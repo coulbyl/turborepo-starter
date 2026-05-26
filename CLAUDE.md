@@ -2,13 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## What is Identis
+
+Identis is a **B2B RegTech SaaS** for francophone Africa. It lets organizations (fintechs, IMF/microfinance, real estate agencies) verify identities, score risk, and validate cases through configurable workflows — all compliant with BCEAO and ARDP regulations.
+
+Two deployment modes:
+- **Cloud** — multi-tenant SaaS, pay-per-verification wallet (500–1 800 FCFA/verification)
+- **Dedicated** — self-hosted Docker Compose package, monthly license (75 000 FCFA/month)
+
+The current codebase is a **boilerplate foundation** with auth, users, notifications, and announcements. The product modules (Workspace, Case, Verification, Rule Engine, Workflow, Form Builder, Entry Points, Wallet, API keys) are yet to be built.
+
+---
+
 ## Commands
 
 ```bash
-# Start all services (Postgres, Redis, Mailpit)
+# Infrastructure (Postgres + Redis + Mailpit)
 docker-compose up -d
 
-# Dev — all apps in parallel
+# Dev — all apps
 pnpm dev
 
 # Scoped dev
@@ -16,7 +28,7 @@ pnpm -F api dev          # NestJS API on :3001
 pnpm -F web dev          # Next.js on :3000
 
 # Build
-pnpm build               # all packages via turbo
+pnpm build
 pnpm -F api build
 pnpm -F web build
 
@@ -24,79 +36,158 @@ pnpm -F web build
 pnpm lint
 pnpm typecheck
 
-# Tests (API — Vitest)
-pnpm -F api test              # unit tests
-pnpm -F api test:watch        # watch mode
-pnpm -F api test:e2e          # e2e (uses Testcontainers — requires Docker)
+# API tests (Vitest)
+pnpm -F api test              # unit
+pnpm -F api test:watch
+pnpm -F api test:e2e          # requires Docker (Testcontainers)
 
-# E2E (web — Playwright)
+# Web E2E (Playwright)
 pnpm -F web e2e
 pnpm -F web e2e:ui
 
-# Database (run from packages/db)
+# Database
 pnpm -F db db:migrate         # run pending migrations
 pnpm -F db db:generate        # regenerate Prisma client after schema changes
-pnpm -F db db:seed            # seed admin user (requires SEED_ADMIN_PASSWORD)
-pnpm -F db db:studio          # Prisma Studio GUI
-pnpm -F db db:reset           # destructive: reset + re-migrate
+pnpm -F db db:seed            # seed admin user (set SEED_ADMIN_PASSWORD first)
+pnpm -F db db:studio
+pnpm -F db db:reset           # destructive
 ```
 
-## Architecture
+---
 
-### Monorepo layout
+## Monorepo layout
 
 ```
-apps/api          NestJS REST API
-apps/web          Next.js 15 frontend (App Router)
-packages/db       Prisma schema + generated client
-packages/ui       Shared shadcn/Radix component library
-packages/transactional  React Email templates (email-verification, password-reset)
-packages/eslint-config  Shared ESLint configs (base / nest / next / react-internal)
+apps/api              NestJS REST API
+apps/web              Next.js 15 frontend (App Router)
+packages/db           Prisma schema + generated client (@identis/db)
+packages/ui           Shared shadcn/Radix UI components (@identis/ui)
+packages/transactional  React Email templates (@identis/transactional)
+packages/eslint-config  Shared ESLint configs
 packages/typescript-config  Shared tsconfig presets
 ```
 
-### Backend (`apps/api`)
+---
 
-NestJS application with feature modules under `src/modules/`:
+## Target architecture — NestJS modules to build
 
-- **auth** — session-based auth (cookie `starter_session`), email OTP, TOTP/TOTP-QR, password reset. No JWT. Sessions are hashed tokens stored in Postgres.
-- **admin-users** — admin CRUD over users, generate password-reset links
-- **announcements** — CMS announcements (admin CRUD + public read)
-- **notification** — in-app notifications with per-user read tracking via BullMQ + Redis
-- **mail** — nodemailer wrapper; dev uses Mailpit (`:8025`)
+The central entity is **Workspace** (a client organization). All business data is scoped by `workspaceId`.
 
-`PrismaService` wraps the generated `@prisma/client` and is provided globally via `PrismaModule`. Import it from `@/prisma.service` inside the API, or import `@identis/db` from the workspace.
+| Module | Responsibility |
+|---|---|
+| `WorkspaceModule` | CRUD workspace, members, roles (Admin/Agent/Reviewer/Compliance/Developer), branding |
+| `CaseModule` | Create/track/search verification cases; holds score result and form data |
+| `VerifModule` | Smile ID integration — Basic KYC, DocV, DocV+AML, Smile Secure (dedup) |
+| `RuleEngineModule` | Configurable risk rules (condition/operator/consequence), score 0–100 |
+| `WorkflowModule` | Multi-step validation pipeline, roles per step, delays, auto-escalation |
+| `FormModule` | Dynamic form builder (text/number/select/upload/consent), sector templates |
+| `EntryPointModule` | One-time unique links for self-service candidate flow |
+| `WalletModule` | Prepaid balance, deductions per verification, recharge via Wave/Orange |
+| `ApiModule` | External API keys (hashed), logs, webhooks, usage metering |
+| `LicenseModule` | Dedicated mode — license validation + 24h heartbeat to api.identis.ci |
+| `AdminModule` | Super-admin — all workspaces, licenses, global metrics |
 
-The API uses `@modules/...` and `@utils/...` path aliases (see `tsconfig.json`).
+The boilerplate already has: `AuthModule`, `NotificationModule`, `AnnouncementsModule`, `AdminUsersModule`, `MailModule`, `RedisModule`.
 
-### Frontend (`apps/web`)
+---
 
-Next.js App Router with two layout trees:
+## Key architectural decisions
 
-- `app/(public)/` — unauthenticated pages (auth flows)
-- `app/dashboard/` — protected; `layout.tsx` calls `getCurrentSession()` server-side and redirects to login if absent, then wraps children in `CurrentUserProvider`
+**Multi-tenant isolation** — every Prisma query on business entities MUST include `WHERE workspaceId = X`. The `WorkspaceScopeGuard` enforces this at the HTTP layer. Implement it from Sprint 1 — retrofitting is expensive.
 
-**Domain layer** (`domains/<feature>/`): all API calls and types live here, split into `use-cases/` (functions) and `types/`. There is no dedicated API client class — calls go through two thin helpers:
+**Verification provider abstraction** — implement `IVerificationProvider` interface with `verifyDocument()`, `checkLiveness()`, `checkAML()` methods. Smile ID is the first implementation. This enables adding Verichap (local CI/UEMOA backup provider) later without changing business logic.
 
-- `lib/api/server-api.ts` — `serverApiRequest<T>()` for Server Components; forwards cookies automatically
-- `lib/api/client-api.ts` — `clientApiRequest<T>()` for Client Components; sends `credentials: "include"`
+**Score ≠ Smile ID result** — Smile ID returns raw biometric data (liveness score, document valid, AML match). The Identis Rule Engine combines this with form data to compute a 0–100 score. Never expose Smile ID's raw score as the Identis score.
 
-Both helpers target `BACKEND_URL` (default `http://localhost:3001`).
+**Async verification flow** — Basic KYC is synchronous (<3s). Document Verification is async — Smile ID calls back via webhook. Use WebSocket (Socket.io) to push results to the dashboard. No polling — too expensive on 3G.
 
-**i18n**: `next-intl` with `messages/en.json` and `messages/fr.json`.
+**Biometric data** — photos (CNI, selfie) are stored on Cloudflare R2 encrypted AES-256, never in PostgreSQL. Only the R2 URL is stored. Access requires a signed URL with 15-minute expiry. Auto-delete after 90 days via cron job.
 
-**UI**: Components in `packages/ui` (shadcn-based, Tailwind v4). App-specific components live in `apps/web/components/`.
+**API keys** — stored as bcrypt hash only. Prefix pattern: `id_live_xxxx`. The raw key is returned once at creation and never retrievable again.
 
-### Database (`packages/db`)
+**Rule Engine caching** — rules are loaded from PostgreSQL, compiled in memory, cached in Redis with key `rules:{workspaceId}`, TTL 5 minutes. Cache is invalidated immediately on rule modification.
 
-Prisma schema at `packages/db/prisma/schema.prisma`. Models: `User`, `Session`, `EmailVerificationCode`, `PasswordResetToken`, `Notification`, `UserNotificationRead`, `Announcement`.
+**Candidate flow resilience** — the `EntryPoint` entity stores `lastCompletedStep`. If a candidate loses connection mid-flow, they resume at the last completed step when reopening the link (before expiry).
 
-PKs use `uuidv7()` (Postgres extension). After schema changes, run `db:generate` before building the API.
+---
 
-### Environment setup
+## Data model overview
 
-Copy `.env.example` → `.env` (docker-compose vars) and `apps/api/.env.example` → `apps/api/.env` (API vars). Critical vars:
+The full Prisma schema (to be implemented) centers on `Workspace`:
 
-- `DATABASE_URL` — Postgres connection string
-- `TOTP_APP_SECRET` — AES-256-GCM key for encrypting TOTP secrets at rest; never rotate without migrating existing records
-- `CORS_ORIGIN` / `AUTH_COOKIE_DOMAIN` — must match frontend origin in production
+- `Workspace` → `Member[]`, `Case[]`, `Rule[]`, `WorkflowStep[]`, `FormTemplate[]`, `ApiKey[]`, `WalletTransaction[]`
+- `Case` → `Verification?`, `StepHistory[]`, `EntryPoint?`
+- `Verification` — Smile ID result: `smileJobId`, `livenessScore`, `documentValid`, `amlMatch`, `duplicateFound`, `rawResult` (Json), `cniPhotoUrl`, `selfiePhotoUrl`
+- `Rule` — `condition`, `operator`, `value`, `consequence` (MALUS/BLOCK/ALERT), `malus` points
+- `WorkflowStep` — `requiredRole`, `maxDelayHours`, `onExpiry` (ESCALATE/ALERT/AUTO_APPROVE), score thresholds
+- `WalletTransaction` — `type` (INSCRIPTION/RECHARGE/DEDUCTION/REFUND), `amount` in FCFA, `balanceBefore`, `balanceAfter`
+
+Current schema (`packages/db/prisma/schema.prisma`) only has the boilerplate models (User, Session, Notification, Announcement). The full schema above must be migrated in.
+
+---
+
+## Backend (`apps/api`)
+
+- Path aliases: `@/` → `src/`, `@modules/` → `src/modules/`, `@utils/` → `src/utils/`
+- `PrismaService` in `src/prisma.service.ts` — import as `@identis/db` from workspace packages
+- Session auth via cookie `starter_session` (boilerplate) — will migrate to JWT (access 15min + refresh 7 days) for the product
+- BullMQ queues backed by Redis — used for notification delivery and async Smile ID retry (5min → 15min → 1h → 4h → 24h)
+- Logging: Pino structured JSON, import `createLogger` from `@utils/logger`
+
+---
+
+## Frontend (`apps/web`)
+
+Two route groups:
+- `app/(public)/` — unauthenticated (auth flows, candidate self-service flow)
+- `app/dashboard/` — protected; `layout.tsx` redirects unauthenticated users to `/auth/login`
+
+**API calls:**
+- Server Components → `lib/api/server-api.ts` (`serverApiRequest<T>`) — forwards cookies automatically
+- Client Components → `lib/api/client-api.ts` (`clientApiRequest<T>`) — sends `credentials: "include"`
+
+**Domain layer** (`domains/<feature>/use-cases/`) — all API interactions live here, no direct fetch in components.
+
+**i18n**: `next-intl`, messages in `messages/en.json` and `messages/fr.json`.
+
+**UI**: `@identis/ui` (shadcn/Radix, Tailwind v4). App-specific components in `apps/web/components/`.
+
+---
+
+## Environment setup
+
+Copy `.env.example` → `.env` (docker-compose) and `apps/api/.env.example` → `apps/api/.env` (API).
+
+Critical production vars:
+- `TOTP_APP_SECRET` — AES-256-GCM key for TOTP secrets; never rotate without migrating existing records
+- `JWT_SECRET` + `JWT_REFRESH_SECRET` — 256-bit random, different values
+- `SMILE_ID_PARTNER_ID` + `SMILE_ID_API_KEY` — from Smile ID portal (sandbox free, `SMILE_ID_ENV=0`)
+- `R2_ACCOUNT_ID` + `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` + `R2_BUCKET_NAME` — Cloudflare R2
+- `ENCRYPTION_KEY` — 32-byte hex for AES-256 (biometric data encryption)
+- `WHATSAPP_PHONE_ID` + `WHATSAPP_TOKEN` — Meta Business API
+
+---
+
+## Security checklist (before any production deploy)
+
+- `WorkspaceScopeGuard` on every business endpoint
+- No secrets in git — env vars only
+- HTTPS + Helmet.js headers active
+- Nginx rate limiting: 100 req/min per IP globally, 1 000 req/hour per API key
+- ClamAV sidecar active for file uploads
+- R2 direct URL access disabled (signed URLs only)
+- ARTCI declaration filed (required for biometric data collection in CI)
+- Sentry configured with no PII in logs
+
+---
+
+## Docs
+
+Full product documentation is in `docs/`:
+- `Identis_Architecture_v1.md` — detailed tech architecture, data model, API reference
+- `Identis_PRD_v1.md` — product requirements, user stories by segment
+- `Identis_Roadmap_v1.md` — 18-month roadmap, 4 phases, feature backlog
+- `Identis_BizModel_v1.md` — pricing, margins, financial projections
+- `Identis_Decisions_v1.md` — 26 product & legal decisions (mandatory reading before implementing any module)
+- `Identis_Complement_v1.md` — GTM scripts, QA test cases, CGU clauses, brand identity, security plan
+- `Identis_UXUI_v1.md` — design system, user flows, component patterns

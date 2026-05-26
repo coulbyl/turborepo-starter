@@ -1,37 +1,167 @@
 # AGENTS — Workspace Instructions for AI Coding Agents
 
-Purpose: Help AI agents be immediately productive in this monorepo by summarizing how to run, build, and test the project, where to find architectural context, and where to find project-specific agent skills.
+Purpose: help coding agents become productive quickly in this monorepo by documenting the real project structure, safe commands, local dependencies, and where to find architecture and product context.
 
-Use when: triaging issues, running tests, making code changes in `apps/*`, `packages/*`, or updating infra/config. Trigger phrases: "dev", "build", "pnpm", "turbo", "prisma", "Playwright", "NestJS", "Next.js".
+Use when: working anywhere in `apps/*` or `packages/*`, running local tooling, updating infra/config, or trying to understand how the API, web app, and shared packages fit together.
 
-Quick commands
-- **Start local dev**: `pnpm dev` (runs turbo pipelines for apps) — see [package.json](package.json)
-- **Start services**: `docker-compose up` — starts Postgres, Redis, Mailpit — see [docker-compose.yml](docker-compose.yml)
-- **API (apps/api)**: `pnpm -F api dev`, `pnpm -F api test`, `pnpm -F api test:e2e` — see [apps/api/package.json](apps/api/package.json)
-- **Web (apps/web)**: `pnpm -F web dev`, `pnpm -F web build`, `pnpm -F web e2e` — see [apps/web/package.json](apps/web/package.json)
-- **DB (packages/db)**: `pnpm -w -F db db:generate`, `pnpm -w -F db db:seed`, `pnpm -w -F db db:migrate` — see [packages/db/package.json](packages/db/package.json)
+## Workspace Snapshot
 
-Environment notes / gotchas
-- This is a pnpm + Turborepo monorepo. Use `pnpm` and `turbo` commands; do not assume `npm` or `yarn`.
-- Many tasks depend on Docker services (Postgres, Redis). If tests or dev fail, check `docker-compose.yml` and environment variables.
-- Prisma migrations are managed in `packages/db` — run migrations there before running API migrations.
-- Turbo caching may affect incremental builds; prefer use of `pnpm -w` / `pnpm -F <pkg>` for package-scoped tasks when diagnosing.
+- Product: `Identis`, a Francophone Africa identity verification and dossier-validation platform.
+- Monorepo: `pnpm` + `Turborepo`
+- Runtime: Node `>=22`
+- Main apps:
+  - `apps/api`: NestJS backend
+  - `apps/web`: Next.js App Router frontend
+- Shared packages:
+  - `packages/db`: Prisma schema, generated client, DB utilities
+  - `packages/ui`: shared UI components and styles
+  - `packages/transactional`: React email templates
+  - `packages/eslint-config`, `packages/typescript-config`: shared tooling config
 
-Where to find context
-- Architecture & docs: see [docs/](docs/) for design docs and decisions.
-- Backend code: [apps/api/src/](apps/api/src/)
-- Frontend code: [apps/web/](apps/web/)
-- Shared schema & DB: [packages/db/prisma/schema.prisma](packages/db/prisma/schema.prisma)
+## Quick Commands
 
-Agent skills & helpers
-- Repository contains curated skills for common tasks under `.agents/skills/`:
-  - [nestjs-best-practices](.agents/skills/nestjs-best-practices/AGENTS.md) — NestJS guidance
-  - [nextjs-app-router-patterns](.agents/skills/nextjs-app-router-patterns/) — Next.js patterns
-  - [playwright-best-practices](.agents/skills/playwright-best-practices/) — E2E testing guidance
+- Install dependencies: `pnpm install`
+- Start all local apps: `pnpm dev`
+- Build all packages/apps: `pnpm build`
+- Lint workspace: `pnpm lint`
+- Typecheck workspace: `pnpm typecheck`
 
-Guidelines for agent behavior
-- Prefer linking to existing docs (do not copy large docs from `docs/`).
-- Use targeted `applyTo` globs for file-level instructions; avoid always-on `applyTo: "**"` unless necessary.
-- If running commands, prefer non-destructive ones first (lint, test), and prompt before running migrations or destructive DB resets.
+### Package-scoped commands
 
-If you need more targeted instructions (frontend-only or backend-only), ask to create a separate instructions file under `.github/` or an agent skill in `.agents/skills/`.
+- API dev: `pnpm -F api dev`
+- API tests: `pnpm -F api test`
+- API e2e tests: `pnpm -F api test:e2e`
+- Web dev: `pnpm -F web dev`
+- Web production build: `pnpm -F web build`
+- Web e2e: `pnpm -F web e2e`
+- Prisma generate: `pnpm -F @identis/db db:generate`
+- Prisma migrate: `pnpm -F @identis/db db:migrate`
+- Prisma seed: `pnpm -F @identis/db db:seed`
+
+Prefer `pnpm -F <package>` when diagnosing or iterating on a single app/package. Use root scripts when the task genuinely spans the workspace.
+
+## Local Services
+
+`docker-compose.yml` starts the local service dependencies:
+
+- PostgreSQL on `localhost:5432`
+- Redis on `localhost:6379`
+- Mailpit SMTP on `localhost:1025`
+- Mailpit UI on `http://localhost:8025`
+
+Start them with:
+
+```bash
+docker-compose up -d
+```
+
+If API startup, queues, email, or DB-backed tests fail, check Docker services first before assuming application bugs.
+
+## Environment Notes
+
+- Root `.env` configures Docker-facing infrastructure variables.
+- Backend runtime variables live separately in `apps/api/.env` if present in your local setup.
+- The API defaults to `http://localhost:3001`.
+- The web app defaults to `http://localhost:3000`.
+- The frontend talks to the backend via `NEXT_PUBLIC_API_URL`, falling back to `http://localhost:3001`.
+- Prisma reads `DATABASE_URL` from the environment.
+- Redis defaults to `localhost:6379`.
+
+## Architecture Map
+
+### Backend
+
+- Entry point: [apps/api/src/main.ts](apps/api/src/main.ts)
+- Root module: [apps/api/src/app.module.ts](apps/api/src/app.module.ts)
+- Main feature modules currently include:
+  - `auth`
+  - `admin-users`
+  - `announcements`
+  - `notification`
+  - `mail`
+- Common infrastructure:
+  - Prisma service/module in `apps/api/src/prisma.*`
+  - Redis module in `apps/api/src/common/redis/`
+
+### Frontend
+
+- App Router root: [apps/web/app/](apps/web/app/)
+- Public auth flow: `apps/web/app/(public)/auth/`
+- Dashboard area: `apps/web/app/dashboard/`
+- Domain-oriented client code: `apps/web/domains/`
+- Shared API helpers: `apps/web/lib/api/`
+- Localized messages: `apps/web/messages/`
+
+### Database
+
+- Prisma schema: [packages/db/prisma/schema.prisma](packages/db/prisma/schema.prisma)
+- Prisma config: [packages/db/prisma.config.ts](packages/db/prisma.config.ts)
+- DB package source: [packages/db/src/](packages/db/src/)
+
+### Shared UI and Emails
+
+- Shared components: [packages/ui/src/components/](packages/ui/src/components/)
+- Shared styles: `packages/ui/src/styles/`
+- Transactional emails: [packages/transactional/src/emails/](packages/transactional/src/emails/)
+
+## Docs and Product Context
+
+Start with these files when you need product or UX intent before changing code:
+
+- [README.md](README.md)
+- [docs/Identis_PRD_v1.md](docs/Identis_PRD_v1.md)
+- [docs/Identis_Roadmap_v1.md](docs/Identis_Roadmap_v1.md)
+- [docs/Identis_UXUI_v1.md](docs/Identis_UXUI_v1.md)
+
+Prefer linking to these docs instead of copying large sections into new files or comments.
+
+## Testing Guidance
+
+- Use narrow, package-scoped checks first.
+- Good first passes:
+  - `pnpm -F api test`
+  - `pnpm -F web build`
+  - `pnpm -F web e2e`
+- API e2e uses Vitest config under `apps/api/test/`.
+- Web e2e uses Playwright.
+
+If a change touches DB access, auth, queues, or email flows, assume local services may be required.
+
+## Turborepo Guidance
+
+- This repo uses package tasks, not root task logic.
+- Keep task definitions inside each package `package.json`.
+- Root `package.json` should stay as a thin wrapper around `turbo run ...`.
+- When adding a new task across packages, update both:
+  - the relevant package `package.json`
+  - [turbo.json](turbo.json)
+
+Avoid introducing one-off root scripts that bypass Turbo orchestration.
+
+## Agent Skills Available In-Repo
+
+- [nestjs-best-practices](.agents/skills/nestjs-best-practices/AGENTS.md)
+- [nextjs-app-router-patterns](.agents/skills/nextjs-app-router-patterns/SKILL.md)
+- [playwright-best-practices](.agents/skills/playwright-best-practices/SKILL.md)
+- [shadcn](.agents/skills/shadcn/SKILL.md)
+- [turborepo](.agents/skills/turborepo/SKILL.md)
+
+Use the matching skill when the task clearly falls into one of those areas.
+
+## Safety Rules For Agents
+
+- Use `pnpm`, not `npm` or `yarn`.
+- Prefer non-destructive commands first: `lint`, `typecheck`, targeted tests, read-only inspection.
+- Do not run `db:reset` or destructive Prisma commands unless explicitly asked.
+- Do not overwrite user changes already present in the worktree.
+- Prefer minimal, package-scoped verification before running full workspace commands.
+- When editing docs or product copy, keep terminology aligned with `Identis` rather than the original starter template wording.
+
+## Good First Reads For Common Tasks
+
+- Backend bug or endpoint work: `apps/api/src/main.ts`, `apps/api/src/app.module.ts`, then the relevant module in `apps/api/src/modules/`
+- Frontend page or flow work: matching route in `apps/web/app/`, then related logic in `apps/web/domains/`
+- DB or schema work: `packages/db/prisma/schema.prisma`, then `packages/db/package.json`
+- Build/task issues: `package.json`, `turbo.json`, `pnpm-workspace.yaml`
+
+If more granular instructions are needed, add a focused skill under `.agents/skills/` or a narrower instruction file close to the code it governs.
