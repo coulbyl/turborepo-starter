@@ -33,7 +33,7 @@ export class ApiKeyGuard implements CanActivate {
       select: { id: true, keyHash: true, workspaceId: true },
     });
 
-    if (!key || !verifyApiKey(raw, key.keyHash)) {
+    if (!key || !(await verifyApiKey(raw, key.keyHash))) {
       throw new UnauthorizedException('Clé API invalide');
     }
 

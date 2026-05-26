@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -10,13 +11,14 @@ async function bootstrap() {
   const host = process.env.HOST ?? '0.0.0.0';
   const corsOrigin = process.env.CORS_ORIGIN ?? true;
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ origin: corsOrigin, credentials: true });
 
+  app.use(helmet());
+  app.enableCors({ origin: corsOrigin, credentials: true });
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   const openApiConfig = new DocumentBuilder()
-    .setTitle('Starter API')
-    .setDescription('Starter backend API reference')
+    .setTitle('Identis API')
+    .setDescription('API de vérification d\'identité Identis')
     .setVersion('1.0.0')
     .build();
 

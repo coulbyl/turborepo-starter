@@ -86,7 +86,7 @@ export class AuthService {
         email,
         username,
         fullName: input.fullName.trim(),
-        passwordHash: hashPassword(input.password),
+        passwordHash: await hashPassword(input.password),
         bio: input.bio?.trim() || null,
       },
       select: {
@@ -138,7 +138,7 @@ export class AuthService {
       },
     });
 
-    if (!user || !verifyPassword(input.password, user.passwordHash)) {
+    if (!user || !(await verifyPassword(input.password, user.passwordHash))) {
       throw new UnauthorizedException('Identifiants invalides');
     }
 
@@ -451,6 +451,7 @@ export class AuthService {
       throw new BadRequestException('Lien invalide ou expiré');
     }
 
+    const passwordHash = await hashPassword(dto.newPassword);
     await this.prisma.client.$transaction([
       this.prisma.client.passwordResetToken.update({
         where: { id: record.id },
@@ -458,7 +459,7 @@ export class AuthService {
       }),
       this.prisma.client.user.update({
         where: { id: record.userId },
-        data: { passwordHash: hashPassword(dto.newPassword) },
+        data: { passwordHash },
       }),
       this.prisma.client.session.deleteMany({
         where: { userId: record.userId },
@@ -488,10 +489,11 @@ export class AuthService {
       throw new UnauthorizedException('Code TOTP invalide');
     }
 
+    const passwordHash = await hashPassword(dto.newPassword);
     await this.prisma.client.$transaction([
       this.prisma.client.user.update({
         where: { id: user.id },
-        data: { passwordHash: hashPassword(dto.newPassword) },
+        data: { passwordHash },
       }),
       this.prisma.client.session.deleteMany({
         where: { userId: user.id },

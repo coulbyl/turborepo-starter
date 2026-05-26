@@ -4,73 +4,31 @@ import {
   createHash,
   randomBytes,
   scryptSync,
-  timingSafeEqual,
 } from 'node:crypto';
+import * as argon2 from 'argon2';
 import {
   AUTH_SESSION_COOKIE,
   AUTH_SESSION_TTL_MS,
   COOKIE_DOMAIN,
 } from './auth.constants';
 
-const SCRYPT_KEYLEN = 64;
-const SCRYPT_N = 32768;
-const SCRYPT_R = 8;
-const SCRYPT_P = 1;
-const SCRYPT_MAXMEM = 128 * SCRYPT_N * SCRYPT_R * SCRYPT_P * 2; // 64 MB
-
 export function normalizeIdentifier(value: string): string {
   return value.trim().toLowerCase();
 }
 
-export function hashPassword(password: string): string {
-  const salt = randomBytes(16).toString('hex');
-  const hash = scryptSync(password, salt, SCRYPT_KEYLEN, {
-    N: SCRYPT_N,
-    r: SCRYPT_R,
-    p: SCRYPT_P,
-    maxmem: SCRYPT_MAXMEM,
-  }).toString('hex');
-  return `${SCRYPT_N}:${SCRYPT_R}:${SCRYPT_P}:${salt}:${hash}`;
+export async function hashPassword(password: string): Promise<string> {
+  return argon2.hash(password, { type: argon2.argon2id });
 }
 
-export function verifyPassword(password: string, storedHash: string): boolean {
-  const parts = storedHash.split(':');
-
-  let N: number;
-  let r: number;
-  let p: number;
-  let salt: string;
-  let expectedHash: string;
-
-  if (parts.length === 5) {
-    // Current format: "N:r:p:salt:hash"
-    [N, r, p] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
-    salt = parts[3] ?? '';
-    expectedHash = parts[4] ?? '';
-  } else if (parts.length === 2) {
-    // Legacy format: "salt:hash" (N=16384 default)
-    N = 16384;
-    r = 8;
-    p = 1;
-    salt = parts[0] ?? '';
-    expectedHash = parts[1] ?? '';
-  } else {
+export async function verifyPassword(
+  password: string,
+  storedHash: string,
+): Promise<boolean> {
+  try {
+    return await argon2.verify(storedHash, password);
+  } catch {
     return false;
   }
-
-  if (!salt || !expectedHash || !N || !r || !p) return false;
-
-  const maxmem = 128 * N * r * p * 2;
-  const actualHash = scryptSync(password, salt, SCRYPT_KEYLEN, {
-    N,
-    r,
-    p,
-    maxmem,
-  }).toString('hex');
-  return timingSafeEqual(
-    Buffer.from(actualHash, 'hex'),
-    Buffer.from(expectedHash, 'hex'),
-  );
 }
 
 export function generateSessionToken(): string {
@@ -131,7 +89,7 @@ const AES_IV_LEN = 12;
 const AES_TAG_LEN = 16;
 
 function deriveAesKey(secret: string): Buffer {
-  return scryptSync(secret, 'starter-totp-salt', AES_KEY_LEN);
+  return scryptSync(secret, 'identis-totp-salt', AES_KEY_LEN);
 }
 
 export function encryptTotpSecret(
