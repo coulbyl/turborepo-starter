@@ -218,6 +218,62 @@ export class CaseService {
     return { items, total, page, limit };
   }
 
+  async getStats(workspaceId: string) {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [
+      totalCases,
+      casesThisMonth,
+      pendingCases,
+      approvedTotal,
+      rejectedTotal,
+      walletBalance,
+      recentCases,
+    ] = await Promise.all([
+      this.prisma.client.case.count({ where: { workspaceId } }),
+      this.prisma.client.case.count({
+        where: { workspaceId, createdAt: { gte: monthStart } },
+      }),
+      this.prisma.client.case.count({
+        where: { workspaceId, status: { in: ['PENDING', 'IN_REVIEW'] } },
+      }),
+      this.prisma.client.case.count({
+        where: { workspaceId, status: 'APPROVED' },
+      }),
+      this.prisma.client.case.count({
+        where: { workspaceId, status: 'REJECTED' },
+      }),
+      this.walletService.getBalance(workspaceId),
+      this.prisma.client.case.findMany({
+        where: { workspaceId },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: {
+          id: true,
+          reference: true,
+          status: true,
+          formData: true,
+          createdAt: true,
+          verification: { select: { status: true } },
+        },
+      }),
+    ]);
+
+    const decided = approvedTotal + rejectedTotal;
+    const approvalRate =
+      decided > 0 ? Math.round((approvedTotal / decided) * 100) : null;
+
+    return {
+      totalCases,
+      casesThisMonth,
+      pendingCases,
+      approvalRate,
+      walletBalance,
+      recentCases,
+    };
+  }
+
   async findOne(workspaceId: string, caseId: string) {
     const found = await this.prisma.client.case.findFirst({
       where: { id: caseId, workspaceId },

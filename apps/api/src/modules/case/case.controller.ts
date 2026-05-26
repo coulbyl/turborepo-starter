@@ -66,6 +66,11 @@ export class CaseController {
     });
   }
 
+  @Get('stats')
+  getStats(@CurrentWorkspaceId() workspaceId: string) {
+    return this.caseService.getStats(workspaceId);
+  }
+
   @Get()
   findAll(
     @CurrentWorkspaceId() workspaceId: string,
