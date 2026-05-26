@@ -33,15 +33,17 @@ _De zéro au premier client Dedicated — Plan sur 18 mois_
 
 ### Sprint 1 — Fondations vérification (3 semaines)
 
-- [ ] Intégration Smile ID — Basic KYC + Document Verification + Selfie liveness
-- [ ] Workspace création, membres, rôles (Admin + Agent)
-- [ ] Dashboard minimal : liste dossiers + statuts vert/orange/rouge
-- [ ] Flow agent-initié : scan CNI + selfie + résultat immédiat
-- [ ] Wallet prépayé : inscription 15 000 FCFA + 10 vérifications offertes
+> Démarré le 26 mai 2026 (avant le 1er juin officiel).
+
+- [x] Intégration Smile ID — Basic KYC + Document Verification + Selfie liveness (JT11/JT6/JT5, support international)
+- [ ] Workspace création, membres, rôles (Admin + Agent) — création UI ✅, membres/rôles ⬜
+- [x] Dashboard minimal : liste dossiers + statuts vert/orange/rouge
+- [x] Flow agent-initié : scan CNI + selfie + résultat immédiat
+- [x] Wallet prépayé : inscription 15 000 FCFA + 10 vérifications offertes
 - [ ] Rapport PDF basique par dossier
-- [ ] Sandbox Smile ID configurée et testable
-- [ ] Interface `IVerificationProvider` abstraite
-- [ ] `WorkspaceScopeGuard` sur tous les endpoints métier
+- [ ] Sandbox Smile ID configurée et testable — ⚠️ en attente credentials `SMILE_ID_PARTNER_ID` + `SMILE_ID_API_KEY`
+- [x] Interface `IVerificationProvider` abstraite (prête pour Verichap/backup UEMOA)
+- [x] `WorkspaceScopeGuard` sur tous les endpoints métier (case, wallet, workspace)
 - [ ] Endpoint `DELETE /cases/:id` avec suppression cascade R2 + formData
 - [ ] Job cron nettoyage photos biométriques R2 (90 jours)
 - [ ] `Promise.race` timeout Smile ID + Bull retry queue (5min → 15min → 1h → 4h → 24h)
@@ -223,7 +225,8 @@ _De zéro au premier client Dedicated — Plan sur 18 mois_
 
 | Date             | Milestone                                                            |
 | ---------------- | -------------------------------------------------------------------- |
-| **Juin 2026**    | Sprint 1 — première ligne de code Identis                            |
+| **26 mai 2026**  | Sprint 1 démarré — WalletModule, CaseModule, WebhooksModule, SmileIdProvider, dashboard cases ✅ |
+| **Juin 2026**    | Fin Sprint 1 cible — workspace members, PDF, sandbox Smile ID        |
 | **Juillet 2026** | Première vérification réelle en production (CNI ivoirienne + selfie) |
 | **Août 2026**    | Premier client payant — inscription 15 000 FCFA encaissée            |
 | **Sept 2026**    | 3 clients actifs — MVP validé                                        |
@@ -254,8 +257,14 @@ _De zéro au premier client Dedicated — Plan sur 18 mois_
 
 ## Prochaine action immédiate
 
-Créer le compte sandbox Smile ID sur [portal.usesmileid.com](https://portal.usesmileid.com) et tester le premier appel API sur une CNI ivoirienne. C'est le seul bloquant technique avant de démarrer le Sprint 1.
+Sprint 1 en cours. Prochaines étapes pour le terminer :
+
+1. **Credentials Smile ID sandbox** — créer le compte sur portal.usesmileid.com, renseigner `SMILE_ID_PARTNER_ID` + `SMILE_ID_API_KEY` dans `apps/api/.env`
+2. **Migration DB** — `pnpm -F db db:migrate` une fois Docker lancé
+3. **Dashboard overview** — page `/dashboard` avec stats résumées (nb dossiers, solde wallet, dernières vérifs)
+4. **Workspace members** — invitation par email, assignation rôle Admin/Agent
+5. **PDF basique** — rapport par dossier
 
 ---
 
-_Document confidentiel — Identis Roadmap v1.0 — Mai 2026_
+_Document confidentiel — Identis Roadmap v1.0 — Mis à jour 26 mai 2026_
