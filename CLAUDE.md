@@ -127,6 +127,57 @@ Current schema (`packages/db/prisma/schema.prisma`) only has the boilerplate mod
 
 ---
 
+## ESLint / TypeScript rules — recurring gotchas
+
+**`max-params` in NestJS**
+
+The rule fires at the **first decorator** of a method, not at the method signature. Place the disable comment *before* `@Post()` / `@Get()` etc., not before `create(`:
+
+```ts
+// eslint-disable-next-line max-params   ← before the decorator
+@Post()
+@UseInterceptors(...)
+create(@Param() ..., @Body() ..., @UploadedFiles() ..., @CurrentSession() ...) { ... }
+```
+
+For DI constructors, place it on the line immediately before `constructor(`. Prefer refactoring to an options object when the caller is your own code; reserve `eslint-disable` for NestJS infrastructure constraints (constructors with `@Inject`, decorated controller methods).
+
+**`@typescript-eslint/require-await`**
+
+Never use `async` on a method whose body only throws. Return `Promise.reject()` instead:
+
+```ts
+// ✗ async checkAml(...): Promise<AmlResult> { throw new UnprocessableEntityException(...); }
+checkAml(...): Promise<AmlResult> {
+  return Promise.reject(new UnprocessableEntityException(...));
+}
+```
+
+**`@typescript-eslint/no-unnecessary-type-assertion`**
+
+The rule can misfire on multi-line `(await expr()) as T` patterns. Split into two lines so the cast is unambiguous:
+
+```ts
+// ✗  const result = (await this.idApi.submit_job(...)) as Record<string, unknown>;
+const raw = await this.idApi.submit_job(...);
+const result = raw as Record<string, unknown>;
+```
+
+**NestJS DTO definite assignment**
+
+In class-validator DTOs, required properties must carry the `!` suffix — TypeScript strict mode requires it:
+
+```ts
+// ✗  firstName: string;
+firstName!: string;
+```
+
+**Unused imports**
+
+Namespace imports (`Prisma`, `UserRole`) imported for their type only must use `import type { ... }`, or be removed entirely if nothing from them is referenced. Value imports that shadow the same name from another import also trigger this rule.
+
+---
+
 ## Backend (`apps/api`)
 
 - Path aliases: `@/` → `src/`, `@modules/` → `src/modules/`, `@utils/` → `src/utils/`

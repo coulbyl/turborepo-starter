@@ -157,6 +157,59 @@ Use the matching skill when the task clearly falls into one of those areas.
 - Prefer minimal, package-scoped verification before running full workspace commands.
 - When editing docs or product copy, keep terminology aligned with `Identis` rather than the original starter template wording.
 
+## Known Lint & Typecheck Rules
+
+These rules have caused repeated failures — check them before submitting a lint/typecheck pass.
+
+**`max-params` — placement of the disable comment**
+
+ESLint reports the error at the **first decorator** of a NestJS method. The disable comment must go on the line immediately before that decorator, not before the method name:
+
+```ts
+// eslint-disable-next-line max-params   ← directly above @Post/@Get/etc.
+@Post()
+@UseInterceptors(...)
+create(@Param() ..., @Body() ..., @UploadedFiles() ..., @CurrentSession() ...) {}
+```
+
+For DI constructors, the comment goes on the line immediately before `constructor(`.
+
+Prefer refactoring to an options object (`options: { a, b, c, d }`) when the caller is own code. Use `eslint-disable` only for NestJS infrastructure constraints (DI constructors with `@Inject`, decorated controller methods).
+
+**`require-await` — methods that only throw**
+
+A method with `async` but no `await` triggers this rule. If the body only throws, remove `async` and return `Promise.reject()`:
+
+```ts
+checkAml(...): Promise<AmlResult> {
+  return Promise.reject(new UnprocessableEntityException('...'));
+}
+```
+
+**`no-unnecessary-type-assertion` — multi-line await cast**
+
+The `(await longCall()) as T` pattern can misfire. Split into two statements:
+
+```ts
+const raw = await this.idApi.submit_job(...);
+const result = raw as Record<string, unknown>;
+```
+
+**NestJS DTOs — definite assignment**
+
+Required properties in class-validator DTOs need the `!` suffix under strict mode:
+
+```ts
+firstName!: string;   // ✓
+firstName: string;    // ✗ → TS2564
+```
+
+**Unused imports**
+
+Use `import type { Foo }` for types never referenced as values. Remove namespace imports (`Prisma`, `UserRole`) that appear in the import list but are never used in the file body.
+
+---
+
 ## Good First Reads For Common Tasks
 
 - Backend bug or endpoint work: `apps/api/src/main.ts`, `apps/api/src/app.module.ts`, then the relevant module in `apps/api/src/modules/`
