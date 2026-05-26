@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Prisma } from '@identis/db';
 import { OTP } from 'otplib';
 import QRCode from 'qrcode';
 import type { Response } from 'express';

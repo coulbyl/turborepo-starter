@@ -55,7 +55,7 @@ describe('NotificationService — list & mark read', () => {
     };
     const prisma = makePrisma();
     vi.mocked(prisma.client.notification.findMany).mockResolvedValue([
-      fakeNotif as never,
+      fakeNotif,
     ]);
     vi.mocked(prisma.client.notification.count).mockResolvedValue(1);
 
@@ -65,7 +65,7 @@ describe('NotificationService — list & mark read', () => {
       offset: 0,
       unread: true,
       userId: 'user-1',
-      role: 'ADMIN' as never,
+      role: 'ADMIN',
     });
 
     expect(result.total).toBe(1);

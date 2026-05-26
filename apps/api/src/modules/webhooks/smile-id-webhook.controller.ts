@@ -148,7 +148,7 @@ export class SmileIdWebhookController {
           livenessScore,
           documentValid,
           faceMatch,
-          rawResult: payload as unknown as Record<string, unknown>,
+          rawResult: payload,
           updatedAt: new Date(),
         },
       }),

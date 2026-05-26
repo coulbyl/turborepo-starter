@@ -32,6 +32,7 @@ async function generateReference(
 
 @Injectable()
 export class CaseService {
+  // eslint-disable-next-line max-params
   constructor(
     private readonly prisma: PrismaService,
     private readonly walletService: WalletService,
@@ -42,14 +43,18 @@ export class CaseService {
 
   async create(
     workspaceId: string,
-    initiatorId: string,
-    dto: CreateCaseDto,
-    files: {
-      selfie: Express.Multer.File;
-      idFront: Express.Multer.File;
-      idBack?: Express.Multer.File;
+    options: {
+      initiatorId: string;
+      dto: CreateCaseDto;
+      files: {
+        selfie: Express.Multer.File;
+        idFront: Express.Multer.File;
+        idBack?: Express.Multer.File;
+      };
     },
   ) {
+    const { initiatorId, dto, files } = options;
+
     // 1. Validate wallet balance before doing anything
     const balance = await this.walletService.getBalance(workspaceId);
     const requiredBalance = 1000; // DOC_VERIFY cost

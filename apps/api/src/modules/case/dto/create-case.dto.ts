@@ -59,12 +59,12 @@ export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
   @Length(2, 100)
-  firstName: string;
+  firstName!: string;
 
   @IsNotEmpty()
   @IsString()
   @Length(2, 100)
-  lastName: string;
+  lastName!: string;
 
   @IsOptional()
   @IsString()
@@ -75,13 +75,13 @@ export class CreateCaseDto {
 
   @IsNotEmpty()
   @IsString()
-  country: string; // ISO 3166-1 alpha-2 — validated against support matrix at service level
+  country!: string; // ISO 3166-1 alpha-2 — validated against support matrix at service level
 
   @IsNotEmpty()
   @IsEnum(SUPPORTED_ID_TYPES, {
     message: `Type de document non supporté. Valeurs: ${SUPPORTED_ID_TYPES.join(', ')}`,
   })
-  idType: string;
+  idType!: string;
 
   @IsOptional()
   @IsString()

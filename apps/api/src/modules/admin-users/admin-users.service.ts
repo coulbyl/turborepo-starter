@@ -34,7 +34,7 @@ export class AdminUsersService {
     const role = query.role ?? 'ALL';
 
     const where = {
-      ...(role !== 'ALL' ? { role: role as UserRole } : {}),
+      ...(role !== 'ALL' ? { role } : {}),
       ...(q
         ? {
             OR: [

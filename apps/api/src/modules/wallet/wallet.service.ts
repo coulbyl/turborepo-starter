@@ -42,9 +42,9 @@ export class WalletService {
   async credit(
     workspaceId: string,
     amount: number,
-    type: TxType,
-    reference?: string,
+    options: { type: TxType; reference?: string },
   ) {
+    const { type, reference } = options;
     return this.prisma.client.$transaction(async (tx) => {
       const ws = await tx.workspace.findUniqueOrThrow({
         where: { id: workspaceId },
@@ -134,7 +134,10 @@ export class WalletService {
    */
   async refund(workspaceId: string, product: VerifProduct, caseId: string) {
     const cost = VERIFICATION_COST[product] ?? VERIFICATION_COST['DOC_VERIFY'];
-    return this.credit(workspaceId, cost, TxType.REFUND, caseId);
+    return this.credit(workspaceId, cost, {
+      type: TxType.REFUND,
+      reference: caseId,
+    });
   }
 
   /**
@@ -142,6 +145,8 @@ export class WalletService {
    * Called once at workspace creation.
    */
   async creditWelcomeBonus(workspaceId: string) {
-    return this.credit(workspaceId, WELCOME_CREDIT_FCFA, TxType.INSCRIPTION);
+    return this.credit(workspaceId, WELCOME_CREDIT_FCFA, {
+      type: TxType.INSCRIPTION,
+    });
   }
 }

@@ -27,6 +27,7 @@ import { ListCasesQueryDto } from './dto/list-cases-query.dto';
 export class CaseController {
   constructor(private readonly caseService: CaseService) {}
 
+  // eslint-disable-next-line max-params
   @Post()
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
@@ -54,10 +55,14 @@ export class CaseController {
       throw new Error('selfie et idFront sont requis');
     }
 
-    return this.caseService.create(workspaceId, session.user.id, dto, {
-      selfie: files.selfie[0],
-      idFront: files.idFront[0],
-      idBack: files.idBack?.[0],
+    return this.caseService.create(workspaceId, {
+      initiatorId: session.user.id,
+      dto,
+      files: {
+        selfie: files.selfie[0],
+        idFront: files.idFront[0],
+        idBack: files.idBack?.[0],
+      },
     });
   }
 

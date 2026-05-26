@@ -128,7 +128,7 @@ export class SmileIdProvider implements IVerificationProvider {
       'Submitting Enhanced KYC',
     );
 
-    const result = (await this.idApi.submit_job(
+    const rawResponse = await this.idApi.submit_job(
       {
         user_id: input.jobRef,
         job_id: input.jobRef,
@@ -143,7 +143,8 @@ export class SmileIdProvider implements IVerificationProvider {
         dob: input.dateOfBirth,
         phone_number: input.phoneNumber,
       },
-    )) as Record<string, unknown>;
+    );
+    const result = rawResponse as Record<string, unknown>;
 
     const verified = result['ResultCode'] === RESULT_CODE.ID_VERIFIED;
 
@@ -163,7 +164,7 @@ export class SmileIdProvider implements IVerificationProvider {
    * The AML_CHECK field is surfaced inside Biometric KYC (JT1) results — this
    * method wraps a standalone call if enabled.
    */
-  async checkAml(input: AmlCheckInput): Promise<AmlResult> {
+  checkAml(input: AmlCheckInput): Promise<AmlResult> {
     this.logger.warn(
       { firstName: input.firstName, country: input.country },
       'AML check called — requires AML product activation on Smile ID account',
@@ -171,21 +172,25 @@ export class SmileIdProvider implements IVerificationProvider {
     // AML is not a standalone job_type in SDK v3.1.0.
     // It is returned as Actions.AML_CHECK in JT1 responses when enabled.
     // Implement direct REST call to /v3/aml when account is activated.
-    throw new UnprocessableEntityException(
-      'AML Check non activé — contacter Smile ID pour activer ce produit sur le compte partenaire',
+    return Promise.reject(
+      new UnprocessableEntityException(
+        'AML Check non activé — contacter Smile ID pour activer ce produit sur le compte partenaire',
+      ),
     );
   }
 
   /**
    * Smile Secure face deduplication — requires Smile Secure activation on account.
    */
-  async detectDuplicate(input: DetectDuplicateInput): Promise<DuplicateResult> {
+  detectDuplicate(input: DetectDuplicateInput): Promise<DuplicateResult> {
     this.logger.warn(
       { workspaceId: input.workspaceId },
       'detectDuplicate called — requires Smile Secure activation on Smile ID account',
     );
-    throw new UnprocessableEntityException(
-      'Smile Secure non activé — contacter Smile ID pour activer ce produit sur le compte partenaire',
+    return Promise.reject(
+      new UnprocessableEntityException(
+        'Smile Secure non activé — contacter Smile ID pour activer ce produit sur le compte partenaire',
+      ),
     );
   }
 
@@ -195,7 +200,7 @@ export class SmileIdProvider implements IVerificationProvider {
    */
   verifyWebhookSignature(timestamp: string, signature: string): boolean {
     try {
-      return this.sig.confirm_signature(timestamp, signature) as boolean;
+      return this.sig.confirm_signature(timestamp, signature);
     } catch {
       return false;
     }
