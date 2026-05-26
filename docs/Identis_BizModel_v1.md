@@ -4,7 +4,7 @@
 
 _Structure de revenus, pricing, couts et projections financieres_
 
-Cloud Pay-as-you-go  |  Dedicated Licence  |  FCFA
+Cloud Pay-as-you-go | Dedicated Licence | FCFA
 
 Version
 
@@ -19,6 +19,7 @@ Monnaie
 **Franc CFA (FCFA)**
 
 # **1. Vue d'ensemble du modele economique**
+
 Identis genere des revenus selon deux flux principaux, adaptes chacun a un profil client distinct. Le modele est concu pour etre simple a comprendre, previsible pour le client, et rentable des les premiers mois.
 
 **01**
@@ -42,7 +43,9 @@ Intégration custom, formation equipes, audit conformite BCEAO, migration de don
 Le candidat final (locataire, emprunteur) ne paie jamais directement. C'est toujours le workspace client qui supporte le cout des verifications. Le workspace peut repercuter ce cout dans ses propres frais de dossier — c'est son choix commercial.
 
 # **2. Flux Cloud — Pay-as-you-go**
+
 ## **2.1 Frais d'inscription — Filtre et credit de depart**
+
 **15 000 FCFA**
 
 Frais d'inscription one-time — non remboursable
@@ -50,6 +53,7 @@ Frais d'inscription one-time — non remboursable
 _Inclut 10 verifications completes offertes (~10 000 FCFA de valeur)_
 
 ### **Ce que couvre ce frais**
+
 - **Filtre anti-plaisantins : **un workspace cree coute quelque chose — seuls les projets serieux s'inscrivent
 - **Setup du workspace : **configuration initiale, creation du compte, onboarding
 - **Credit de depart : **10 verifications completes (Document Verification + Selfie) pour tester en conditions reelles
@@ -58,6 +62,7 @@ _Inclut 10 verifications completes offertes (~10 000 FCFA de valeur)_
 Les 10 verifications offertes correspondent a la formule 'Document Verification + Selfie liveness' (valeur unitaire 1 200 FCFA). Le client peut ainsi valider son integration et tester le produit avant de recharger son wallet.
 
 ## **2.2 Wallet prepaye — Fonctionnement**
+
 Apres l'inscription, le client recharge son wallet selon ses besoins. Chaque verification consomme un montant selon son type. Pas d'abonnement, pas d'engagement.
 
 **Regle**
@@ -93,6 +98,7 @@ Remboursement solde
 Possible sur demande, delai 5 jours ouvrés
 
 ## **2.3 Grille tarifaire — Prix par verification**
+
 **Basic KYC**
 
 **500**
@@ -160,6 +166,7 @@ _FCFA / verification_
 Smile Secure (detection de doublon) est un add-on : il se cumule avec une verification DocV. Exemple : DocV Standard + Smile Secure = 1 200 + 300 = 1 500 FCFA pour une verification complete avec controle doublon.
 
 ## **2.4 Tarification degressive — Clients a volume**
+
 A partir de 500 verifications par mois, une remise sur le prix unitaire est applicable. La remise est calculee automatiquement sur la consommation du mois ecoule.
 
 **Volume mensuel**
@@ -215,6 +222,7 @@ Negociable
 La remise degressive s'applique automatiquement. Le client ne change pas de plan — il rechargera simplement moins souvent pour le meme volume. La remise est visible dans son tableau de bord wallet.
 
 ## **2.5 Structure de couts Cloud — Marge Identis**
+
 Identis porte le cout Smile ID et le repercute avec marge sur chaque verification. Les estimations ci-dessous sont basees sur les tarifs marche Smile ID Afrique de l'Ouest.
 
 **Produit**
@@ -270,11 +278,13 @@ Smile Secure
 Ces marges sont estimatives — le tarif reel Smile ID est confirme apres negociation du contrat partenaire. A partir de 1 000 verifications/mois, Smile ID propose generalement des tarifs preferentiels qui ameliorent mecaniquement la marge.
 
 # **3. Flux Dedicated — Licence logicielle**
+
 Le client Dedicated deploie Identis sur sa propre infrastructure. Il gere son propre compte Smile ID et paie Smile ID directement. Identis facture uniquement le droit d'usage du logiciel et la maintenance.
 
 Ce modele est strategiquement important : il cible les grandes institutions qui ne peuvent pas envoyer leurs donnees biometriques vers un cloud externe. En leur offrant cette option, Identis accede a des tickets eleves inaccessibles en SaaS pur.
 
 ## **3.1 Structure tarifaire Dedicated**
+
 **Setup**
 
 **150 000 — 300 000**
@@ -312,6 +322,7 @@ _facture par Identis_
 - Stockage fichiers
 
 ## **3.2 Ce qu'Identis voit du client Dedicated**
+
 Le client Dedicated reste enregistre dans l'ecosysteme Identis. Son instance distante envoie un heartbeat periodique. Identis ne voit jamais les donnees biometriques ou les dossiers.
 
 **Ce qu'Identis voit**
@@ -341,6 +352,7 @@ Regles Rule Engine configurees
 La separation est totale sur les donnees metier. Identis conserve uniquement les informations necessaires a la gestion de la relation commerciale et a la validation de la licence.
 
 ## **3.3 Conditions de la relation Dedicated**
+
 - **Contrat minimum : **12 mois renouvelable par tacite reconduction
 - **Preavis de resiliation : **60 jours avant echeance
 - **Mises a jour : **le client valide et deploie les mises a jour — Identis fournit les releases
@@ -349,6 +361,7 @@ La separation est totale sur les donnees metier. Identis conserve uniquement les
 - **Suspension : **en cas de non-paiement, la cle de licence est desactivee apres 30 jours de grace
 
 # **4. Comparaison Cloud vs Dedicated**
+
 **Critere**
 
 **Cloud Pay-as-you-go**
@@ -416,9 +429,11 @@ Variable selon usage
 900 000+ FCFA/an hors setup
 
 # **5. Projections financieres**
+
 Les projections ci-dessous sont basees sur des hypotheses conservatrices pour la premiere annee post-lancement. Elles ne tiennent pas compte d'eventuels clients Dedicated en annee 1.
 
 ## **5.1 Hypotheses de base**
+
 **Hypothese**
 
 **Valeur retenue**
@@ -462,6 +477,7 @@ Mois 10
 Cycle de vente long (6-9 mois)
 
 ## **5.2 Scenarios de revenus — Annee 1**
+
 **Indicateur**
 
 **Pessimiste**
@@ -521,6 +537,7 @@ Cycle de vente long (6-9 mois)
 Ces projections excluent les revenus de services (integration custom, formation). Un seul client Dedicated signe double potentiellement le revenu annuel. L'objectif prioritaire est d'atteindre 5 clients Cloud actifs dans les 6 premiers mois.
 
 ## **5.3 Structure des couts operationnels**
+
 **Poste de cout**
 
 **Estimation mensuelle**
@@ -566,28 +583,29 @@ Hors Smile ID
 Le point mort Cloud est atteint avec environ 3 a 4 clients actifs generant 100 verifications/mois chacun — soit ~300 000 a 400 000 FCFA de revenu mensuel brut. C'est un objectif realisable en 3 a 4 mois post-lancement.
 
 # **6. Metriques cles a suivre**
+
 **NWA**
 
 Nouveaux
 Workspaces
-Actifs_par mois_
+Actifs*par mois*
 
 **CPV**
 
 Cout par
-Verification_marge reelle vs estimee_
+Verification*marge reelle vs estimee*
 
 **WRR**
 
 Wallet
 Recharge
-Rate_% wallets recharges / mois_
+Rate*% wallets recharges / mois*
 
 **DCV**
 
 Dedicated
 Contract
-Value_valeur annuelle contrats_
+Value*valeur annuelle contrats*
 
 **Metrique**
 
@@ -609,9 +627,9 @@ Taux de recharge wallet
 
 % wallets recharges dans les 30j apres epuisement
 
->60%
+> 60%
 
->75%
+> 75%
 
 Verifications/workspace/mois
 
@@ -649,11 +667,12 @@ NPS client
 
 Net Promoter Score workspace admin
 
->40
+> 40
 
->60
+> 60
 
 # **7. Strategie de montee en gamme client**
+
 Le modele Pay-as-you-go n'est pas la destination finale pour tous les clients. L'objectif est de faire monter les clients Cloud a volume vers des arrangements preferentiels, et d'identifier les candidats Dedicated.
 
 **Etape 1 — Entree**
@@ -684,9 +703,11 @@ Le modele Pay-as-you-go n'est pas la destination finale pour tous les clients. L
 - Souverainete donnees totale
 
 # **8. Synthese**
+
 Un modele simple, deux flux. Le Cloud Pay-as-you-go genere du revenu immediatement des les premiers clients. Le Dedicated genere des tickets eleves a partir du mois 10. Les deux se complementent sans se cannibaliser.
 
 ## **Recapitulatif des revenus par source**
+
 **Source**
 
 **Declencheur**
@@ -768,6 +789,7 @@ Sur devis
 Projet
 
 ## **Prochaines decisions a prendre**
+
 - Confirmer le tarif reel Smile ID apres creation du compte partenaire
 - Valider le frais d'inscription de 15 000 FCFA avec 2-3 prospects avant lancement
 - Definir la politique de remboursement du solde wallet (conditions exactes)

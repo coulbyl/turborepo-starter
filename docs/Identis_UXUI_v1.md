@@ -4,7 +4,7 @@
 
 _Architecture des surfaces, flows utilisateurs et principes de design_
 
-Bento Grid  |  Tailwind CSS  |  shadcn/ui
+Bento Grid | Tailwind CSS | shadcn/ui
 
 Version
 
@@ -23,6 +23,7 @@ Grid System
 **Bento Grid**
 
 # **1. Principes de design**
+
 Identis n'est pas un outil grand public. C'est un outil professionnel utilise quotidiennement par des agents terrain, des responsables conformite, et des developpeurs. Le design doit servir l'efficacite avant l'esthetique.
 
 **Clarte**
@@ -42,6 +43,7 @@ L'UI inspire le serieux. Le client doit avoir confiance dans les resultats.
 Fonctionne sur 3G, Android 8+, ecrans 5 pouces.
 
 ## **1.1 Stack UI retenu**
+
 **Element**
 
 **Choix**
@@ -91,6 +93,7 @@ Tailwind animate + tw-animate-css
 Micro-interactions subtiles, pas de librairie lourde
 
 ## **1.2 Palette de couleurs**
+
 **Brand Dark**
 
 #1B3A6B
@@ -132,6 +135,7 @@ Micro-interactions subtiles, pas de librairie lourde
 #FFFFFF
 
 # **2. Architecture des surfaces**
+
 Identis expose trois surfaces d'acces complementaires. Chacune cible un profil utilisateur distinct et s'adapte a son contexte d'usage.
 
 **01**
@@ -159,6 +163,7 @@ Page standalone ouverte depuis un lien WhatsApp/SMS. Aucune installation, aucun 
 Section du web app dediee aux integrateurs. Gestion des cles API, logs en temps reel, documentation interactive, webhooks. Inspiration : dashboards Stripe / Supabase.
 
 ## **2.1 Modele multi-tenant avec Dedicated**
+
 **Type de tenant**
 
 **Hebergement**
@@ -186,7 +191,9 @@ Grandes banques, institutions
 Dans les deux cas, le workspace est enregistre dans l'ecosysteme Identis. Le client Dedicated reste visible dans le super-admin — statut de licence, date d'expiration, derniere connexion — mais ses donnees ne quittent jamais son infra.
 
 # **3. Web App — Dashboard**
+
 ## **3.1 Structure de navigation**
+
 **Section**
 
 **Contenu**
@@ -242,6 +249,7 @@ Branding workspace, notifications, facturation
 Admin uniquement
 
 ## **3.2 Dashboard principal — Bento Grid**
+
 Le dashboard est la page d'accueil. Il doit permettre au responsable de saisir l'etat global de son workspace en moins de 10 secondes.
 
 **Dossiers en cours**
@@ -283,9 +291,11 @@ _Date de renouvellement. Quota verifications restantes. Lien upgrade._
 Chaque carte Bento est un composant shadcn/ui Card independant. La grille utilise CSS Grid avec gap-4 et des colspan variables selon la taille de l'ecran. Sur mobile, les cartes s'empilent en colonne unique.
 
 ## **3.3 Liste des dossiers**
+
 Vue centrale du produit. Chaque membre de l'equipe y revient plusieurs fois par jour.
 
 ### **Composants cles**
+
 - Barre de recherche + filtres (statut, score, date, agent) en haut de page
 - Tableau avec colonnes : ID dossier / Nom / Score / Statut / Etape workflow / Initiateur / Date / Actions
 - Badge couleur sur le score : vert 70-100 / orange 40-69 / rouge 0-39
@@ -294,6 +304,7 @@ Vue centrale du produit. Chaque membre de l'equipe y revient plusieurs fois par 
 - Pagination ou scroll infini selon le volume
 
 ## **3.4 Detail d'un dossier**
+
 Page la plus dense du produit. Elle regroupe toutes les informations d'un dossier en un seul endroit.
 
 **Colonne gauche (60%)**
@@ -313,11 +324,13 @@ Page la plus dense du produit. Elle regroupe toutes les informations d'un dossie
 - Bouton export PDF rapport final
 
 # **4. Mobile PWA — App Agent**
+
 L'app agent est la surface la plus critique pour l'adoption terrain. Un agent IMF qui jongle avec un client en face de lui n'a pas le temps de naviguer dans des menus complexes.
 
 Choix technique : PWA (Progressive Web App) avant React Native. Meme codebase Next.js, installable depuis le navigateur Android, fonctionne offline partiel. React Native natif est prevu post-MVP si l'adoption mobile le justifie.
 
 ## **4.1 Regles UX mobile strictes**
+
 - Maximum 3 taps pour lancer un screening
 - Bouton d'action principal toujours visible (sticky bottom bar)
 - Pas de tableau dense — cartes empilees uniquement
@@ -327,6 +340,7 @@ Choix technique : PWA (Progressive Web App) avant React Native. Meme codebase Ne
 - Optimise pour une seule main — elements CTA en zone de pouce
 
 ## **4.2 Ecrans de l'app agent**
+
 **Ecran**
 
 **Contenu**
@@ -382,11 +396,13 @@ Liste chronologique. Filtre statut. Indicateur dossiers en attente.
 Tabs + Card list
 
 # **5. Flow Candidat — Lien unique**
+
 Le flow candidat est la seule surface publique d'Identis. Il est ouvert depuis un lien WhatsApp ou SMS. Le candidat n'a pas de compte, ne connait pas Identis, et peut etre mefiant.
 
 Objectif UX : le candidat doit comprendre en 5 secondes pourquoi on lui demande ces informations, et avoir confiance avant de prendre une photo de sa CNI.
 
 ## **5.1 Principes specifiques au flow candidat**
+
 - Branding du workspace visible immediatement (logo + nom de l'organisation)
 - Explication claire du contexte : 'Immo Prestige Abidjan vous demande une verification d'identite pour votre candidature de location'
 - Consentement ARDP explicite avec texte simple, pas juridique
@@ -396,6 +412,7 @@ Objectif UX : le candidat doit comprendre en 5 secondes pourquoi on lui demande 
 - Lien expire clairement indique — cree l'urgence sans stresser
 
 ## **5.2 Steps du flow candidat**
+
 **1**
 
 **Accueil contextualise**
@@ -447,7 +464,9 @@ Ecran de succes. Message personnalise du workspace. Confirmation SMS/WhatsApp en
 Le candidat ne voit jamais son score. Il recoit uniquement une confirmation de reception. Le score est reserve aux agents et validateurs internes du workspace.
 
 # **6. Flows utilisateurs detailles**
+
 ## **6.1 Flow — Agent initie un dossier directement**
+
 **1**
 
 **Agent ouvre l'app mobile**
@@ -491,6 +510,7 @@ L'agent soumet. Resultat Smile ID en 5 secondes. Score calcule. Dossier entre da
 Badge vert/orange/rouge. Score. Regles declenchees. L'agent informe verbalement le client.
 
 ## **6.2 Flow — Agent envoie un lien au client**
+
 **1**
 
 **Agent cree un dossier**
@@ -522,6 +542,7 @@ L'agent recoit une notification WhatsApp ou push : 'Kone a complete sa verificat
 Le dossier est automatiquement route selon le score. Le responsable prend le relais.
 
 ## **6.3 Flow — Responsable valide un dossier**
+
 **1**
 
 **Notification recue**
@@ -559,9 +580,11 @@ Sa decision, son commentaire et l'horodatage sont ajoutes a la timeline du dossi
 Si approuve, le compliance officer est notifie pour le sign-off final.
 
 # **7. Configuration workspace**
+
 La section Configuration est reservee aux admins du workspace. C'est la partie la plus complexe de l'UI — elle doit rester comprehensible pour un responsable sans background technique.
 
 ## **7.1 Rule Engine — Interface de configuration**
+
 **Interface de creation de regle**
 
 - Dropdown 'Si' : liste des conditions disponibles
@@ -579,6 +602,7 @@ La section Configuration est reservee aux admins du workspace. C'est la partie l
 - Choix du template de depart (IMF, immo, fintech, custom)
 
 ## **7.2 Form Builder — Interface de configuration**
+
 - Vue drag-and-drop des champs (reordonnement par glisser-deposer)
 - Sidebar droite : parametres du champ selectionne (label, obligatoire, options)
 - Preview live du formulaire tel que le candidat le verra
@@ -587,6 +611,7 @@ La section Configuration est reservee aux admins du workspace. C'est la partie l
 - Bouton 'Tester le formulaire' — l'admin peut le remplir lui-meme pour valider
 
 ## **7.3 Workflow Builder — Interface de configuration**
+
 - Vue lineaire des etapes avec fleches de progression
 - Ajout / suppression / reordonnement d'etapes
 - Par etape : nom, role responsable, delai maximum, action si delai depasse
@@ -594,6 +619,7 @@ La section Configuration est reservee aux admins du workspace. C'est la partie l
 - Mode test : simuler un dossier fictif dans le workflow
 
 ## **7.4 Branding workspace**
+
 **Element**
 
 **Description**
@@ -631,6 +657,7 @@ Texte personnalisé affiché page 1 du flow candidat.
 Textarea + preview
 
 # **8. Espace developpeur — API Dashboard**
+
 Inspire des dashboards Stripe et Supabase. Le developpeur fintech doit pouvoir s'integrer et debugger sans jamais contacter le support.
 
 **Section**
@@ -676,6 +703,7 @@ Donnees de test CI predefinies. Reset de l'environnement en un clic.
 Sprint 1
 
 # **9. Composants shadcn/ui identifies**
+
 Liste des composants shadcn/ui a installer et utiliser par surface.
 
 **Composant**
@@ -747,6 +775,7 @@ Calendar / DatePicker
 Filtres par date, configuration expiration lien, date de licence
 
 # **10. Ordre de build UI**
+
 Chaque sprint livre des ecrans fonctionnels et utilisables. Pas de design sans implementation derriere.
 
 **Sprint**
@@ -789,15 +818,18 @@ Dedicated instance dashboard
 React Native natifWeb + Mobile
 
 # **Synthese**
+
 Un seul codebase Next.js livre trois surfaces : le dashboard web, la PWA mobile agent, et le flow candidat. Tailwind CSS + shadcn/ui garantit la coherence visuelle sans ecrire de CSS custom. Le Bento Grid est reserve au dashboard desktop — sur mobile tout s'empile en colonne unique.
 
 ## **Ce que ce document ne couvre pas encore**
+
 - Les wireframes haute fidelite — a produire en Figma ou directement en code
 - Les animations et micro-interactions specifiques
 - Le design des emails transactionnels
 - L'interface super-admin Identis (gestion de tous les workspaces)
 
 ## **Prochaine etape**
+
 Produire les premiers composants React en code — en commencant par le dashboard Bento et le flow screening mobile. Le design se valide dans le navigateur, pas dans Figma.
 
 _Document confidentiel — Identis UX/UI v1.0 — Mai 2026_

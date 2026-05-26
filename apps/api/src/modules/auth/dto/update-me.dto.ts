@@ -1,10 +1,4 @@
-import {
-  IsIn,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Matches,
-} from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUrl, Matches } from 'class-validator';
 
 export class UpdateMeDto {
   @IsOptional()

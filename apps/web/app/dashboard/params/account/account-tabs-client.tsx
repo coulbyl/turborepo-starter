@@ -1,13 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@identis/ui";
-import {
-  Bell,
-  Globe,
-  Monitor,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+import { Bell, Globe, Monitor, ShieldCheck, User } from "lucide-react";
 import { ProfileHeroSection } from "./components/profile-hero-section";
 import { AppearanceSection } from "./components/appearance-section";
 import { LanguageSection } from "./components/language-section";

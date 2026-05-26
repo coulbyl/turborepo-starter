@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Mail,
-  AtSign,
-  ShieldCheck,
-  Pencil,
-  Check,
-  X,
-} from "lucide-react";
+import { Mail, AtSign, ShieldCheck, Pencil, Check, X } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { FREE_AVATARS } from "@/lib/avatars";
 import {
@@ -163,8 +156,7 @@ export function ProfileHeroSection() {
       setCurrentUser({ ...currentUser, ...updated });
       setEditingField(null);
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "An error occurred.";
+      const msg = err instanceof Error ? err.message : "An error occurred.";
       setFieldError(msg);
     } finally {
       setFieldSaving(false);

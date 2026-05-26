@@ -8,15 +8,15 @@ Identis permet à toute organisation — fintech, IMF, agence immobilière — d
 
 ## Ce que fait Identis
 
-| Module | Description |
-|---|---|
-| **Vérification d'identité** | CNI + selfie via Smile ID — Basic KYC, Document Verification, AML screening |
-| **Rule Engine** | Règles de scoring configurables (0–100), templates par secteur (IMF, Immo, Fintech) |
-| **Form Builder** | Formulaire sur mesure par workspace — champs texte, upload, consentement ARDP |
-| **Workflow Engine** | Pipeline de validation multi-étapes, rôles, délais, escalade automatique |
-| **Self-service candidat** | Lien unique envoyé par WhatsApp — le candidat se vérifie depuis son téléphone |
-| **Audit trail** | Chaque action horodatée, export PDF conforme BCEAO |
-| **API publique** | Intégration directe pour fintechs — clés API, webhooks, sandbox |
+| Module                      | Description                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| **Vérification d'identité** | CNI + selfie via Smile ID — Basic KYC, Document Verification, AML screening         |
+| **Rule Engine**             | Règles de scoring configurables (0–100), templates par secteur (IMF, Immo, Fintech) |
+| **Form Builder**            | Formulaire sur mesure par workspace — champs texte, upload, consentement ARDP       |
+| **Workflow Engine**         | Pipeline de validation multi-étapes, rôles, délais, escalade automatique            |
+| **Self-service candidat**   | Lien unique envoyé par WhatsApp — le candidat se vérifie depuis son téléphone       |
+| **Audit trail**             | Chaque action horodatée, export PDF conforme BCEAO                                  |
+| **API publique**            | Intégration directe pour fintechs — clés API, webhooks, sandbox                     |
 
 ---
 
@@ -30,17 +30,17 @@ Identis permet à toute organisation — fintech, IMF, agence immobilière — d
 
 ## Stack technique
 
-| Couche | Technologie |
-|---|---|
-| Backend API | NestJS + TypeScript |
-| Frontend | Next.js 15 (App Router) + Tailwind CSS v4 + shadcn/ui |
-| Base de données | PostgreSQL 16 + Prisma ORM |
-| Cache / Queues | Redis + BullMQ |
-| Stockage fichiers | Cloudflare R2 (chiffré AES-256) |
-| Vérification KYC | Smile ID API |
-| Notifications | WhatsApp Business API + SMS + Email |
-| Paiement | Wave CI + Orange Money |
-| Infra | Docker Compose + Nginx + VPS (Hetzner/OVH) |
+| Couche            | Technologie                                           |
+| ----------------- | ----------------------------------------------------- |
+| Backend API       | NestJS + TypeScript                                   |
+| Frontend          | Next.js 15 (App Router) + Tailwind CSS v4 + shadcn/ui |
+| Base de données   | PostgreSQL 16 + Prisma ORM                            |
+| Cache / Queues    | Redis + BullMQ                                        |
+| Stockage fichiers | Cloudflare R2 (chiffré AES-256)                       |
+| Vérification KYC  | Smile ID API                                          |
+| Notifications     | WhatsApp Business API + SMS + Email                   |
+| Paiement          | Wave CI + Orange Money                                |
+| Infra             | Docker Compose + Nginx + VPS (Hetzner/OVH)            |
 
 ---
 
@@ -89,15 +89,15 @@ docs/           Documentation produit complète
 
 ## Documentation
 
-| Document | Contenu |
-|---|---|
-| [Architecture](docs/Identis_Architecture_v1.md) | Schéma de données, API, sécurité, déploiement |
-| [PRD](docs/Identis_PRD_v1.md) | Vision produit, fonctionnalités détaillées, user stories |
-| [Roadmap](docs/Identis_Roadmap_v1.md) | Plan 18 mois — MVP, Growth, Scale, Expansion UEMOA |
-| [Modèle économique](docs/Identis_BizModel_v1.md) | Pricing, marges, projections financières |
-| [Décisions](docs/Identis_Decisions_v1.md) | 26 décisions produit & légales documentées |
-| [Compléments](docs/Identis_Complement_v1.md) | GTM, QA, support, CGU, sécurité |
-| [UX/UI](docs/Identis_UXUI_v1.md) | Design system, flows utilisateurs |
+| Document                                         | Contenu                                                  |
+| ------------------------------------------------ | -------------------------------------------------------- |
+| [Architecture](docs/Identis_Architecture_v1.md)  | Schéma de données, API, sécurité, déploiement            |
+| [PRD](docs/Identis_PRD_v1.md)                    | Vision produit, fonctionnalités détaillées, user stories |
+| [Roadmap](docs/Identis_Roadmap_v1.md)            | Plan 18 mois — MVP, Growth, Scale, Expansion UEMOA       |
+| [Modèle économique](docs/Identis_BizModel_v1.md) | Pricing, marges, projections financières                 |
+| [Décisions](docs/Identis_Decisions_v1.md)        | 26 décisions produit & légales documentées               |
+| [Compléments](docs/Identis_Complement_v1.md)     | GTM, QA, support, CGU, sécurité                          |
+| [UX/UI](docs/Identis_UXUI_v1.md)                 | Design system, flows utilisateurs                        |
 
 ---
 

@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Identis is a **B2B RegTech SaaS** for francophone Africa. It lets organizations (fintechs, IMF/microfinance, real estate agencies) verify identities, score risk, and validate cases through configurable workflows — all compliant with BCEAO and ARDP regulations.
 
 Two deployment modes:
+
 - **Cloud** — multi-tenant SaaS, pay-per-verification wallet (500–1 800 FCFA/verification)
 - **Dedicated** — self-hosted Docker Compose package, monthly license (75 000 FCFA/month)
 
@@ -73,19 +74,19 @@ packages/typescript-config  Shared tsconfig presets
 
 The central entity is **Workspace** (a client organization). All business data is scoped by `workspaceId`.
 
-| Module | Responsibility |
-|---|---|
-| `WorkspaceModule` | CRUD workspace, members, roles (Admin/Agent/Reviewer/Compliance/Developer), branding |
-| `CaseModule` | Create/track/search verification cases; holds score result and form data |
-| `VerifModule` | Smile ID integration — Basic KYC, DocV, DocV+AML, Smile Secure (dedup) |
-| `RuleEngineModule` | Configurable risk rules (condition/operator/consequence), score 0–100 |
-| `WorkflowModule` | Multi-step validation pipeline, roles per step, delays, auto-escalation |
-| `FormModule` | Dynamic form builder (text/number/select/upload/consent), sector templates |
-| `EntryPointModule` | One-time unique links for self-service candidate flow |
-| `WalletModule` | Prepaid balance, deductions per verification, recharge via Wave/Orange |
-| `ApiModule` | External API keys (hashed), logs, webhooks, usage metering |
-| `LicenseModule` | Dedicated mode — license validation + 24h heartbeat to api.identis.ci |
-| `AdminModule` | Super-admin — all workspaces, licenses, global metrics |
+| Module             | Responsibility                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| `WorkspaceModule`  | CRUD workspace, members, roles (Admin/Agent/Reviewer/Compliance/Developer), branding |
+| `CaseModule`       | Create/track/search verification cases; holds score result and form data             |
+| `VerifModule`      | Smile ID integration — Basic KYC, DocV, DocV+AML, Smile Secure (dedup)               |
+| `RuleEngineModule` | Configurable risk rules (condition/operator/consequence), score 0–100                |
+| `WorkflowModule`   | Multi-step validation pipeline, roles per step, delays, auto-escalation              |
+| `FormModule`       | Dynamic form builder (text/number/select/upload/consent), sector templates           |
+| `EntryPointModule` | One-time unique links for self-service candidate flow                                |
+| `WalletModule`     | Prepaid balance, deductions per verification, recharge via Wave/Orange               |
+| `ApiModule`        | External API keys (hashed), logs, webhooks, usage metering                           |
+| `LicenseModule`    | Dedicated mode — license validation + 24h heartbeat to api.identis.ci                |
+| `AdminModule`      | Super-admin — all workspaces, licenses, global metrics                               |
 
 The boilerplate already has: `AuthModule`, `NotificationModule`, `AnnouncementsModule`, `AdminUsersModule`, `MailModule`, `RedisModule`.
 
@@ -139,10 +140,12 @@ Current schema (`packages/db/prisma/schema.prisma`) only has the boilerplate mod
 ## Frontend (`apps/web`)
 
 Two route groups:
+
 - `app/(public)/` — unauthenticated (auth flows, candidate self-service flow)
 - `app/dashboard/` — protected; `layout.tsx` redirects unauthenticated users to `/auth/login`
 
 **API calls:**
+
 - Server Components → `lib/api/server-api.ts` (`serverApiRequest<T>`) — forwards cookies automatically
 - Client Components → `lib/api/client-api.ts` (`clientApiRequest<T>`) — sends `credentials: "include"`
 
@@ -159,6 +162,7 @@ Two route groups:
 Copy `.env.example` → `.env` (docker-compose) and `apps/api/.env.example` → `apps/api/.env` (API).
 
 Critical production vars:
+
 - `TOTP_APP_SECRET` — AES-256-GCM key for TOTP secrets; never rotate without migrating existing records
 - `JWT_SECRET` + `JWT_REFRESH_SECRET` — 256-bit random, different values
 - `SMILE_ID_PARTNER_ID` + `SMILE_ID_API_KEY` — from Smile ID portal (sandbox free, `SMILE_ID_ENV=0`)
@@ -184,6 +188,7 @@ Critical production vars:
 ## Docs
 
 Full product documentation is in `docs/`:
+
 - `Identis_Architecture_v1.md` — detailed tech architecture, data model, API reference
 - `Identis_PRD_v1.md` — product requirements, user stories by segment
 - `Identis_Roadmap_v1.md` — 18-month roadmap, 4 phases, feature backlog

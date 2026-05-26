@@ -19,7 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@identis/ui/components/select";
-import { DatePicker, DateRangePicker } from "@identis/ui/components/date-picker";
+import {
+  DatePicker,
+  DateRangePicker,
+} from "@identis/ui/components/date-picker";
 import { Combobox, type ComboboxOption } from "@identis/ui/components/combobox";
 import { Separator } from "@identis/ui/components/separator";
 

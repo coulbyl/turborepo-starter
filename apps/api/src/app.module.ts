@@ -10,6 +10,8 @@ import { AdminUsersModule } from './modules/admin-users/admin-users.module';
 import { AnnouncementsModule } from './modules/announcements/announcements.module';
 import { MailModule } from './modules/mail/mail.module';
 import { RedisModule } from './common/redis/redis.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
+import { VerificationModule } from './modules/verification/verification.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { RedisModule } from './common/redis/redis.module';
     NotificationModule,
     AnnouncementsModule,
     MailModule,
+    WorkspaceModule,
+    VerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

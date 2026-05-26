@@ -69,9 +69,7 @@ export function PageShell({
             </div>
             <div className="min-w-0">
               <p className="text-base font-bold tracking-tight">Starter</p>
-              <p className="text-xs text-sidebar-foreground/60">
-                Dashboard
-              </p>
+              <p className="text-xs text-sidebar-foreground/60">Dashboard</p>
             </div>
           </a>
         </SidebarHeader>

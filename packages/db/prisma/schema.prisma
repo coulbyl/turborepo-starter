@@ -1,5 +1,5 @@
-// Starter — Prisma Schema (minimal generic boilerplate)
-// Models: User, Session, Notification, UserNotificationRead, Announcement
+// Identis — Prisma Schema v2
+// Central entity: Workspace. All business data is scoped by workspaceId.
 
 generator client {
   provider      = "prisma-client"
@@ -16,9 +16,19 @@ datasource db {
 // ENUMS
 // ─────────────────────────────────────────────
 
+// Global system role — ADMIN = Identis super-admin
 enum UserRole {
   ADMIN
   MEMBER
+}
+
+// Workspace-level role for a member
+enum MemberRole {
+  ADMIN
+  AGENT
+  REVIEWER
+  COMPLIANCE
+  DEVELOPER
 }
 
 enum MfaMethod {
@@ -32,8 +42,93 @@ enum NotificationType {
   ANNOUNCEMENT
 }
 
+enum DeploymentType {
+  CLOUD
+  DEDICATED
+}
+
+enum CaseStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum InitiationMode {
+  AGENT
+  SELF_SERVICE
+}
+
+enum VerifProduct {
+  BASIC_KYC
+  DOC_VERIFY
+  DOC_VERIFY_AML
+  SMILE_SECURE
+}
+
+enum VerifStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  UNKNOWN
+}
+
+enum RuleConsequence {
+  MALUS
+  BLOCK
+  ALERT
+}
+
+enum StepExpiry {
+  ESCALATE
+  ALERT
+  AUTO_APPROVE
+}
+
+enum StepAction {
+  APPROVED
+  REJECTED
+  ESCALATED
+  COMMENTED
+  AUTO_EXPIRED
+}
+
+enum FormSector {
+  IMF
+  IMMO
+  FINTECH
+  CUSTOM
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  SELECT
+  UPLOAD
+  CONSENT
+}
+
+enum EntryStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+enum TxType {
+  INSCRIPTION
+  RECHARGE
+  DEDUCTION
+  REFUND
+}
+
+enum ApiEnv {
+  SANDBOX
+  PRODUCTION
+}
+
 // ─────────────────────────────────────────────
-// MODELS
+// AUTH / USERS
 // ─────────────────────────────────────────────
 
 model User {
@@ -52,10 +147,12 @@ model User {
   theme             String?
   locale            String?
   sessions          Session[]
-  announcements     Announcement[]
-  notificationReads UserNotificationRead[]
   verificationCodes EmailVerificationCode[]
   resetTokens       PasswordResetToken[]
+  notificationReads UserNotificationRead[]
+  members           Member[]
+  announcements     Announcement[]
+  stepHistory       StepHistory[]
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
 
@@ -105,7 +202,10 @@ model Session {
   @@map("user_session")
 }
 
-// In-app notifications — persisted for dashboard display.
+// ─────────────────────────────────────────────
+// NOTIFICATIONS & ANNOUNCEMENTS
+// ─────────────────────────────────────────────
+
 model Notification {
   id        String                 @id @default(cuid())
   type      NotificationType
@@ -121,7 +221,6 @@ model Notification {
   @@map("notification")
 }
 
-// Per-user read tracking for system-wide notifications.
 model UserNotificationRead {
   userId         String       @db.Uuid
   notificationId String
@@ -133,7 +232,6 @@ model UserNotificationRead {
   @@map("user_notification_read")
 }
 
-// CMS announcements — displayed on the dashboard.
 model Announcement {
   id          String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   title       String
@@ -148,6 +246,265 @@ model Announcement {
   updatedAt   DateTime  @updatedAt
 
   @@index([published, publishedAt])
-  @@index([createdAt])
   @@map("announcement")
+}
+
+// ─────────────────────────────────────────────
+// WORKSPACE — central multi-tenant entity
+// ─────────────────────────────────────────────
+
+model Workspace {
+  id               String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name             String
+  slug             String              @unique
+  deploymentType   DeploymentType      @default(CLOUD)
+  logoUrl          String?
+  primaryColor     String?
+  welcomeMessage   String?
+  licenseKey       String?             @unique
+  licenseExpiresAt DateTime?
+  lastHeartbeatAt  DateTime?
+  dedicatedUrl     String?
+  walletBalance    Int                 @default(0) // in FCFA
+  members          Member[]
+  cases            Case[]
+  rules            Rule[]
+  formTemplates    FormTemplate[]
+  workflowSteps    WorkflowStep[]
+  apiKeys          ApiKey[]
+  walletTxs        WalletTransaction[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@map("workspace")
+}
+
+model Member {
+  id          String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId String     @db.Uuid
+  userId      String     @db.Uuid
+  role        MemberRole @default(AGENT)
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@map("member")
+}
+
+// ─────────────────────────────────────────────
+// CASES — verification dossiers
+// ─────────────────────────────────────────────
+
+model Case {
+  id             String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId    String         @db.Uuid
+  reference      String         // e.g. CASE-2026-0042
+  initiatedBy    InitiationMode
+  initiatorId    String?        @db.Uuid // member (agent) if AGENT mode
+  status         CaseStatus     @default(PENDING)
+  currentStepId  String?        @db.Uuid
+  formData       Json?
+  scoreResult    Json?          // { score, rules_triggered, threshold }
+  workspace      Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  verification   Verification?
+  entryPoint     EntryPoint?
+  stepHistory    StepHistory[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([workspaceId, reference])
+  @@index([workspaceId, status])
+  @@index([workspaceId, createdAt])
+  @@map("case")
+}
+
+// ─────────────────────────────────────────────
+// VERIFICATION — Smile ID results
+// ─────────────────────────────────────────────
+
+model Verification {
+  id             String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  caseId         String      @unique @db.Uuid
+  smileJobId     String
+  product        VerifProduct
+  status         VerifStatus @default(PENDING)
+  livenessScore  Float?
+  documentValid  Boolean?
+  faceMatch      Boolean?
+  amlMatch       Boolean?
+  duplicateFound Boolean?
+  rawResult      Json        // full Smile ID response — never exposed to clients
+  cniPhotoUrl    String?     // R2 signed URL base path
+  selfiePhotoUrl String?     // R2 signed URL base path
+  case           Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@map("verification")
+}
+
+// ─────────────────────────────────────────────
+// RULE ENGINE
+// ─────────────────────────────────────────────
+
+model Rule {
+  id          String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId String          @db.Uuid
+  name        String
+  description String?
+  condition   String          // e.g. 'document_expired_months'
+  operator    String          // GT | LT | EQ | CONTAINS | IN
+  value       String
+  consequence RuleConsequence
+  malus       Int?            // penalty points if MALUS
+  active      Boolean         @default(true)
+  order       Int             @default(0)
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([workspaceId, active])
+  @@map("rule")
+}
+
+// ─────────────────────────────────────────────
+// WORKFLOW ENGINE
+// ─────────────────────────────────────────────
+
+model WorkflowStep {
+  id            String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId   String     @db.Uuid
+  name          String
+  order         Int
+  requiredRole  MemberRole
+  maxDelayHours Int        @default(48)
+  onExpiry      StepExpiry @default(ESCALATE)
+  scoreMin      Int?       // minimum score to reach this step
+  scoreMax      Int?       // maximum score at this step (above = auto-approve)
+  workspace     Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  stepHistory   StepHistory[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([workspaceId, order])
+  @@map("workflow_step")
+}
+
+model StepHistory {
+  id        String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  caseId    String     @db.Uuid
+  stepId    String     @db.Uuid
+  actorId   String?    @db.Uuid // null = automatic system action
+  action    StepAction
+  comment   String?
+  case      Case       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  step      WorkflowStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  actor     User?      @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  createdAt DateTime   @default(now())
+
+  @@index([caseId, createdAt])
+  @@map("step_history")
+}
+
+// ─────────────────────────────────────────────
+// FORM BUILDER
+// ─────────────────────────────────────────────
+
+model FormTemplate {
+  id          String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId String      @db.Uuid
+  name        String
+  sector      FormSector?
+  active      Boolean     @default(true)
+  fields      FormField[]
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([workspaceId])
+  @@map("form_template")
+}
+
+model FormField {
+  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  formTemplateId String       @db.Uuid
+  type           FieldType
+  label          String
+  placeholder    String?
+  required       Boolean      @default(false)
+  options        Json?        // for SELECT: ['CDI','CDD','Freelance']
+  conditionalOn  String?      // fieldId that controls visibility
+  conditionalVal String?      // value that triggers display
+  order          Int          @default(0)
+  formTemplate   FormTemplate @relation(fields: [formTemplateId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@index([formTemplateId, order])
+  @@map("form_field")
+}
+
+// ─────────────────────────────────────────────
+// ENTRY POINTS — self-service unique links
+// ─────────────────────────────────────────────
+
+model EntryPoint {
+  id               String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId      String      @db.Uuid
+  caseId           String      @unique @db.Uuid
+  token            String      @unique
+  expiresAt        DateTime
+  completedAt      DateTime?
+  lastCompletedStep String?    // CONSENT | CNI_FRONT | CNI_BACK | SELFIE | FORM | REVIEW
+  status           EntryStatus @default(PENDING)
+  case             Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([token, status])
+  @@map("entry_point")
+}
+
+// ─────────────────────────────────────────────
+// WALLET
+// ─────────────────────────────────────────────
+
+model WalletTransaction {
+  id            String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId   String       @db.Uuid
+  type          TxType
+  amount        Int          // in FCFA (positive or negative)
+  balanceBefore Int
+  balanceAfter  Int
+  reference     String?      // Wave/Orange payment ref
+  caseId        String?      @db.Uuid
+  product       VerifProduct?
+  workspace     Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@map("wallet_transaction")
+}
+
+// ─────────────────────────────────────────────
+// API KEYS — external API access for fintechs
+// ─────────────────────────────────────────────
+
+model ApiKey {
+  id          String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  workspaceId String    @db.Uuid
+  name        String
+  keyHash     String    @unique // bcrypt hash — never stored in plain text
+  prefix      String    // e.g. 'id_live_xxxx' — used to look up before bcrypt verify
+  environment ApiEnv    @default(SANDBOX)
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([prefix])
+  @@map("api_key")
 }

@@ -25,7 +25,8 @@ export function Amount({
     minimumFractionDigits: 2,
   });
 
-  const display = signed && n > 0 ? `+${formatter.format(n)}` : formatter.format(n);
+  const display =
+    signed && n > 0 ? `+${formatter.format(n)}` : formatter.format(n);
 
   return <span className={`tabular-nums ${className ?? ""}`}>{display}</span>;
 }

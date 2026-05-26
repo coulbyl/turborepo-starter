@@ -4,7 +4,7 @@
 
 _De zero au premier client Dedicated — Plan sur 18 mois_
 
-MVP  |  Growth  |  Scale  |  Expansion UEMOA
+MVP | Growth | Scale | Expansion UEMOA
 
 Horizon
 
@@ -19,29 +19,33 @@ Depart
 **Juin 2026**
 
 # **1. Vue d'ensemble — 4 phases sur 18 mois**
-**P1  MVP**_   Juin — Septembre 2026 (4 mois)_
+
+**P1 MVP**_ Juin — Septembre 2026 (4 mois)_
 
 Construire et valider le produit avec les 3 premiers clients payants
 
-**P2  Growth**_   Octobre 2026 — Janvier 2027 (4 mois)_
+**P2 Growth**_ Octobre 2026 — Janvier 2027 (4 mois)_
 
 Atteindre 15 clients Cloud actifs et signer le premier contrat Dedicated
 
-**P3  Scale**_   Fevrier — Juillet 2027 (6 mois)_
+**P3 Scale**_ Fevrier — Juillet 2027 (6 mois)_
 
 Automatiser l'acquisition, lancer React Native, atteindre la rentabilite
 
-**P4  Expansion UEMOA**_   Aout — Decembre 2027 (5 mois)_
+**P4 Expansion UEMOA**_ Aout — Decembre 2027 (5 mois)_
 
 Ouvrir le Senegal et le Benin, API publique documentee, marketplace de templates
 
 Principe directeur : chaque phase se declenche sur des metriques, pas sur un calendrier. Si P1 prend 5 mois au lieu de 4, P2 demarre quand meme sur les criteres atteints — pas sur la date.
 
 # **2. Phase 1 — MVP (Juin — Septembre 2026)**
+
 ## **Objectif**
+
 Avoir un produit fonctionnel, deploye en production, utilise par 3 clients payants reels. Valider que la douleur est reelle et que le produit resout le bon probleme.
 
 ## **Criteres de sortie de P1**
+
 - **3 clients Cloud actifs **ayant effectue au moins 50 verifications chacun
 - **Chiffre d'affaires M4 **> 150 000 FCFA (hors inscriptions)
 - **NPS initial **> 40 sur les 3 premiers clients
@@ -49,6 +53,7 @@ Avoir un produit fonctionnel, deploye en production, utilise par 3 clients payan
 - **API documentee **et testee par au moins 1 developpeur externe
 
 ## **2.1 Sprint 1 — Fondations verification**
+
 **S1**
 
 3 semaines
@@ -64,6 +69,7 @@ Avoir un produit fonctionnel, deploye en production, utilise par 3 clients payan
 - Sandbox Smile ID configuree et testable
 
 ## **2.2 Sprint 2 — API et self-service**
+
 **S2**
 
 3 semaines
@@ -79,6 +85,7 @@ Avoir un produit fonctionnel, deploye en production, utilise par 3 clients payan
 - Recharge wallet : Wave CI + Orange Money
 
 ## **2.3 Sprint 3 — Workflow et equipe**
+
 **S3**
 
 3 semaines
@@ -94,6 +101,7 @@ Avoir un produit fonctionnel, deploye en production, utilise par 3 clients payan
 - AML Check integration — screening sanctions BCEAO
 
 ## **2.4 Sprint 4 — Configuration et branding**
+
 **S4**
 
 3 semaines
@@ -109,10 +117,13 @@ Avoir un produit fonctionnel, deploye en production, utilise par 3 clients payan
 - Tests end-to-end sur tous les flows critiques
 
 # **3. Phase 2 — Growth (Octobre 2026 — Janvier 2027)**
+
 ## **Objectif**
+
 Passer de 3 a 15 clients Cloud actifs. Signer le premier contrat Dedicated. Automatiser ce qui peut l'etre pour reduire le temps passe par client.
 
 ## **Criteres de sortie de P2**
+
 - **15 clients Cloud actifs **avec au moins 100 verifications/mois chacun
 - **1 contrat Dedicated signe **et deploye chez le client
 - **Revenu mensuel recurrent **> 800 000 FCFA
@@ -120,6 +131,7 @@ Passer de 3 a 15 clients Cloud actifs. Signer le premier contrat Dedicated. Auto
 - **Taux de recharge wallet **> 70% dans les 30 jours suivant epuisement
 
 ## **Features Phase 2**
+
 **P2-A**
 
 4 semaines
@@ -170,10 +182,13 @@ Continu sur P2
 - Participation evenements fintech Abidjan (CIFA, Impact Hub)
 
 # **4. Phase 3 — Scale (Fevrier — Juillet 2027)**
+
 ## **Objectif**
+
 Industrialiser la croissance. Reduire le cout d'acquisition. Lancer React Native. Atteindre la rentabilite operationnelle sans injection de capital.
 
 ## **Criteres de sortie de P3**
+
 - **30 clients Cloud actifs **avec volume moyen 150 verifications/mois
 - **3 contrats Dedicated actifs **dont au moins 1 institution financiere
 - **Rentabilite : **revenus mensuels > couts operationnels depuis au moins 2 mois
@@ -181,6 +196,7 @@ Industrialiser la croissance. Reduire le cout d'acquisition. Lancer React Native
 - **Marketplace templates : **5 templates sectoriels disponibles
 
 ## **Features Phase 3**
+
 **P3-A**
 
 6 semaines
@@ -231,10 +247,13 @@ Industrialiser la croissance. Reduire le cout d'acquisition. Lancer React Native
 - Nouveau produit wallet : 2 500 FCFA par verification KYB
 
 # **5. Phase 4 — Expansion UEMOA (Aout — Decembre 2027)**
+
 ## **Objectif**
+
 Ouvrir le Senegal et le Benin. Documenter l'API publiquement pour attirer les integrateurs. Devenir la reference RegTech de la zone UEMOA francophone.
 
 ## **Criteres de sortie de P4**
+
 - **Presence Senegal : **au moins 5 clients actifs a Dakar
 - **Presence Benin : **au moins 3 clients actifs a Cotonou
 - **API publique : **documentee sur docs.identis.ci avec SDK NPM publie
@@ -242,6 +261,7 @@ Ouvrir le Senegal et le Benin. Documenter l'API publiquement pour attirer les in
 - **5 contrats Dedicated actifs **dont 1 hors CI
 
 ## **Features Phase 4**
+
 **P4-A**
 
 5 semaines
@@ -280,6 +300,7 @@ Ouvrir le Senegal et le Benin. Documenter l'API publiquement pour attirer les in
 - Reporting BCEAO automatise : generation du rapport reglementaire mensuel
 
 # **6. Milestones cles**
+
 **Date**
 
 **Milestone**
@@ -371,6 +392,7 @@ SDK NPM @identis/node-sdk publie sur npm
 **Scale**
 
 # **7. Backlog features complet**
+
 Vue exhaustive de toutes les features identifiees, classees par phase et effort estime.
 
 **ID**
@@ -684,6 +706,7 @@ Credit scoring exportable
 Valeur ajoutee premium
 
 # **8. Hors roadmap — decisions futures**
+
 Ces features ont ete identifiees mais volontairement exclues de la roadmap 18 mois. Elles seront evaluees selon la demande client reelle.
 
 **Feature**
@@ -735,9 +758,11 @@ LLM couteux, ROI incertain MVP
 Si margin > 60% sur 6 mois
 
 # **9. Synthese**
+
 La roadmap est construite sur un principe simple : livrer de la valeur a chaque sprint, valider avec de vrais clients, et ne passer a la phase suivante que sur des metriques atteintes — pas sur un calendrier.
 
 ## **Resume par phase**
+
 **Phase**
 
 **Periode**
@@ -779,6 +804,7 @@ Internationaliser
 50 clients, 3 pays, API publique
 
 ## **La prochaine action immediate**
+
 Creer le compte sandbox Smile ID sur portal.usesmileid.com et tester le premier appel API sur une CNI ivoirienne. C'est le seul blocant technique avant de demarrer Sprint 1.
 
 _Document confidentiel — Identis Roadmap Produit v1.0 — Mai 2026_

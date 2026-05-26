@@ -4,7 +4,7 @@
 
 _Schema de donnees, securite, API, deploiement Cloud et Dedicated_
 
-NestJS  |  PostgreSQL  |  Prisma  |  Next.js  |  Docker
+NestJS | PostgreSQL | Prisma | Next.js | Docker
 
 Version
 
@@ -23,17 +23,18 @@ Deploiement
 **Docker / Podman**
 
 # **1. Stack technique complet**
+
 **Frontend**
 
-Next.js 14 (App Router)   |   TypeScript   |   Tailwind CSS v4   |   shadcn/ui   |   Recharts
+Next.js 14 (App Router) | TypeScript | Tailwind CSS v4 | shadcn/ui | Recharts
 
 **Backend**
 
-NestJS   |   TypeScript   |   Prisma ORM   |   Passport.js (auth)   |   Bull (queues)
+NestJS | TypeScript | Prisma ORM | Passport.js (auth) | Bull (queues)
 
 **Base de donnees**
 
-PostgreSQL 16   |   Prisma Migrations   |   Redis (cache + sessions)
+PostgreSQL 16 | Prisma Migrations | Redis (cache + sessions)
 
 **Stockage**
 
@@ -45,35 +46,37 @@ Smile ID API (Basic KYC, DocV, Biometric, AML, Smile Secure)
 
 **Notifications**
 
-WhatsApp Business API   |   SMS (Twilio ou Africa's Talking)   |   Email (Resend)
+WhatsApp Business API | SMS (Twilio ou Africa's Talking) | Email (Resend)
 
 **Paiement**
 
-Wave CI API   |   Orange Money API   |   Virement (manuel M1)
+Wave CI API | Orange Money API | Virement (manuel M1)
 
 **Infra Cloud**
 
-VPS (Hetzner ou OVH)   |   Nginx reverse proxy   |   Docker Compose   |   Certbot SSL
+VPS (Hetzner ou OVH) | Nginx reverse proxy | Docker Compose | Certbot SSL
 
 **Infra Dedicated**
 
-Docker Compose packaged   |   PostgreSQL embarque   |   R2 ou MinIO local
+Docker Compose packaged | PostgreSQL embarque | R2 ou MinIO local
 
 **CI/CD**
 
-GitHub Actions   |   Docker Hub registry   |   Deploiement auto sur merge main
+GitHub Actions | Docker Hub registry | Deploiement auto sur merge main
 
 **Monitoring**
 
-Sentry (erreurs)   |   Uptime Robot (disponibilite)   |   Logs structurees JSON
+Sentry (erreurs) | Uptime Robot (disponibilite) | Logs structurees JSON
 
 # **2. Architecture globale**
+
 ## **2.1 Vue en couches**
+
 ┌──────────────────────────────────────────────────────────────┐
 
-│                    CLIENTS (3 surfaces)                      │
+│ CLIENTS (3 surfaces) │
 
-│  Next.js Web App    |   PWA Mobile Agent   |  Flow Candidat  │
+│ Next.js Web App | PWA Mobile Agent | Flow Candidat │
 
 └────────────────────────────┬─────────────────────────────────┘
 
@@ -81,9 +84,9 @@ Sentry (erreurs)   |   Uptime Robot (disponibilite)   |   Logs structurees JSON
 
 ┌────────────────────────────▼─────────────────────────────────┐
 
-│                   NGINX Reverse Proxy                        │
+│ NGINX Reverse Proxy │
 
-│              SSL termination + rate limiting                 │
+│ SSL termination + rate limiting │
 
 └────────────────────────────┬─────────────────────────────────┘
 
@@ -91,23 +94,24 @@ Sentry (erreurs)   |   Uptime Robot (disponibilite)   |   Logs structurees JSON
 
 ┌────────────────────────────▼─────────────────────────────────┐
 
-│                  NestJS API (port 3001)                      │
+│ NestJS API (port 3001) │
 
-│  AuthModule | WorkspaceModule | CaseModule | VerifModule     │
+│ AuthModule | WorkspaceModule | CaseModule | VerifModule │
 
-│  RuleEngineModule | WorkflowModule | FormModule | ApiModule  │
+│ RuleEngineModule | WorkflowModule | FormModule | ApiModule │
 
-│  WalletModule | NotificationModule | AdminModule             │
+│ WalletModule | NotificationModule | AdminModule │
 
 └──────┬──────────────┬──────────────┬──────────────┬──────────┘
 
        │              │              │              │
 
-  PostgreSQL       Redis          Smile ID      Cloudflare R2
+PostgreSQL Redis Smile ID Cloudflare R2
 
-  (donnees)       (cache)         (KYC API)     (fichiers)
+(donnees) (cache) (KYC API) (fichiers)
 
 ## **2.2 Modules NestJS**
+
 **Module**
 
 **Responsabilite**
@@ -193,342 +197,347 @@ Validation licences Dedicated, heartbeat
 POST /license/validate, /license/heartbeat
 
 # **3. Schema de donnees — Modele Prisma**
+
 Le schema est organise autour de l'entite centrale Workspace. Toutes les donnees sont isolees par workspace (multi-tenant). La cle d'isolation est workspaceId presente sur chaque entite metier.
 
 ## **3.1 Entites principales**
+
 **Workspace**
 
 _Compte client Identis_
 
-id               String   @id @default(cuid())
+id String @id @default(cuid())
 
-name             String
+name String
 
-slug             String   @unique
+slug String @unique
 
-deploymentType   DeploymentType  // CLOUD | DEDICATED
+deploymentType DeploymentType // CLOUD | DEDICATED
 
-logoUrl          String?
+logoUrl String?
 
-primaryColor     String?
+primaryColor String?
 
-welcomeMessage   String?
+welcomeMessage String?
 
-licenseKey       String?  @unique
+licenseKey String? @unique
 
 licenseExpiresAt DateTime?
 
-lastHeartbeatAt  DateTime?
+lastHeartbeatAt DateTime?
 
-dedicatedUrl     String?
+dedicatedUrl String?
 
-walletBalance    Int      @default(0)  // en FCFA
+walletBalance Int @default(0) // en FCFA
 
-createdAt        DateTime @default(now())
+createdAt DateTime @default(now())
 
-members          Member[]
+members Member[]
 
-cases            Case[]
+cases Case[]
 
-rules            Rule[]
+rules Rule[]
 
-formTemplates    FormTemplate[]
+formTemplates FormTemplate[]
 
-workflowSteps    WorkflowStep[]
+workflowSteps WorkflowStep[]
 
-apiKeys          ApiKey[]
+apiKeys ApiKey[]
 
-walletTx         WalletTransaction[]
+walletTx WalletTransaction[]
 
 **Member**
 
 _Membre d'un workspace_
 
-id           String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId  String
+workspaceId String
 
-userId       String
+userId String
 
-role         MemberRole  // ADMIN | AGENT | REVIEWER | COMPLIANCE
+role MemberRole // ADMIN | AGENT | REVIEWER | COMPLIANCE
 
-createdAt    DateTime @default(now())
+createdAt DateTime @default(now())
 
-workspace    Workspace @relation(...)
+workspace Workspace @relation(...)
 
-user         User      @relation(...)
+user User @relation(...)
 
 **Case**
 
 _Dossier de verification_
 
-id              String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId     String
+workspaceId String
 
-reference       String  // ex: CASE-2026-0042
+reference String // ex: CASE-2026-0042
 
-initiatedBy     InitiationMode  // AGENT | SELF_SERVICE
+initiatedBy InitiationMode // AGENT | SELF_SERVICE
 
-initiatorId     String?  // membre agent si AGENT
+initiatorId String? // membre agent si AGENT
 
-entryPointId    String?  // lien si SELF_SERVICE
+entryPointId String? // lien si SELF_SERVICE
 
-status          CaseStatus  // PENDING|IN_REVIEW|APPROVED|REJECTED|EXPIRED
+status CaseStatus // PENDING|IN_REVIEW|APPROVED|REJECTED|EXPIRED
 
-currentStepId   String?
+currentStepId String?
 
-formData        Json?   // reponses formulaire additionnel
+formData Json? // reponses formulaire additionnel
 
-verificationId  String? // ref vers Verification
+verificationId String? // ref vers Verification
 
-scoreResult     Json?   // { score, rules_triggered, threshold }
+scoreResult Json? // { score, rules_triggered, threshold }
 
-createdAt       DateTime @default(now())
+createdAt DateTime @default(now())
 
-updatedAt       DateTime @updatedAt
+updatedAt DateTime @updatedAt
 
-stepHistory     StepHistory[]
+stepHistory StepHistory[]
 
-verification    Verification?
+verification Verification?
 
 **Verification**
 
 _Resultat Smile ID_
 
-id              String  @id @default(cuid())
+id String @id @default(cuid())
 
-caseId          String  @unique
+caseId String @unique
 
-smileJobId      String  // ID retourne par Smile ID
+smileJobId String // ID retourne par Smile ID
 
-product         VerifProduct  // BASIC_KYC|DOC_VERIFY|DOC_VERIFY_AML|SMILE_SECURE
+product VerifProduct // BASIC_KYC|DOC_VERIFY|DOC_VERIFY_AML|SMILE_SECURE
 
-status          VerifStatus   // PENDING|APPROVED|REJECTED|UNKNOWN
+status VerifStatus // PENDING|APPROVED|REJECTED|UNKNOWN
 
-livenessScore   Float?
+livenessScore Float?
 
-documentValid   Boolean?
+documentValid Boolean?
 
-amlMatch        Boolean?
+amlMatch Boolean?
 
-duplicateFound  Boolean?
+duplicateFound Boolean?
 
-rawResult       Json    // reponse complete Smile ID
+rawResult Json // reponse complete Smile ID
 
-cniPhotoUrl     String? // stocke sur R2
+cniPhotoUrl String? // stocke sur R2
 
-selfiePhotoUrl  String? // stocke sur R2
+selfiePhotoUrl String? // stocke sur R2
 
-createdAt       DateTime @default(now())
+createdAt DateTime @default(now())
 
 **Rule**
 
 _Regle du Rule Engine_
 
-id           String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId  String
+workspaceId String
 
-name         String
+name String
 
-condition    String  // ex: 'document_expired_months > 6'
+condition String // ex: 'document_expired_months > 6'
 
-operator     String  // GT | LT | EQ | CONTAINS | IN
+operator String // GT | LT | EQ | CONTAINS | IN
 
-value        String
+value String
 
-consequence  RuleConsequence  // MALUS | BLOCK | ALERT
+consequence RuleConsequence // MALUS | BLOCK | ALERT
 
-malus        Int?    // points de penalite si MALUS
+malus Int? // points de penalite si MALUS
 
-active       Boolean @default(true)
+active Boolean @default(true)
 
-order        Int
+order Int
 
-createdAt    DateTime @default(now())
+createdAt DateTime @default(now())
 
 **WorkflowStep**
 
 _Etape de validation_
 
-id              String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId     String
+workspaceId String
 
-name            String
+name String
 
-order           Int
+order Int
 
-requiredRole    MemberRole
+requiredRole MemberRole
 
-maxDelayHours   Int     @default(48)
+maxDelayHours Int @default(48)
 
-onExpiry        StepExpiry  // ESCALATE | ALERT | AUTO_APPROVE
+onExpiry StepExpiry // ESCALATE | ALERT | AUTO_APPROVE
 
-scoreMin        Int?    // score minimum pour passer cette etape
+scoreMin Int? // score minimum pour passer cette etape
 
-scoreMax        Int?    // score maximum pour cette etape
+scoreMax Int? // score maximum pour cette etape
 
-createdAt       DateTime @default(now())
+createdAt DateTime @default(now())
 
 **StepHistory**
 
 _Audit trail d'un dossier_
 
-id          String  @id @default(cuid())
+id String @id @default(cuid())
 
-caseId      String
+caseId String
 
-stepId      String
+stepId String
 
-actorId     String?  // null si action automatique systeme
+actorId String? // null si action automatique systeme
 
-action      StepAction  // APPROVED|REJECTED|ESCALATED|COMMENTED|AUTO
+action StepAction // APPROVED|REJECTED|ESCALATED|COMMENTED|AUTO
 
-comment     String?
+comment String?
 
-createdAt   DateTime @default(now())
+createdAt DateTime @default(now())
 
 **FormTemplate**
 
 _Formulaire configurable_
 
-id           String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId  String
+workspaceId String
 
-name         String
+name String
 
-sector       FormSector?  // IMF | IMMO | FINTECH | CUSTOM
+sector FormSector? // IMF | IMMO | FINTECH | CUSTOM
 
-active       Boolean @default(true)
+active Boolean @default(true)
 
-fields       FormField[]
+fields FormField[]
 
-createdAt    DateTime @default(now())
+createdAt DateTime @default(now())
 
 **FormField**
 
 _Champ du formulaire_
 
-id              String  @id @default(cuid())
+id String @id @default(cuid())
 
-formTemplateId  String
+formTemplateId String
 
-type            FieldType  // TEXT|NUMBER|SELECT|UPLOAD|CONSENT
+type FieldType // TEXT|NUMBER|SELECT|UPLOAD|CONSENT
 
-label           String
+label String
 
-placeholder     String?
+placeholder String?
 
-required        Boolean @default(false)
+required Boolean @default(false)
 
-options         Json?   // pour SELECT : ['CDI','CDD','Freelance']
+options Json? // pour SELECT : ['CDI','CDD','Freelance']
 
-conditionalOn   String? // fieldId de reference
+conditionalOn String? // fieldId de reference
 
-conditionalVal  String? // valeur qui declenche l'affichage
+conditionalVal String? // valeur qui declenche l'affichage
 
-order           Int
+order Int
 
 **EntryPoint**
 
 _Lien unique self-service_
 
-id           String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId  String
+workspaceId String
 
-caseId       String  @unique
+caseId String @unique
 
-token        String  @unique  // dans l'URL
+token String @unique // dans l'URL
 
-expiresAt    DateTime
+expiresAt DateTime
 
-completedAt  DateTime?
+completedAt DateTime?
 
-status       EntryStatus  // PENDING|COMPLETED|EXPIRED
+status EntryStatus // PENDING|COMPLETED|EXPIRED
 
-createdAt    DateTime @default(now())
+createdAt DateTime @default(now())
 
 **WalletTransaction**
 
 _Mouvement du wallet_
 
-id           String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId  String
+workspaceId String
 
-type         TxType  // INSCRIPTION|RECHARGE|DEDUCTION|REFUND
+type TxType // INSCRIPTION|RECHARGE|DEDUCTION|REFUND
 
-amount       Int     // en FCFA (positif ou negatif)
+amount Int // en FCFA (positif ou negatif)
 
 balanceBefore Int
 
-balanceAfter  Int
+balanceAfter Int
 
-reference    String?  // ref paiement Wave/Orange
+reference String? // ref paiement Wave/Orange
 
-caseId       String?  // si DEDUCTION liee a un dossier
+caseId String? // si DEDUCTION liee a un dossier
 
-product      VerifProduct?
+product VerifProduct?
 
-createdAt    DateTime @default(now())
+createdAt DateTime @default(now())
 
 **ApiKey**
 
 _Cle d'acces API externe_
 
-id           String  @id @default(cuid())
+id String @id @default(cuid())
 
-workspaceId  String
+workspaceId String
 
-name         String  // label donne par le dev
+name String // label donne par le dev
 
-keyHash      String  @unique  // bcrypt hash — jamais en clair
+keyHash String @unique // bcrypt hash — jamais en clair
 
-prefix       String  // ex: 'id_live_' pour identifier
+prefix String // ex: 'id*live*' pour identifier
 
-environment  ApiEnv  // SANDBOX | PRODUCTION
+environment ApiEnv // SANDBOX | PRODUCTION
 
-lastUsedAt   DateTime?
+lastUsedAt DateTime?
 
-revokedAt    DateTime?
+revokedAt DateTime?
 
-createdAt    DateTime @default(now())
+createdAt DateTime @default(now())
 
 ## **3.2 Enumerations Prisma**
-enum DeploymentType  { CLOUD  DEDICATED }
 
-enum MemberRole      { ADMIN  AGENT  REVIEWER  COMPLIANCE  DEVELOPER }
+enum DeploymentType { CLOUD DEDICATED }
 
-enum CaseStatus      { PENDING  IN_REVIEW  APPROVED  REJECTED  EXPIRED }
+enum MemberRole { ADMIN AGENT REVIEWER COMPLIANCE DEVELOPER }
 
-enum InitiationMode  { AGENT  SELF_SERVICE }
+enum CaseStatus { PENDING IN_REVIEW APPROVED REJECTED EXPIRED }
 
-enum VerifProduct    { BASIC_KYC  DOC_VERIFY  DOC_VERIFY_AML  SMILE_SECURE }
+enum InitiationMode { AGENT SELF_SERVICE }
 
-enum VerifStatus     { PENDING  APPROVED  REJECTED  UNKNOWN }
+enum VerifProduct { BASIC_KYC DOC_VERIFY DOC_VERIFY_AML SMILE_SECURE }
 
-enum RuleConsequence { MALUS  BLOCK  ALERT }
+enum VerifStatus { PENDING APPROVED REJECTED UNKNOWN }
 
-enum StepExpiry      { ESCALATE  ALERT  AUTO_APPROVE }
+enum RuleConsequence { MALUS BLOCK ALERT }
 
-enum StepAction      { APPROVED  REJECTED  ESCALATED  COMMENTED  AUTO_EXPIRED }
+enum StepExpiry { ESCALATE ALERT AUTO_APPROVE }
 
-enum FormSector      { IMF  IMMO  FINTECH  CUSTOM }
+enum StepAction { APPROVED REJECTED ESCALATED COMMENTED AUTO_EXPIRED }
 
-enum FieldType       { TEXT  NUMBER  SELECT  UPLOAD  CONSENT }
+enum FormSector { IMF IMMO FINTECH CUSTOM }
 
-enum EntryStatus     { PENDING  COMPLETED  EXPIRED }
+enum FieldType { TEXT NUMBER SELECT UPLOAD CONSENT }
 
-enum TxType          { INSCRIPTION  RECHARGE  DEDUCTION  REFUND }
+enum EntryStatus { PENDING COMPLETED EXPIRED }
 
-enum ApiEnv          { SANDBOX  PRODUCTION }
+enum TxType { INSCRIPTION RECHARGE DEDUCTION REFUND }
+
+enum ApiEnv { SANDBOX PRODUCTION }
 
 # **4. Securite**
+
 ## **4.1 Authentification et autorisation**
+
 **Mecanisme**
 
 **Detail**
@@ -572,6 +581,7 @@ Token one-time lie au lien unique
 Pas de JWT — validation par token EntryPoint
 
 ## **4.2 Isolation multi-tenant**
+
 Chaque requete est validee contre le workspaceId du token JWT. Un membre ne peut jamais acceder aux donnees d'un autre workspace.
 
 // Guard applique sur tous les endpoints metier
@@ -580,7 +590,7 @@ Chaque requete est validee contre le workspaceId du token JWT. Un membre ne peut
 
 export class WorkspaceScopeGuard implements CanActivate {
 
-  canActivate(context: ExecutionContext): boolean {
+canActivate(context: ExecutionContext): boolean {
 
     const request = context.switchToHttp().getRequest();
 
@@ -594,13 +604,14 @@ export class WorkspaceScopeGuard implements CanActivate {
 
     return user.workspaceId === workspaceId;
 
-  }
+}
 
 }
 
 Toutes les requetes Prisma incluent systematiquement un filtre WHERE workspaceId = X. Meme en cas de bug dans les guards, la couche donnees reste isolee.
 
 ## **4.3 Securite des donnees biometriques**
+
 **Donnee**
 
 **Stockage**
@@ -652,11 +663,12 @@ Indefini (exigence BCEAO)
 Les photos biometriques ne sont jamais stockees en base de donnees. Seule l'URL R2 est enregistree. L'acces direct au fichier necessite une URL signee generee a la demande avec expiration courte.
 
 ## **4.4 Securite des cles API**
+
 // Generation d'une cle API
 
 // 1. Generer une cle aleatoire
 
-const rawKey = 'id_live_' + crypto.randomBytes(32).toString('hex');
+const rawKey = 'id*live*' + crypto.randomBytes(32).toString('hex');
 
 // 2. Stocker uniquement le hash en base
 
@@ -664,7 +676,7 @@ const keyHash = await bcrypt.hash(rawKey, 12);
 
 await prisma.apiKey.create({
 
-  data: { workspaceId, name, keyHash,
+data: { workspaceId, name, keyHash,
 
           prefix: rawKey.substring(0, 12),  // 'id_live_xxxx'
 
@@ -679,6 +691,7 @@ await prisma.apiKey.create({
 return { key: rawKey, message: 'Copiez cette cle maintenant' };
 
 ## **4.5 Rate limiting et protection API**
+
 - **Rate limit global : **100 requetes / minute par IP (Nginx)
 - **Rate limit par cle API : **1 000 requetes / heure configurable par workspace
 - **Rate limit flow candidat : **3 tentatives / token, puis expiration forcee
@@ -687,6 +700,7 @@ return { key: rawKey, message: 'Copiez cette cle maintenant' };
 - **Helmet.js : **headers de securite HTTP sur toutes les reponses
 
 ## **4.6 Conformite ARDP (protection donnees CI)**
+
 - Consentement explicite capture et horodate dans EntryPoint avant toute collecte
 - Droit a l'effacement : endpoint DELETE /cases/:id supprime photos R2 + formData
 - Pas de transfert de donnees biometriques hors du territoire sans consentement
@@ -694,7 +708,9 @@ return { key: rawKey, message: 'Copiez cette cle maintenant' };
 - Politique de retention documentee et appliquee automatiquement
 
 # **5. API REST — Reference**
+
 ## **5.1 Conventions**
+
 - **Base URL Cloud : **https://api.identis.ci/v1
 - **Base URL Dedicated : **https://votre-domaine/api/v1
 - **Authentification : **Header Authorization: Bearer {apiKey} ou Bearer {jwtToken}
@@ -703,19 +719,20 @@ return { key: rawKey, message: 'Copiez cette cle maintenant' };
 - **Erreurs : **RFC 7807 — { type, title, status, detail, instance }
 
 ## **5.2 Endpoints de verification**
+
 // Basic KYC — verification par numero CNI seul
 
 POST /v1/verify/basic
 
 {
 
-  "id_number": "CI1234567890",
+"id_number": "CI1234567890",
 
-  "first_name": "Kouame",
+"first_name": "Kouame",
 
-  "last_name": "Yao",
+"last_name": "Yao",
 
-  "date_of_birth": "1990-05-15"
+"date_of_birth": "1990-05-15"
 
 }
 
@@ -725,15 +742,15 @@ POST /v1/verify/document
 
 {
 
-  "document_front": "base64...",
+"document_front": "base64...",
 
-  "document_back": "base64...",
+"document_back": "base64...",
 
-  "selfie": "base64...",
+"selfie": "base64...",
 
-  "country": "CI",
+"country": "CI",
 
-  "id_type": "NATIONAL_ID"
+"id_type": "NATIONAL_ID"
 
 }
 
@@ -743,30 +760,31 @@ POST /v1/verify/full
 
 {
 
-  "document_front": "base64...",
+"document_front": "base64...",
 
-  "document_back": "base64...",
+"document_back": "base64...",
 
-  "selfie": "base64...",
+"selfie": "base64...",
 
-  "aml_check": true
+"aml_check": true
 
 }
 
 ## **5.3 Format de reponse standard**
+
 // Reponse verification complete
 
 {
 
-  "case_id": "case_abc123",
+"case_id": "case_abc123",
 
-  "status": "APPROVED",
+"status": "APPROVED",
 
-  "score": 82,
+"score": 82,
 
-  "score_label": "LOW_RISK",
+"score_label": "LOW_RISK",
 
-  "verification": {
+"verification": {
 
     "document_valid": true,
 
@@ -776,25 +794,26 @@ POST /v1/verify/full
 
     "aml_match": false
 
-  },
+},
 
-  "rules_triggered": [
+"rules_triggered": [
 
     { "rule": "document_age", "malus": 0 },
 
     { "rule": "liveness_threshold", "malus": 0 }
 
-  ],
+],
 
-  "wallet_deducted": 1200,
+"wallet_deducted": 1200,
 
-  "wallet_balance": 48800,
+"wallet_balance": 48800,
 
-  "created_at": "2026-05-22T14:32:00Z"
+"created_at": "2026-05-22T14:32:00Z"
 
 }
 
 ## **5.4 Webhooks**
+
 Les webhooks permettent a une fintech de recevoir les resultats de verification sans polling.
 
 // Configuration d'un webhook
@@ -803,11 +822,11 @@ POST /v1/webhooks
 
 {
 
-  "url": "https://votre-app.com/identis/webhook",
+"url": "https://votre-app.com/identis/webhook",
 
-  "events": ["case.completed", "case.approved", "case.rejected"],
+"events": ["case.completed", "case.approved", "case.rejected"],
 
-  "secret": "votre_secret_pour_valider_la_signature"
+"secret": "votre_secret_pour_valider_la_signature"
 
 }
 
@@ -815,45 +834,47 @@ POST /v1/webhooks
 
 {
 
-  "event": "case.completed",
+"event": "case.completed",
 
-  "case_id": "case_abc123",
+"case_id": "case_abc123",
 
-  "status": "APPROVED",
+"status": "APPROVED",
 
-  "score": 82,
+"score": 82,
 
-  "timestamp": "2026-05-22T14:32:00Z",
+"timestamp": "2026-05-22T14:32:00Z",
 
-  "signature": "sha256=abc123..."  // HMAC-SHA256
+"signature": "sha256=abc123..." // HMAC-SHA256
 
 }
 
 # **6. Deploiement Cloud**
+
 ## **6.1 Architecture serveur**
+
 ┌─────────────────────────────────────────────────────┐
 
-│               VPS Principal (4 vCPU, 8 GB RAM)      │
+│ VPS Principal (4 vCPU, 8 GB RAM) │
 
-│                                                     │
+│ │
 
-│  ┌──────────┐  ┌──────────┐  ┌───────────────────┐ │
+│ ┌──────────┐ ┌──────────┐ ┌───────────────────┐ │
 
-│  │  Nginx   │  │ NestJS   │  │   Next.js (web)   │ │
+│ │ Nginx │ │ NestJS │ │ Next.js (web) │ │
 
-│  │ :80/:443 │  │  :3001   │  │      :3000        │ │
+│ │ :80/:443 │ │ :3001 │ │ :3000 │ │
 
-│  └──────────┘  └──────────┘  └───────────────────┘ │
+│ └──────────┘ └──────────┘ └───────────────────┘ │
 
-│                                                     │
+│ │
 
-│  ┌──────────┐  ┌──────────┐  ┌───────────────────┐ │
+│ ┌──────────┐ ┌──────────┐ ┌───────────────────┐ │
 
-│  │PostgreSQL│  │  Redis   │  │  Bull (queues)    │ │
+│ │PostgreSQL│ │ Redis │ │ Bull (queues) │ │
 
-│  │  :5432   │  │  :6379   │  │   (notifications) │ │
+│ │ :5432 │ │ :6379 │ │ (notifications) │ │
 
-│  └──────────┘  └──────────┘  └───────────────────┘ │
+│ └──────────┘ └──────────┘ └───────────────────┘ │
 
 └─────────────────────────────────────────────────────┘
 
@@ -866,11 +887,12 @@ POST /v1/webhooks
               WhatsApp API (notifs)
 
 ## **6.2 Docker Compose Cloud**
+
 # docker-compose.cloud.yml
 
 services:
 
-  api:
+api:
 
     image: identis/api:latest
 
@@ -890,7 +912,7 @@ services:
 
     depends_on: [postgres, redis]
 
-  web:
+web:
 
     image: identis/web:latest
 
@@ -898,17 +920,17 @@ services:
 
       NEXT_PUBLIC_API_URL: https://api.identis.ci
 
-  postgres:
+postgres:
 
     image: postgres:16-alpine
 
     volumes: [postgres_data:/var/lib/postgresql/data]
 
-  redis:
+redis:
 
     image: redis:7-alpine
 
-  nginx:
+nginx:
 
     image: nginx:alpine
 
@@ -917,17 +939,18 @@ services:
     volumes: [./nginx.conf:/etc/nginx/nginx.conf]
 
 ## **6.3 CI/CD — GitHub Actions**
+
 # .github/workflows/deploy.yml
 
 on:
 
-  push:
+push:
 
     branches: [main]
 
 jobs:
 
-  deploy:
+deploy:
 
     steps:
 
@@ -952,11 +975,13 @@ jobs:
         run: ssh deploy@vps 'docker exec api npx prisma migrate deploy'
 
 # **7. Deploiement Dedicated**
+
 Le package Dedicated est un Docker Compose autonome que le client deploie sur sa propre infrastructure. Il inclut tout le necessaire pour fonctionner independamment du cloud Identis.
 
 Le client Dedicated gere son propre compte Smile ID. Il configure ses credentials Smile ID dans le fichier .env de son instance. Identis ne connait pas ces credentials.
 
 ## **7.1 Package livre au client Dedicated**
+
 - docker-compose.dedicated.yml — compose complet autonome
 - .env.example — toutes les variables d'environnement a configurer
 - setup.sh — script d'installation et de premiere configuration
@@ -965,11 +990,12 @@ Le client Dedicated gere son propre compte Smile ID. Il configure ses credential
 - INSTALL.md — documentation d'installation pas a pas
 
 ## **7.2 Docker Compose Dedicated**
+
 # docker-compose.dedicated.yml
 
 services:
 
-  api:
+api:
 
     image: identis/api:${IDENTIS_VERSION}
 
@@ -993,33 +1019,34 @@ services:
 
       MINIO_ENDPOINT: http://minio:9000
 
-  web:
+web:
 
     image: identis/web:${IDENTIS_VERSION}
 
-  postgres:
+postgres:
 
     image: postgres:16-alpine
 
     volumes: [postgres_data:/var/lib/postgresql/data]
 
-  redis:
+redis:
 
     image: redis:7-alpine
 
-  minio:  # stockage local si pas de R2
+minio: # stockage local si pas de R2
 
     image: minio/minio
 
     volumes: [minio_data:/data]
 
-  nginx:
+nginx:
 
     image: nginx:alpine
 
     ports: ['80:80', '443:443']
 
 ## **7.3 Validation de licence**
+
 L'instance Dedicated valide sa licence au demarrage et envoie un heartbeat toutes les 24 heures vers api.identis.ci.
 
 // LicenseModule — validation au demarrage
@@ -1028,7 +1055,7 @@ L'instance Dedicated valide sa licence au demarrage et envoie un heartbeat toute
 
 export class LicenseService implements OnModuleInit {
 
-  async onModuleInit() {
+async onModuleInit() {
 
     const valid = await this.validateLicense();
 
@@ -1040,9 +1067,9 @@ export class LicenseService implements OnModuleInit {
 
     }
 
-  }
+}
 
-  async validateLicense(): Promise<boolean> {
+async validateLicense(): Promise<boolean> {
 
     const response = await fetch('https://api.identis.ci/v1/license/validate', {
 
@@ -1054,11 +1081,12 @@ export class LicenseService implements OnModuleInit {
 
     return response.ok;
 
-  }
+}
 
 }
 
 # **8. Monitoring et observabilite**
+
 **Outil**
 
 **Usage**
@@ -1096,15 +1124,16 @@ Dashboard files d'attente notifications
 File en echec > 10 jobs
 
 ## **8.1 Endpoint /health**
+
 // GET /health — verifie tous les services
 
 {
 
-  "status": "ok",
+"status": "ok",
 
-  "timestamp": "2026-05-22T14:32:00Z",
+"timestamp": "2026-05-22T14:32:00Z",
 
-  "services": {
+"services": {
 
     "database": "ok",
 
@@ -1114,18 +1143,20 @@ File en echec > 10 jobs
 
     "r2_storage": "ok"
 
-  },
+},
 
-  "version": "1.2.0",
+"version": "1.2.0",
 
-  "uptime": 864000
+"uptime": 864000
 
 }
 
 # **9. Synthese**
+
 Un seul codebase NestJS sert les deux modes de deploiement. La difference est dans les variables d'environnement et le LicenseModule. Aucune logique metier n'est dupliquee.
 
 ## **Points d'attention pour le MVP**
+
 - Negocier le contrat Smile ID avant de commencer le VerifModule — les credentials sandbox sont gratuits
 - Configurer Cloudflare R2 en premier — requis pour stocker les photos des les tests
 - Implementer WorkspaceScopeGuard des le debut — corriger l'isolation multi-tenant apres coup est couteux
@@ -1134,6 +1165,7 @@ Un seul codebase NestJS sert les deux modes de deploiement. La difference est da
 - Activer Sentry des le Sprint 1 — les erreurs en production sans monitoring sont dangereuses
 
 ## **Variables d'environnement critiques**
+
 # .env.production
 
 DATABASE_URL=postgresql://user:pass@host:5432/identis
@@ -1148,7 +1180,7 @@ SMILE_ID_PARTNER_ID=<from smile ID portal>
 
 SMILE_ID_API_KEY=<from smile ID portal>
 
-SMILE_ID_ENV=1  # 0=sandbox, 1=production
+SMILE_ID_ENV=1 # 0=sandbox, 1=production
 
 R2_ACCOUNT_ID=<cloudflare account id>
 
