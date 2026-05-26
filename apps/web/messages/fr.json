@@ -1,0 +1,103 @@
+{
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "empty": "Aucune donnée",
+    "reset": "Réinitialiser",
+    "apply": "Appliquer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "seeAll": "Voir tout"
+  },
+  "nav": {
+    "dashboard": "Accueil",
+    "navGroupAdmin": "Admin",
+    "users": "Utilisateurs",
+    "announcements": "Annonces",
+    "notifications": "Notifications",
+    "settings": "Paramètres"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification",
+    "emptyDescription": "Vous êtes à jour.",
+    "markAllRead": "Tout marquer comme lu",
+    "unread": "Non lues",
+    "all": "Toutes",
+    "viewAll": "Voir tout",
+    "isRead": "Lu",
+    "justNow": "À l'instant",
+    "types": {
+      "SYSTEM": "Système",
+      "ACCOUNT": "Compte",
+      "ANNOUNCEMENT": "Annonce"
+    }
+  },
+  "filters": {
+    "label": "Filtres",
+    "resetAll": "Tout réinitialiser",
+    "apply": "Appliquer"
+  },
+  "table": {
+    "empty": "Aucune donnée.",
+    "noResults": "Aucun résultat pour ces filtres."
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "locale": {
+    "fr": "Français",
+    "en": "English"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "logout": "Se déconnecter",
+    "emailOrUsername": "Email ou username",
+    "password": "Mot de passe",
+    "noAccount": "Pas encore de compte ?",
+    "alreadyAccount": "Déjà un compte ?",
+    "logoutLoading": "Déconnexion..."
+  },
+  "account": {
+    "title": "Mes paramètres",
+    "appearance": "Apparence",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "account": "Compte",
+    "theme": "Thème",
+    "savePreferences": "Enregistrer",
+    "savedAutomatically": "Enregistré automatiquement.",
+    "profile": "Profil",
+    "profileDescription": "Vos informations de compte.",
+    "fullName": "Nom complet",
+    "email": "Email",
+    "username": "Identifiant",
+    "role": "Rôle",
+    "password": "Mot de passe",
+    "changePassword": "Modifier le mot de passe",
+    "changePasswordHint": "La modification du mot de passe sera disponible prochainement.",
+    "notificationDescription": "Notifications actuellement visibles dans l'application selon votre rôle.",
+    "notificationAvailabilityHint": "Les préférences de notification ne sont pas configurables pour le moment.",
+    "notificationVisibleStatus": "Visible",
+    "roles": {
+      "ADMIN": "Admin",
+      "MEMBER": "Membre"
+    }
+  },
+  "dashboard": {
+    "announcements": {
+      "title": "Nouveautés",
+      "dismiss": "Plus tard",
+      "close": "Fermer l'annonce",
+      "closeItem": "Masquer cette annonce",
+      "read": "Lire",
+      "markAsRead": "Marquer comme lu"
+    }
+  }
+}

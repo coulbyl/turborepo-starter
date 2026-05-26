@@ -1,0 +1,103 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "error": "An error occurred",
+    "empty": "No data",
+    "reset": "Reset",
+    "apply": "Apply",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "seeAll": "See all"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "navGroupAdmin": "Admin",
+    "users": "Users",
+    "announcements": "Announcements",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "emptyDescription": "You're all caught up.",
+    "markAllRead": "Mark all as read",
+    "unread": "Unread",
+    "all": "All",
+    "viewAll": "View all",
+    "isRead": "Read",
+    "justNow": "Just now",
+    "types": {
+      "SYSTEM": "System",
+      "ACCOUNT": "Account",
+      "ANNOUNCEMENT": "Announcement"
+    }
+  },
+  "filters": {
+    "label": "Filters",
+    "resetAll": "Reset all",
+    "apply": "Apply"
+  },
+  "table": {
+    "empty": "No data.",
+    "noResults": "No results for these filters."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "locale": {
+    "fr": "Français",
+    "en": "English"
+  },
+  "auth": {
+    "login": "Sign in",
+    "register": "Create account",
+    "logout": "Sign out",
+    "emailOrUsername": "Email or username",
+    "password": "Password",
+    "noAccount": "No account yet?",
+    "alreadyAccount": "Already have an account?",
+    "logoutLoading": "Signing out..."
+  },
+  "account": {
+    "title": "My settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "notifications": "Notifications",
+    "account": "Account",
+    "theme": "Theme",
+    "savePreferences": "Save",
+    "savedAutomatically": "Saved automatically.",
+    "profile": "Profile",
+    "profileDescription": "Your account information.",
+    "fullName": "Full name",
+    "email": "Email",
+    "username": "Username",
+    "role": "Role",
+    "password": "Password",
+    "changePassword": "Change password",
+    "changePasswordHint": "Password change will be available soon.",
+    "notificationDescription": "Notifications currently visible in the app for your role.",
+    "notificationAvailabilityHint": "Notification preferences are not configurable yet.",
+    "notificationVisibleStatus": "Visible",
+    "roles": {
+      "ADMIN": "Admin",
+      "MEMBER": "Member"
+    }
+  },
+  "dashboard": {
+    "announcements": {
+      "title": "What's new",
+      "dismiss": "Later",
+      "close": "Dismiss announcement",
+      "closeItem": "Hide this announcement",
+      "read": "Read",
+      "markAsRead": "Mark as read"
+    }
+  }
+}

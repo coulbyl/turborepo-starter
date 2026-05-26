@@ -1,0 +1,153 @@
+// Starter — Prisma Schema (minimal generic boilerplate)
+// Models: User, Session, Notification, UserNotificationRead, Announcement
+
+generator client {
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat  = "cjs"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MEMBER
+}
+
+enum MfaMethod {
+  EMAIL
+  TOTP
+}
+
+enum NotificationType {
+  SYSTEM
+  ACCOUNT
+  ANNOUNCEMENT
+}
+
+// ─────────────────────────────────────────────
+// MODELS
+// ─────────────────────────────────────────────
+
+model User {
+  id                String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  email             String                 @unique
+  username          String                 @unique
+  passwordHash      String
+  fullName          String
+  bio               String?
+  role              UserRole               @default(MEMBER)
+  emailVerified     Boolean                @default(false)
+  mfaMethod         MfaMethod?
+  totpSecret        String?
+  totpVerified      Boolean                @default(false)
+  avatarUrl         String?
+  theme             String?
+  locale            String?
+  sessions          Session[]
+  announcements     Announcement[]
+  notificationReads UserNotificationRead[]
+  verificationCodes EmailVerificationCode[]
+  resetTokens       PasswordResetToken[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@map("users")
+}
+
+model EmailVerificationCode {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("email_verification_code")
+}
+
+model PasswordResetToken {
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String   @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash        String   @unique
+  expiresAt        DateTime
+  used             Boolean  @default(false)
+  isAdminGenerated Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@map("password_reset_token")
+}
+
+model Session {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, expiresAt])
+  @@map("user_session")
+}
+
+// In-app notifications — persisted for dashboard display.
+model Notification {
+  id        String                 @id @default(cuid())
+  type      NotificationType
+  title     String
+  body      String
+  payload   Json?
+  read      Boolean                @default(false)
+  readAt    DateTime?
+  createdAt DateTime               @default(now())
+  reads     UserNotificationRead[]
+
+  @@index([read, createdAt])
+  @@map("notification")
+}
+
+// Per-user read tracking for system-wide notifications.
+model UserNotificationRead {
+  userId         String       @db.Uuid
+  notificationId String
+  readAt         DateTime     @default(now())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, notificationId])
+  @@map("user_notification_read")
+}
+
+// CMS announcements — displayed on the dashboard.
+model Announcement {
+  id          String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  title       String
+  description String
+  href        String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+  createdById String?   @db.Uuid
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([published, publishedAt])
+  @@index([createdAt])
+  @@map("announcement")
+}

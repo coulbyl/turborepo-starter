@@ -1,0 +1,58 @@
+{
+  "name": "@starter/ui",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/globals.css",
+    "./badge": "./src/components/badge.tsx",
+    "./button": "./src/components/button.tsx",
+    "./card": "./src/components/card.tsx",
+    "./code": "./src/components/code.tsx",
+    "./components/*": "./src/components/*.tsx",
+    "./feature-card": "./src/components/feature-card.tsx",
+    "./globals.css": "./src/styles/globals.css",
+    "./styles/theme.css": "./src/styles/theme.css",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./page-shell": "./src/components/page-shell.tsx",
+    "./section-header": "./src/components/section-header.tsx",
+    "./stat-card": "./src/components/stat-card.tsx",
+    "./top-nav": "./src/components/top-nav.tsx",
+    "./cn": "./src/utils/cn.ts",
+    "./utils/*": "./src/utils/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "generate:component": "turbo gen react-component",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@starter/eslint-config": "workspace:*",
+    "@starter/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "tailwindcss": "^4.1.13",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "catalog:",
+    "date-fns": "catalog:",
+    "lucide-react": "catalog:",
+    "next-themes": "catalog:",
+    "radix-ui": "^1.4.3",
+    "react": "catalog:",
+    "react-day-picker": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "tailwind-merge": "^3.3.1",
+    "vaul": "catalog:",
+    "zod": "catalog:"
+  }
+}
