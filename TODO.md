@@ -1,6 +1,8 @@
 # TODO — Sprint 1 (Fondations vérification)
 
 > Sprint démarré le 26 mai 2026. Se clôture quand tous les items sont cochés.
+>
+> **Workflow :** quand ce fichier est entièrement coché → cocher les items dans `ROADMAP.md` → remplacer ce fichier par les prochaines tâches tirées du sprint suivant dans la roadmap. La `ROADMAP.md` est le backlog de référence.
 
 ## En cours
 
