@@ -92,7 +92,7 @@ export class CaseService {
       select: { id: true, reference: true, status: true, createdAt: true },
     });
 
-    const callbackUrl = this.config.getOrThrow<string>('SMILE_ID_CALLBACK_URL');
+    const callbackUrl = this.config.get<string>('SMILE_ID_CALLBACK_URL', '');
     const jobRef = `${newCase.id}-${Date.now()}`;
 
     try {

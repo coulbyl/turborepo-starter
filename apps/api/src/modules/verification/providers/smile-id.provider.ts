@@ -31,14 +31,20 @@ export class SmileIdProvider implements IVerificationProvider {
   private readonly sig: Signature;
 
   constructor(private readonly config: ConfigService) {
-    const partnerId = this.config.getOrThrow<string>('SMILE_ID_PARTNER_ID');
-    const apiKey = this.config.getOrThrow<string>('SMILE_ID_API_KEY');
+    const partnerId = this.config.get<string>('SMILE_ID_PARTNER_ID', '');
+    const apiKey = this.config.get<string>('SMILE_ID_API_KEY', '');
     const env = this.config.get<string>('SMILE_ID_ENV', '0');
     const callbackUrl = this.config.get<string>('SMILE_ID_CALLBACK_URL', '');
 
     this.webApi = new WebApi(partnerId, callbackUrl, apiKey, env);
     this.idApi = new IDApi(partnerId, apiKey, env);
     this.sig = new Signature(partnerId, apiKey);
+
+    if (!partnerId || !apiKey) {
+      this.logger.warn(
+        'SMILE_ID_PARTNER_ID ou SMILE_ID_API_KEY non configuré — les vérifications échoueront',
+      );
+    }
   }
 
   /**
