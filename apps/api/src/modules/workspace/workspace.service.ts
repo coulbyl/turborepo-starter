@@ -7,6 +7,7 @@ import {
 import { MemberRole } from '@identis/db';
 import { PrismaService } from '@/prisma.service';
 import { createLogger } from '@utils/logger';
+import { WalletService } from '@modules/wallet/wallet.service';
 import type { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import type { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import type { InviteMemberDto } from './dto/invite-member.dto';
@@ -28,7 +29,10 @@ const WORKSPACE_SELECT = {
 
 @Injectable()
 export class WorkspaceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly walletService: WalletService,
+  ) {}
 
   async create(userId: string, dto: CreateWorkspaceDto) {
     const existing = await this.prisma.client.workspace.findUnique({
@@ -48,17 +52,12 @@ export class WorkspaceService {
         members: {
           create: { userId, role: MemberRole.ADMIN },
         },
-        walletTxs: {
-          create: {
-            type: 'INSCRIPTION',
-            amount: -15000,
-            balanceBefore: 0,
-            balanceAfter: 0,
-          },
-        },
       },
       select: WORKSPACE_SELECT,
     });
+
+    // Credit 10 free verifications (10 000 FCFA) for new workspace
+    await this.walletService.creditWelcomeBonus(workspace.id);
 
     logger.info({ workspaceId: workspace.id, userId }, 'workspace created');
     return workspace;

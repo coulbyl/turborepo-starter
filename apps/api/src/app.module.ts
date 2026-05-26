@@ -15,6 +15,9 @@ import { MailModule } from './modules/mail/mail.module';
 import { RedisModule } from './common/redis/redis.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { VerificationModule } from './modules/verification/verification.module';
+import { WalletModule } from './modules/wallet/wallet.module';
+import { CaseModule } from './modules/case/case.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -41,6 +44,9 @@ import { VerificationModule } from './modules/verification/verification.module';
     MailModule,
     WorkspaceModule,
     VerificationModule,
+    WalletModule,
+    CaseModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
