@@ -1,13 +1,45 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, Length, Matches } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 
 // All country codes supported by Smile ID (extends as new countries are activated)
 export const SUPPORTED_COUNTRIES = [
   // BCEAO zone (JT11 authority lookup available)
-  'CI', 'SN', 'BJ', 'GH', 'NG', 'KE', 'ZA', 'TZ', 'UG', 'RW', 'ET', 'CM',
+  'CI',
+  'SN',
+  'BJ',
+  'GH',
+  'NG',
+  'KE',
+  'ZA',
+  'TZ',
+  'UG',
+  'RW',
+  'ET',
+  'CM',
   // DocV only
-  'BF', 'ML', 'TG', 'MR', 'NE', 'GN',
+  'BF',
+  'ML',
+  'TG',
+  'MR',
+  'NE',
+  'GN',
   // International (passport via JT6 ICAO MRZ)
-  'FR', 'US', 'GB', 'DE', 'LB', 'CN', 'MA', 'DZ', 'TN', 'EG',
+  'FR',
+  'US',
+  'GB',
+  'DE',
+  'LB',
+  'CN',
+  'MA',
+  'DZ',
+  'TN',
+  'EG',
 ] as const;
 
 export const SUPPORTED_ID_TYPES = [

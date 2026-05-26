@@ -1,4 +1,8 @@
-import { Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WebApi, IDApi, Signature } from 'smile-identity-core';
 import {
@@ -43,11 +47,22 @@ export class SmileIdProvider implements IVerificationProvider {
    * country + idType. Falls back to JT6 + PASSPORT for international docs.
    * Result is delivered to callbackUrl (webhook).
    */
-  async verifyDocument(input: DocumentVerificationInput): Promise<SubmittedJobResult> {
-    const { jobType, authorityVerified } = resolveJobType(input.country, input.idType);
+  async verifyDocument(
+    input: DocumentVerificationInput,
+  ): Promise<SubmittedJobResult> {
+    const { jobType, authorityVerified } = resolveJobType(
+      input.country,
+      input.idType,
+    );
 
     this.logger.log(
-      { caseId: input.caseId, country: input.country, idType: input.idType, jobType, authorityVerified },
+      {
+        caseId: input.caseId,
+        country: input.country,
+        idType: input.idType,
+        jobType,
+        authorityVerified,
+      },
       'Submitting document verification',
     );
 
@@ -57,7 +72,10 @@ export class SmileIdProvider implements IVerificationProvider {
     ];
 
     if (input.idBackBase64) {
-      images.push({ image_type_id: IMAGE_TYPE.ID_BACK_BASE64, image: input.idBackBase64 });
+      images.push({
+        image_type_id: IMAGE_TYPE.ID_BACK_BASE64,
+        image: input.idBackBase64,
+      });
     }
 
     const idInfo: Record<string, unknown> = {
@@ -74,7 +92,7 @@ export class SmileIdProvider implements IVerificationProvider {
       idInfo['id_number'] = input.idNumber;
     }
 
-    const response = await this.webApi.submit_job(
+    const response = (await this.webApi.submit_job(
       {
         user_id: input.caseId,
         job_id: input.jobRef,
@@ -85,7 +103,7 @@ export class SmileIdProvider implements IVerificationProvider {
       {
         optional_callback: input.callbackUrl,
       },
-    ) as { success: boolean; smile_job_id: string };
+    )) as { success: boolean; smile_job_id: string };
 
     this.logger.log(
       { caseId: input.caseId, smileJobId: response.smile_job_id, jobType },
@@ -110,8 +128,12 @@ export class SmileIdProvider implements IVerificationProvider {
       'Submitting Enhanced KYC',
     );
 
-    const result = await this.idApi.submit_job(
-      { user_id: input.jobRef, job_id: input.jobRef, job_type: JOB_TYPE.ENHANCED_KYC },
+    const result = (await this.idApi.submit_job(
+      {
+        user_id: input.jobRef,
+        job_id: input.jobRef,
+        job_type: JOB_TYPE.ENHANCED_KYC,
+      },
       {
         country: input.country.toUpperCase(),
         id_type: input.idType.toUpperCase(),
@@ -121,7 +143,7 @@ export class SmileIdProvider implements IVerificationProvider {
         dob: input.dateOfBirth,
         phone_number: input.phoneNumber,
       },
-    ) as Record<string, unknown>;
+    )) as Record<string, unknown>;
 
     const verified = result['ResultCode'] === RESULT_CODE.ID_VERIFIED;
 

@@ -7,15 +7,15 @@
 // ── Inputs ───────────────────────────────────────────────────────────────────
 
 export type DocumentVerificationInput = {
-  caseId: string;          // Identis case UUID — used as Smile ID user_id
-  jobRef: string;          // Unique submission ref — used as Smile ID job_id
-  country: string;         // ISO 3166-1 alpha-2 (CI, SN, FR, US, ...)
-  idType: string;          // NATIONAL_ID | PASSPORT | DRIVERS_LICENSE | ...
-  idNumber?: string;       // Optional — pre-fills id_info for authority lookup
+  caseId: string; // Identis case UUID — used as Smile ID user_id
+  jobRef: string; // Unique submission ref — used as Smile ID job_id
+  country: string; // ISO 3166-1 alpha-2 (CI, SN, FR, US, ...)
+  idType: string; // NATIONAL_ID | PASSPORT | DRIVERS_LICENSE | ...
+  idNumber?: string; // Optional — pre-fills id_info for authority lookup
   selfieBase64: string;
   idFrontBase64: string;
   idBackBase64?: string;
-  callbackUrl: string;     // Webhook URL Smile ID will POST results to
+  callbackUrl: string; // Webhook URL Smile ID will POST results to
 };
 
 export type EnhancedKycInput = {
@@ -25,7 +25,7 @@ export type EnhancedKycInput = {
   idNumber: string;
   firstName?: string;
   lastName?: string;
-  dateOfBirth?: string;    // 'yyyy-mm-dd'
+  dateOfBirth?: string; // 'yyyy-mm-dd'
   phoneNumber?: string;
 };
 
@@ -44,18 +44,18 @@ export type DetectDuplicateInput = {
 // ── Outputs ──────────────────────────────────────────────────────────────────
 
 export type SubmittedJobResult = {
-  smileJobId: string;      // Smile ID global job identifier
-  jobType: number;         // JT used: 6 = DocV, 11 = Enhanced DocV
+  smileJobId: string; // Smile ID global job identifier
+  jobType: number; // JT used: 6 = DocV, 11 = Enhanced DocV
   authorityVerified: boolean; // true only when JT11 was used
 };
 
 export type EnhancedKycResult = {
   smileJobId: string;
-  verified: boolean;       // ResultCode 1012
+  verified: boolean; // ResultCode 1012
   fullName?: string;
   dateOfBirth?: string;
   expirationDate?: string;
-  photo?: string;          // base64, 'Not Available' for CI
+  photo?: string; // base64, 'Not Available' for CI
   rawResult: Record<string, unknown>;
 };
 

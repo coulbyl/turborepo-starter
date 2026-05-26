@@ -12,21 +12,21 @@ pnpm add smile-identity-core
 
 ```ts
 import {
-  WebApi,      // produits biométriques (images requises)
-  IDApi,       // Enhanced KYC texte seul (sans images)
-  Signature,   // HMAC-SHA256 — vérification des webhooks
-  Utilities,   // polling job_status
-  JOB_TYPE,    // constantes numérotées des produits
-  IMAGE_TYPE,  // constantes pour le type de chaque image
-} from 'smile-identity-core';
+  WebApi, // produits biométriques (images requises)
+  IDApi, // Enhanced KYC texte seul (sans images)
+  Signature, // HMAC-SHA256 — vérification des webhooks
+  Utilities, // polling job_status
+  JOB_TYPE, // constantes numérotées des produits
+  IMAGE_TYPE, // constantes pour le type de chaque image
+} from "smile-identity-core";
 ```
 
 ## Environnements
 
-| `sid_server` | URL de base |
-|---|---|
-| `'0'` | `testapi.smileidentity.com/v1` (sandbox) |
-| `'1'` | `api.smileidentity.com/v1` (production) |
+| `sid_server` | URL de base                              |
+| ------------ | ---------------------------------------- |
+| `'0'`        | `testapi.smileidentity.com/v1` (sandbox) |
+| `'1'`        | `api.smileidentity.com/v1` (production)  |
 
 Variables d'env requises : `SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY`, `SMILE_ID_ENV` (`0` = sandbox, `1` = prod).
 
@@ -34,27 +34,27 @@ Variables d'env requises : `SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY`, `SMILE_ID_
 
 ## `JOB_TYPE` — constantes produits
 
-| Constante | Valeur | Produit Identis |
-|---|---|---|
-| `BIOMETRIC_KYC` | 1 | Selfie + CNI + lookup autorité — Verification Sprint 1 |
-| `SMART_SELFIE_AUTHENTICATION` | 2 | Auth selfie contre profil enrôlé |
-| `SMART_SELFIE_REGISTRATION` | 4 | Enrôlement selfie |
-| `ENHANCED_KYC` | 5 | Vérification texte seul (N° CNI sans image) |
-| `DOCUMENT_VERIFICATION` | 6 | Scan document + selfie, pas d'autorité |
-| `ENHANCED_DOCUMENT_VERIFICATION` | 11 | DocV + cross-check autorité — recommandé CI |
+| Constante                        | Valeur | Produit Identis                                        |
+| -------------------------------- | ------ | ------------------------------------------------------ |
+| `BIOMETRIC_KYC`                  | 1      | Selfie + CNI + lookup autorité — Verification Sprint 1 |
+| `SMART_SELFIE_AUTHENTICATION`    | 2      | Auth selfie contre profil enrôlé                       |
+| `SMART_SELFIE_REGISTRATION`      | 4      | Enrôlement selfie                                      |
+| `ENHANCED_KYC`                   | 5      | Vérification texte seul (N° CNI sans image)            |
+| `DOCUMENT_VERIFICATION`          | 6      | Scan document + selfie, pas d'autorité                 |
+| `ENHANCED_DOCUMENT_VERIFICATION` | 11     | DocV + cross-check autorité — recommandé CI            |
 
 ## `IMAGE_TYPE` — constantes images
 
-| Constante | Valeur | Usage |
-|---|---|---|
-| `SELFIE_IMAGE_FILE` | 0 | Selfie — chemin fichier |
-| `ID_CARD_IMAGE_FILE` | 1 | Recto CNI — chemin fichier |
-| `SELFIE_IMAGE_BASE64` | 2 | Selfie — base64 |
-| `ID_CARD_IMAGE_BASE64` | 3 | Recto CNI — base64 |
-| `LIVENESS_IMAGE_FILE` | 4 | Image liveness — chemin fichier |
-| `ID_CARD_BACK_IMAGE_FILE` | 5 | Verso CNI — chemin fichier |
-| `LIVENESS_IMAGE_BASE64` | 6 | Image liveness — base64 |
-| `ID_CARD_BACK_IMAGE_BASE64` | 7 | Verso CNI — base64 |
+| Constante                   | Valeur | Usage                           |
+| --------------------------- | ------ | ------------------------------- |
+| `SELFIE_IMAGE_FILE`         | 0      | Selfie — chemin fichier         |
+| `ID_CARD_IMAGE_FILE`        | 1      | Recto CNI — chemin fichier      |
+| `SELFIE_IMAGE_BASE64`       | 2      | Selfie — base64                 |
+| `ID_CARD_IMAGE_BASE64`      | 3      | Recto CNI — base64              |
+| `LIVENESS_IMAGE_FILE`       | 4      | Image liveness — chemin fichier |
+| `ID_CARD_BACK_IMAGE_FILE`   | 5      | Verso CNI — chemin fichier      |
+| `LIVENESS_IMAGE_BASE64`     | 6      | Image liveness — base64         |
+| `ID_CARD_BACK_IMAGE_BASE64` | 7      | Verso CNI — base64              |
 
 ---
 
@@ -62,10 +62,10 @@ Variables d'env requises : `SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY`, `SMILE_ID_
 
 ```ts
 const webApi = new WebApi(
-  partner_id,        // string — depuis le portail Smile ID
-  default_callback,  // string | null — URL webhook par défaut
-  api_key,           // string — depuis le portail Smile ID
-  sid_server         // '0' | '1'
+  partner_id, // string — depuis le portail Smile ID
+  default_callback, // string | null — URL webhook par défaut
+  api_key, // string — depuis le portail Smile ID
+  sid_server, // '0' | '1'
 );
 ```
 
@@ -85,22 +85,25 @@ Combine DocV + Enhanced KYC en un seul appel. **Toujours asynchrone — résulta
 ```ts
 await webApi.submit_job(
   {
-    user_id: 'identis_case_id',     // ID interne Identis du dossier
-    job_id: 'smile_job_ref',        // UUID unique par soumission
+    user_id: "identis_case_id", // ID interne Identis du dossier
+    job_id: "smile_job_ref", // UUID unique par soumission
     job_type: JOB_TYPE.ENHANCED_DOCUMENT_VERIFICATION, // 11
   },
   [
-    { image_type_id: IMAGE_TYPE.SELFIE_IMAGE_BASE64, image: '<base64>' },
-    { image_type_id: IMAGE_TYPE.ID_CARD_IMAGE_BASE64, image: '<recto-base64>' },
-    { image_type_id: IMAGE_TYPE.ID_CARD_BACK_IMAGE_BASE64, image: '<verso-base64>' }, // recommandé
+    { image_type_id: IMAGE_TYPE.SELFIE_IMAGE_BASE64, image: "<base64>" },
+    { image_type_id: IMAGE_TYPE.ID_CARD_IMAGE_BASE64, image: "<recto-base64>" },
+    {
+      image_type_id: IMAGE_TYPE.ID_CARD_BACK_IMAGE_BASE64,
+      image: "<verso-base64>",
+    }, // recommandé
   ],
   {
-    country: 'CI',
-    id_type: 'NATIONAL_ID',  // OBLIGATOIRE pour JT11 (contrairement à JT6)
+    country: "CI",
+    id_type: "NATIONAL_ID", // OBLIGATOIRE pour JT11 (contrairement à JT6)
   },
   {
-    optional_callback: 'https://api.identis.ci/webhooks/smile-id',
-  }
+    optional_callback: "https://api.identis.ci/webhooks/smile-id",
+  },
 );
 // Retourne immédiatement: { success: true, smile_job_id: '...' }
 // Stocker smile_job_id dans Verification.smileJobId, puis attendre le webhook
@@ -114,11 +117,11 @@ Même chose mais **sans** cross-check autorité. `id_type` non requis. Utiliser 
 await webApi.submit_job(
   { user_id, job_id, job_type: JOB_TYPE.DOCUMENT_VERIFICATION },
   [
-    { image_type_id: 2, image: '<selfie-base64>' },
-    { image_type_id: 3, image: '<recto-base64>' },
+    { image_type_id: 2, image: "<selfie-base64>" },
+    { image_type_id: 3, image: "<recto-base64>" },
   ],
-  { country: 'CI' },  // id_type non requis
-  { optional_callback: 'https://api.identis.ci/webhooks/smile-id' }
+  { country: "CI" }, // id_type non requis
+  { optional_callback: "https://api.identis.ci/webhooks/smile-id" },
 );
 ```
 
@@ -131,13 +134,13 @@ Utiliser pour pré-vérifier le N° CNI saisi par le candidat avant d'envoyer le
 const result = await idApi.submit_job(
   { user_id, job_id, job_type: 5 },
   {
-    country: 'CI',
-    id_type: 'NATIONAL_ID_NO_PHOTO',  // seul type Enhanced KYC disponible pour CI
-    id_number: '12345',
-    first_name: 'Konan',
-    last_name: 'Kouassi',
-    dob: '1990-05-15',  // 'yyyy-mm-dd'
-  }
+    country: "CI",
+    id_type: "NATIONAL_ID_NO_PHOTO", // seul type Enhanced KYC disponible pour CI
+    id_number: "12345",
+    first_name: "Konan",
+    last_name: "Kouassi",
+    dob: "1990-05-15", // 'yyyy-mm-dd'
+  },
 );
 // Synchrone — résultat direct dans result
 ```
@@ -158,7 +161,7 @@ const sig = new Signature(partner_id, api_key);
 
 // Dans le contrôleur webhook:
 const isValid = sig.confirm_signature(payload.timestamp, payload.signature);
-if (!isValid) throw new UnauthorizedException('Signature Smile ID invalide');
+if (!isValid) throw new UnauthorizedException("Signature Smile ID invalide");
 ```
 
 ---
@@ -229,15 +232,16 @@ const status = await utils.get_job_status(user_id, job_id, {
 
 ### Result codes
 
-| Code | Signification |
-|---|---|
-| `0810` | ✅ Validé (Smile result: pass) |
+| Code   | Signification                             |
+| ------ | ----------------------------------------- |
+| `0810` | ✅ Validé (Smile result: pass)            |
 | `0811` | 🟡 Provisoire (revue manuelle nécessaire) |
-| `0812` | ❌ Refusé (Smile result: fail) |
-| `1012` | ✅ N° CNI vérifié (Enhanced KYC) |
-| `1013` | ❌ N° CNI introuvable |
+| `0812` | ❌ Refusé (Smile result: fail)            |
+| `1012` | ✅ N° CNI vérifié (Enhanced KYC)          |
+| `1013` | ❌ N° CNI introuvable                     |
 
 **Mapping vers Identis `VerifStatus`:**
+
 - `0810` + `Liveness_Check: 'Passed'` → `APPROVED` (score +0)
 - `0811` → `PENDING` (revue manuelle, déclenche étape workflow)
 - `0812` → `REJECTED`
@@ -249,28 +253,28 @@ const status = await utils.get_job_status(user_id, job_id, {
 
 ### Côte d'Ivoire (`CI`)
 
-| Produit | `id_type` | Notes |
-|---|---|---|
-| Enhanced KYC (IDApi, JT5) | `NATIONAL_ID_NO_PHOTO` | Pas de photo dans la réponse |
-| Enhanced KYC (IDApi, JT5) | `RESIDENT_ID_NO_PHOTO` | Carte de résident |
-| DocV / Enhanced DocV (JT6/11) | `NATIONAL_ID` | OCR complet |
-| DocV / Enhanced DocV | `DRIVERS_LICENSE` | |
-| DocV / Enhanced DocV | `PASSPORT` | |
-| DocV / Enhanced DocV | `HEALTH_INSURANCE_ID` | Carte CMU |
-| DocV / Enhanced DocV | `ATTESTATION_CARD` | CNI provisoire |
-| DocV / Enhanced DocV | `RESIDENT_CARD` | |
+| Produit                       | `id_type`              | Notes                        |
+| ----------------------------- | ---------------------- | ---------------------------- |
+| Enhanced KYC (IDApi, JT5)     | `NATIONAL_ID_NO_PHOTO` | Pas de photo dans la réponse |
+| Enhanced KYC (IDApi, JT5)     | `RESIDENT_ID_NO_PHOTO` | Carte de résident            |
+| DocV / Enhanced DocV (JT6/11) | `NATIONAL_ID`          | OCR complet                  |
+| DocV / Enhanced DocV          | `DRIVERS_LICENSE`      |                              |
+| DocV / Enhanced DocV          | `PASSPORT`             |                              |
+| DocV / Enhanced DocV          | `HEALTH_INSURANCE_ID`  | Carte CMU                    |
+| DocV / Enhanced DocV          | `ATTESTATION_CARD`     | CNI provisoire               |
+| DocV / Enhanced DocV          | `RESIDENT_CARD`        |                              |
 
 ⚠️ Biometric KYC (JT1) avec `entered: 'true'` en CI : l'autorité ne retourne pas de photo biométrique. Pour le face match, utiliser JT11 (Enhanced DocV) avec une image physique du document.
 
 ### Autres pays BCEAO
 
-| Pays | Enhanced KYC | DocV |
-|---|---|---|
-| Sénégal (`SN`) | `NATIONAL_ID` | `NATIONAL_ID`, `PASSPORT`, `ECOWAS_ID` |
-| Burkina Faso (`BF`) | `NATIONAL_ID` | `NATIONAL_ID`, `PASSPORT` |
-| Mali (`ML`) | — | `PASSPORT` |
-| Togo (`TG`) | — | `RESIDENT_CARD`, `PASSPORT` |
-| Bénin (`BJ`) | `NATIONAL_ID` | `NATIONAL_ID`, `RESIDENT_CARD`, `PASSPORT` |
+| Pays                | Enhanced KYC  | DocV                                       |
+| ------------------- | ------------- | ------------------------------------------ |
+| Sénégal (`SN`)      | `NATIONAL_ID` | `NATIONAL_ID`, `PASSPORT`, `ECOWAS_ID`     |
+| Burkina Faso (`BF`) | `NATIONAL_ID` | `NATIONAL_ID`, `PASSPORT`                  |
+| Mali (`ML`)         | —             | `PASSPORT`                                 |
+| Togo (`TG`)         | —             | `RESIDENT_CARD`, `PASSPORT`                |
+| Bénin (`BJ`)        | `NATIONAL_ID` | `NATIONAL_ID`, `RESIDENT_CARD`, `PASSPORT` |
 
 ---
 

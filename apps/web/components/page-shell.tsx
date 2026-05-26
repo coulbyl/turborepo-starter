@@ -175,7 +175,9 @@ export function PageShell({
               )}
             </div>
             {actions && (
-              <div className="flex shrink-0 items-center gap-1.5">{actions}</div>
+              <div className="flex shrink-0 items-center gap-1.5">
+                {actions}
+              </div>
             )}
           </div>
         </header>

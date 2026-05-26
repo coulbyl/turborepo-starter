@@ -120,7 +120,11 @@ export class CaseService {
       });
 
       // 7. Deduct wallet only after successful submission
-      await this.walletService.deductVerification(workspaceId, VerifProduct.DOC_VERIFY, newCase.id);
+      await this.walletService.deductVerification(
+        workspaceId,
+        VerifProduct.DOC_VERIFY,
+        newCase.id,
+      );
 
       logger.info(
         { caseId: newCase.id, reference, smileJobId: result.smileJobId },
@@ -141,7 +145,10 @@ export class CaseService {
         where: { id: newCase.id },
         data: { status: 'EXPIRED' },
       });
-      logger.error({ caseId: newCase.id, error }, 'Smile ID submission failed — case invalidated');
+      logger.error(
+        { caseId: newCase.id, error },
+        'Smile ID submission failed — case invalidated',
+      );
       throw error;
     }
   }

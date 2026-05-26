@@ -60,7 +60,6 @@ const SEGMENTS = [
 export default function LandingPage() {
   return (
     <div className="min-h-dvh overflow-x-hidden bg-background text-foreground">
-
       {/* ── Nav ─────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
@@ -101,9 +100,9 @@ export default function LandingPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-[1.05rem]">
             Identis permet à toute organisation — fintech, IMF, agence
-            immobilière — de vérifier une identité en quelques secondes,
-            scorer le risque automatiquement et valider les dossiers via un
-            workflow configurable. Conforme BCEAO et ARDP.
+            immobilière — de vérifier une identité en quelques secondes, scorer
+            le risque automatiquement et valider les dossiers via un workflow
+            configurable. Conforme BCEAO et ARDP.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -120,7 +119,8 @@ export default function LandingPage() {
             </Link>
           </div>
           <p className="mt-4 text-xs text-muted-foreground/50">
-            15 000 FCFA à l&apos;inscription · 10 vérifications offertes · Sans engagement
+            15 000 FCFA à l&apos;inscription · 10 vérifications offertes · Sans
+            engagement
           </p>
         </div>
       </section>
@@ -198,8 +198,8 @@ export default function LandingPage() {
                 SaaS multi-tenant
               </p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Démarrez en 5 minutes. Wallet prépayé à la vérification
-                (500–1 800 FCFA). Paiement Wave CI et Orange Money.
+                Démarrez en 5 minutes. Wallet prépayé à la vérification (500–1
+                800 FCFA). Paiement Wave CI et Orange Money.
               </p>
               <ul className="mt-5 space-y-2 text-[0.82rem] text-muted-foreground">
                 {[
@@ -294,7 +294,6 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
-
     </div>
   );
 }

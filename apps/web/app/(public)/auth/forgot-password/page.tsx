@@ -6,7 +6,6 @@ export default function ForgotPasswordPage() {
     <AuthShell
       title="Récupérer l'accès"
       subtitle="Entrez votre email ou nom d'utilisateur. Si un compte correspond, vous recevrez un lien de réinitialisation."
-
     >
       <ForgotPasswordForm />
     </AuthShell>

@@ -18,7 +18,7 @@ async function bootstrap() {
 
   const openApiConfig = new DocumentBuilder()
     .setTitle('Identis API')
-    .setDescription('API de vérification d\'identité Identis')
+    .setDescription("API de vérification d'identité Identis")
     .setVersion('1.0.0')
     .build();
 

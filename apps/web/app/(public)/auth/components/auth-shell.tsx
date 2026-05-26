@@ -35,7 +35,6 @@ export function AuthShell({
 
       <div className="relative w-full max-w-[900px]">
         <div className="md:grid md:min-h-[580px] md:grid-cols-2 md:overflow-hidden md:rounded-[1.6rem] md:border md:border-border md:bg-panel-strong md:shadow-[0_24px_72px_rgba(2,8,23,0.14)]">
-
           {/* ── Aside gauche ── */}
           <section className="hidden flex-col justify-between bg-sidebar px-8 py-10 text-sidebar-foreground md:flex lg:px-10 lg:py-12">
             <div>
@@ -53,7 +52,8 @@ export function AuthShell({
                 Vérifiez l&apos;identité de vos clients en toute confiance
               </h1>
               <p className="mt-3 max-w-xs text-[0.82rem] leading-[1.7] text-sidebar-foreground/55">
-                La plateforme KYC pensée pour les fintechs, IMF et agences immobilières d&apos;Afrique francophone.
+                La plateforme KYC pensée pour les fintechs, IMF et agences
+                immobilières d&apos;Afrique francophone.
               </p>
             </div>
 
@@ -104,7 +104,6 @@ export function AuthShell({
               <div className="mt-8">{children}</div>
             </div>
           </section>
-
         </div>
       </div>
     </main>

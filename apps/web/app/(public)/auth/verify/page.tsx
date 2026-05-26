@@ -19,7 +19,6 @@ export default async function VerifyPage() {
     <AuthShell
       title="Sécurisez votre compte"
       subtitle="Choisissez comment vérifier votre identité. C'est obligatoire pour accéder au dashboard."
-
     >
       <VerifyChoiceForm />
     </AuthShell>

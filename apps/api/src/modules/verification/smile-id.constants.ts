@@ -19,7 +19,14 @@
 
 export const JT11_SUPPORT: Record<string, string[]> = {
   // BCEAO zone
-  CI: ['NATIONAL_ID', 'DRIVERS_LICENSE', 'PASSPORT', 'HEALTH_INSURANCE_ID', 'ATTESTATION_CARD', 'RESIDENT_CARD'],
+  CI: [
+    'NATIONAL_ID',
+    'DRIVERS_LICENSE',
+    'PASSPORT',
+    'HEALTH_INSURANCE_ID',
+    'ATTESTATION_CARD',
+    'RESIDENT_CARD',
+  ],
   SN: ['NATIONAL_ID', 'PASSPORT', 'ECOWAS_ID'],
   BJ: ['NATIONAL_ID', 'RESIDENT_CARD', 'PASSPORT'],
   GH: ['NATIONAL_ID', 'PASSPORT', 'DRIVERS_LICENSE', 'VOTER_ID', 'SSNIT'],
@@ -79,7 +86,7 @@ export const IMAGE_TYPE = {
 // Smile ID result codes
 export const RESULT_CODE = {
   PASS: '0810',
-  PROVISIONAL: '0811',   // manual review needed
+  PROVISIONAL: '0811', // manual review needed
   FAIL: '0812',
   ID_VERIFIED: '1012',
   ID_NOT_FOUND: '1013',
@@ -108,20 +115,29 @@ export function resolveJobType(
   const upperType = idType.toUpperCase();
 
   if (JT11_SUPPORT[upper]?.includes(upperType)) {
-    return { jobType: JOB_TYPE.ENHANCED_DOCUMENT_VERIFICATION, authorityVerified: true };
+    return {
+      jobType: JOB_TYPE.ENHANCED_DOCUMENT_VERIFICATION,
+      authorityVerified: true,
+    };
   }
 
   if (JT6_SUPPORT[upper]?.includes(upperType)) {
-    return { jobType: JOB_TYPE.DOCUMENT_VERIFICATION, authorityVerified: false };
+    return {
+      jobType: JOB_TYPE.DOCUMENT_VERIFICATION,
+      authorityVerified: false,
+    };
   }
 
   // Universal PASSPORT fallback: ICAO MRZ readable on most passports worldwide
   if (upperType === 'PASSPORT') {
-    return { jobType: JOB_TYPE.DOCUMENT_VERIFICATION, authorityVerified: false };
+    return {
+      jobType: JOB_TYPE.DOCUMENT_VERIFICATION,
+      authorityVerified: false,
+    };
   }
 
   throw new Error(
     `Document non supporté: ${country}/${idType}. Types supportés: PASSPORT (universel), ` +
-    `ou consultez la matrice dans smile-id.constants.ts`,
+      `ou consultez la matrice dans smile-id.constants.ts`,
   );
 }

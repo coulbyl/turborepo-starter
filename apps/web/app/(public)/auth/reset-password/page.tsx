@@ -7,7 +7,6 @@ export default function ResetPasswordPage() {
     <AuthShell
       title="Nouveau mot de passe"
       subtitle="Choisissez un mot de passe solide d'au moins 8 caractères."
-
     >
       <Suspense>
         <ResetPasswordForm />

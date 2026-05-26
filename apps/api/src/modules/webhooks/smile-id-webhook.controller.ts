@@ -40,8 +40,7 @@ function resolveStatuses(payload: SmileWebhookPayload): {
   const actions = payload.result?.Actions ?? {};
   const livenessOk = actions.Liveness_Check === 'Passed';
   const faceMatchOk = actions.Selfie_To_ID_Card_Compare === 'Passed';
-  const documentValid =
-    actions.Verify_ID_Number === 'Verified' || faceMatchOk;
+  const documentValid = actions.Verify_ID_Number === 'Verified' || faceMatchOk;
 
   if (code === RESULT_CODE.PASS && livenessOk) {
     return {
@@ -102,8 +101,16 @@ export class SmileIdWebhookController {
   @HttpCode(200)
   async handleSmileIdCallback(@Body() payload: SmileWebhookPayload) {
     // 1. Verify HMAC signature — reject silently if invalid
-    if (!this.verificationProvider.verifyWebhookSignature(payload.timestamp, payload.signature)) {
-      this.logger.warn({ smileJobId: payload.smile_job_id }, 'Invalid Smile ID webhook signature');
+    if (
+      !this.verificationProvider.verifyWebhookSignature(
+        payload.timestamp,
+        payload.signature,
+      )
+    ) {
+      this.logger.warn(
+        { smileJobId: payload.smile_job_id },
+        'Invalid Smile ID webhook signature',
+      );
       throw new UnauthorizedException('Signature invalide');
     }
 
@@ -116,7 +123,10 @@ export class SmileIdWebhookController {
 
     if (!verification) {
       // Could be a retried webhook for an already-processed job — log and ack
-      this.logger.warn({ smileJobId }, 'Webhook received for unknown smileJobId — ignored');
+      this.logger.warn(
+        { smileJobId },
+        'Webhook received for unknown smileJobId — ignored',
+      );
       return { received: true };
     }
 

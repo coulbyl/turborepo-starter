@@ -21,7 +21,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Identis",
-  description: "Plateforme de vérification d'identité pour l'Afrique francophone.",
+  description:
+    "Plateforme de vérification d'identité pour l'Afrique francophone.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -39,9 +40,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body
-        className={`${inter.variable} font-sans antialiased`}
-      >
+      <body className={`${inter.variable} font-sans antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>

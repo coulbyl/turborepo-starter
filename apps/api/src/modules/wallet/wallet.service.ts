@@ -1,11 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TxType, VerifProduct } from '@identis/db';
 import { PrismaService } from '@/prisma.service';
 import { createLogger } from '@utils/logger';
-import { VERIFICATION_COST, WELCOME_CREDIT_FCFA } from '@modules/verification/smile-id.constants';
+import {
+  VERIFICATION_COST,
+  WELCOME_CREDIT_FCFA,
+} from '@modules/verification/smile-id.constants';
 
 const logger = createLogger('wallet-service');
 
@@ -70,7 +70,10 @@ export class WalletService {
         },
       });
 
-      logger.info({ workspaceId, type, amount, balanceAfter }, 'wallet credited');
+      logger.info(
+        { workspaceId, type, amount, balanceAfter },
+        'wallet credited',
+      );
       return record;
     });
   }
@@ -118,7 +121,10 @@ export class WalletService {
         },
       });
 
-      logger.info({ workspaceId, product, cost, balanceAfter, caseId }, 'wallet deducted');
+      logger.info(
+        { workspaceId, product, cost, balanceAfter, caseId },
+        'wallet deducted',
+      );
       return record;
     });
   }
