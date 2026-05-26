@@ -7,7 +7,7 @@
 ## En cours
 
 - [x] **Dashboard overview** — page `/dashboard` avec stats résumées : nb dossiers total, solde wallet, nb vérifications du mois, taux d'approbation
-- [ ] **Workspace members** — endpoints API (inviter membre, changer rôle, retirer) + UI liste membres + formulaire invitation par email
+- [x] **Workspace members** — endpoints API (inviter membre, changer rôle, retirer) + UI liste membres + formulaire invitation par email
 - [ ] **DELETE /cases/:id** — suppression douce ou dure avec cascade : Verification, StepHistory, nettoyage photos R2, formData
 - [ ] **Bull retry queue + timeout** — `Promise.race` timeout 30s sur l'appel Smile ID + queue BullMQ avec backoff 5min → 15min → 1h → 4h → 24h
 - [ ] **Rapport PDF basique** — export par dossier : identité sujet, résultat vérification (liveness, document, faceMatch), référence case, date, logo workspace

@@ -19,6 +19,7 @@ import { WorkspaceService } from './workspace.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { InviteMemberDto } from './dto/invite-member.dto';
+import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
 
 @ApiTags('workspaces')
 @UseGuards(AuthSessionGuard)
@@ -67,6 +68,20 @@ export class WorkspaceController {
     @Body() dto: InviteMemberDto,
   ) {
     return this.workspaceService.inviteMember(workspaceId, dto);
+  }
+
+  @Patch(':workspaceId/members/:memberId')
+  @UseGuards(WorkspaceScopeGuard)
+  updateMemberRole(
+    @CurrentWorkspaceId() workspaceId: string,
+    @Param('memberId') memberId: string,
+    @Body() dto: UpdateMemberRoleDto,
+  ) {
+    return this.workspaceService.updateMemberRole(
+      workspaceId,
+      memberId,
+      dto.role,
+    );
   }
 
   @Delete(':workspaceId/members/:memberId')

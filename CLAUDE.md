@@ -172,6 +172,15 @@ In class-validator DTOs, required properties must carry the `!` suffix — TypeS
 firstName!: string;
 ```
 
+**`@identis/ui` imports**
+
+Seuls les chemins explicitement listés dans `packages/ui/package.json#exports` fonctionnent avec TypeScript (`badge`, `button`, `card`, `stat-card`, etc.). Pour tout autre composant (`dialog`, `input`, `select`, `dropdown-menu`, `label`…), utiliser le chemin wildcard :
+
+```ts
+// ✗  import { Dialog } from "@identis/ui/dialog";
+import { Dialog } from "@identis/ui/components/dialog";
+```
+
 **Unused imports**
 
 Namespace imports (`Prisma`, `UserRole`) imported for their type only must use `import type { ... }`, or be removed entirely if nothing from them is referenced. Value imports that shadow the same name from another import also trigger this rule.

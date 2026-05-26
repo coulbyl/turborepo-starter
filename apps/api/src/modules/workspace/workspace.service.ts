@@ -144,6 +144,31 @@ export class WorkspaceService {
     });
   }
 
+  async updateMemberRole(
+    workspaceId: string,
+    memberId: string,
+    role: MemberRole,
+  ) {
+    const member = await this.prisma.client.member.findUnique({
+      where: { id: memberId },
+      select: { workspaceId: true },
+    });
+
+    if (!member || member.workspaceId !== workspaceId) {
+      throw new NotFoundException('Membre introuvable');
+    }
+
+    return this.prisma.client.member.update({
+      where: { id: memberId },
+      data: { role },
+      select: {
+        id: true,
+        role: true,
+        user: { select: { id: true, email: true, fullName: true } },
+      },
+    });
+  }
+
   async removeMember(workspaceId: string, memberId: string, actorId: string) {
     const member = await this.prisma.client.member.findUnique({
       where: { id: memberId },
