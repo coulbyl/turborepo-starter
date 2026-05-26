@@ -5,9 +5,7 @@ export default function LoginPage() {
   return (
     <AuthShell
       title="Connexion"
-      subtitle="Connectez-vous pour retrouver votre espace et vos coupons."
-      asideTitle="Retrouvez vos matchs, vos sélections et vos coupons au même endroit."
-      asideText="Un point d'entrée sobre pour revenir à l'analyse, consulter vos coupons et poursuivre votre journée sans détour."
+      subtitle="Connectez-vous pour accéder à votre espace Identis."
     >
       <LoginForm />
     </AuthShell>

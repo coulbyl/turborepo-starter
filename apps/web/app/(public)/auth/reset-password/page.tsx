@@ -7,8 +7,7 @@ export default function ResetPasswordPage() {
     <AuthShell
       title="Nouveau mot de passe"
       subtitle="Choisissez un mot de passe solide d'au moins 8 caractères."
-      asideTitle="Réinitialisez votre accès."
-      asideText="Ce lien est valable 15 minutes. Après avoir défini votre nouveau mot de passe, toutes vos sessions actives seront déconnectées."
+
     >
       <Suspense>
         <ResetPasswordForm />

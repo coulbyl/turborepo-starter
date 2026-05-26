@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Starter App",
-  description: "A production-ready monorepo starter.",
+  title: "Identis",
+  description:
+    "Plateforme de vérification d'identité et de validation de dossiers pour l'Afrique francophone.",
 };
 
 export default function PublicLayout({
