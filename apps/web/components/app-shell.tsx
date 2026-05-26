@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Badge } from "@identis/ui";
 import {
+  BarChart2,
   Bell,
+  Code2,
+  FileText,
+  FolderOpen,
+  GitBranch,
   LayoutDashboard,
   Megaphone,
   Settings,
+  Sliders,
   Users,
 } from "lucide-react";
-import { PageShell, type NavGroup } from "./page-shell";
+import { PageShell, type NavGroup, type NavItem } from "./page-shell";
 import { AccountButton } from "./account-button";
 import { NotificationBell } from "./notification-bell";
 import { UserAvatar } from "./user-avatar";
@@ -20,78 +24,163 @@ import { useCurrentUser } from "@/domains/auth/context/current-user-context";
 import { useUnreadCount } from "@/domains/notification/use-cases/use-notifications";
 
 const ROLE_LABEL: Record<string, string> = {
-  ADMIN: "Admin",
-  MEMBER: "Member",
+  ADMIN: "Super Admin",
+  MEMBER: "Membre",
 };
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const currentUser = useCurrentUser();
   const pathname = usePathname();
-  const tNav = useTranslations("nav");
   const isAdmin = currentUser.role === "ADMIN";
   const { data: unreadData } = useUnreadCount();
   const unreadCount = unreadData?.count ?? 0;
 
   const navGroups = useMemo((): NavGroup[] => {
-    const adminItems = isAdmin
-      ? [
+    const groups: NavGroup[] = [
+      {
+        items: [
           {
-            label: tNav("users"),
+            label: "Tableau de bord",
+            mobileLabel: "Dashboard",
+            href: "/dashboard",
+            active: pathname === "/dashboard",
+            icon: LayoutDashboard,
+          },
+          {
+            label: "Dossiers",
+            href: "/dashboard/cases",
+            active: pathname.startsWith("/dashboard/cases"),
+            icon: FolderOpen,
+          },
+          {
+            label: "Workflow",
+            href: "/dashboard/workflow",
+            active: pathname.startsWith("/dashboard/workflow"),
+            icon: GitBranch,
+          },
+          {
+            label: "Analytics",
+            href: "/dashboard/analytics",
+            active: pathname.startsWith("/dashboard/analytics"),
+            icon: BarChart2,
+          },
+        ],
+      },
+      {
+        label: "Configuration",
+        items: [
+          {
+            label: "Rule Engine",
+            href: "/dashboard/rules",
+            active: pathname.startsWith("/dashboard/rules"),
+            icon: Sliders,
+          },
+          {
+            label: "Formulaires",
+            href: "/dashboard/forms",
+            active: pathname.startsWith("/dashboard/forms"),
+            icon: FileText,
+          },
+          {
+            label: "Équipe",
+            href: "/dashboard/team",
+            active: pathname.startsWith("/dashboard/team"),
+            icon: Users,
+          },
+        ],
+      },
+      {
+        label: "Développeur",
+        items: [
+          {
+            label: "API & Dev",
+            href: "/dashboard/developer",
+            active: pathname.startsWith("/dashboard/developer"),
+            icon: Code2,
+          },
+        ],
+      },
+    ];
+
+    if (isAdmin) {
+      groups.push({
+        label: "Administration",
+        items: [
+          {
+            label: "Utilisateurs",
             href: "/dashboard/users",
             active: pathname.startsWith("/dashboard/users"),
             icon: Users,
           },
           {
-            label: tNav("announcements"),
+            label: "Annonces",
             href: "/dashboard/announcements",
             active: pathname.startsWith("/dashboard/announcements"),
             icon: Megaphone,
           },
-        ]
-      : [];
-
-    return [
-      {
-        items: [
-          {
-            label: tNav("dashboard"),
-            mobileLabel: tNav("dashboard"),
-            href: "/dashboard",
-            active: pathname === "/dashboard",
-            icon: LayoutDashboard,
-          },
         ],
-      },
-      ...(adminItems.length > 0
-        ? [{ label: tNav("navGroupAdmin"), items: adminItems }]
-        : []),
-    ];
-  }, [isAdmin, pathname, tNav]);
+      });
+    }
+
+    return groups;
+  }, [isAdmin, pathname]);
 
   const pinnedNavItems = useMemo(
-    () => [
+    (): NavItem[] => [
       {
-        label: tNav("notifications"),
+        label: "Notifications",
+        mobileLabel: "Notifs",
         href: "/dashboard/notifications",
         active: pathname.startsWith("/dashboard/notifications"),
         icon: Bell,
         badge: unreadCount,
       },
     ],
-    [pathname, tNav, unreadCount],
+    [pathname, unreadCount],
   );
 
-  const pageTitle = useMemo(
-    () => navGroups.flatMap((g) => g.items).find((item) => item.active)?.label,
-    [navGroups],
+  const mobileNavItems = useMemo(
+    (): NavItem[] => [
+      {
+        label: "Dashboard",
+        mobileLabel: "Home",
+        href: "/dashboard",
+        active: pathname === "/dashboard",
+        icon: LayoutDashboard,
+      },
+      {
+        label: "Dossiers",
+        href: "/dashboard/cases",
+        active: pathname.startsWith("/dashboard/cases"),
+        icon: FolderOpen,
+      },
+      {
+        label: "Workflow",
+        href: "/dashboard/workflow",
+        active: pathname.startsWith("/dashboard/workflow"),
+        icon: GitBranch,
+      },
+      {
+        label: "Notifs",
+        href: "/dashboard/notifications",
+        active: pathname.startsWith("/dashboard/notifications"),
+        icon: Bell,
+        badge: unreadCount,
+      },
+      {
+        label: "Paramètres",
+        href: "/dashboard/params/account",
+        active: pathname.startsWith("/dashboard/params"),
+        icon: Settings,
+      },
+    ],
+    [pathname, unreadCount],
   );
 
-  const allNavItems = useMemo(
-    () => navGroups.flatMap((g) => g.items),
-    [navGroups],
-  );
-
-  const mobileNavItems = allNavItems.slice(0, 4);
+  const pageTitle = useMemo(() => {
+    const all = navGroups.flatMap((g) => g.items);
+    return all.find((item) => item.active)?.label;
+  }, [navGroups]);
 
   return (
     <PageShell
@@ -100,44 +189,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       mobileNavItems={mobileNavItems}
       pageTitle={pageTitle}
       actions={
-        <div className="relative flex items-center gap-2">
+        <>
           <NotificationBell />
           <AccountButton currentUser={currentUser} />
-        </div>
+        </>
       }
       sidebarFooter={
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 rounded-xl border border-sidebar-border/60 bg-sidebar-accent/50 px-3 py-2.5">
-            <UserAvatar
-              avatarUrl={currentUser.avatarUrl}
-              username={currentUser.fullName}
-              size={32}
-              className="ring-1 ring-sidebar-border"
-            />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <p className="truncate text-sm font-semibold text-sidebar-foreground">
-                  {currentUser.fullName}
-                </p>
-                <Badge
-                  variant="neutral"
-                  className="shrink-0 text-[0.62rem] text-sidebar-foreground/80"
-                >
-                  {ROLE_LABEL[currentUser.role] ?? currentUser.role}
-                </Badge>
-              </div>
-              <p className="truncate text-xs text-sidebar-foreground/60">
-                @{currentUser.username}
-              </p>
-            </div>
-            <Link
-              href="/dashboard/params/account"
-              title="Account settings"
-              className="shrink-0 rounded-lg p-1.5 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
-            >
-              <Settings size={15} />
-            </Link>
+        <div className="flex items-center gap-2.5 rounded-lg border border-sidebar-border/50 bg-sidebar-accent/40 px-2.5 py-2">
+          <UserAvatar
+            avatarUrl={currentUser.avatarUrl}
+            username={currentUser.fullName}
+            size={30}
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[0.75rem] font-semibold leading-tight text-sidebar-foreground">
+              {currentUser.fullName}
+            </p>
+            <p className="truncate text-[0.65rem] leading-tight text-sidebar-foreground/50">
+              {ROLE_LABEL[currentUser.role] ?? currentUser.role}
+            </p>
           </div>
+          <Link
+            href="/dashboard/params/account"
+            title="Paramètres"
+            className="shrink-0 rounded-md p-1 text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+          >
+            <Settings size={13} />
+          </Link>
         </div>
       }
     >

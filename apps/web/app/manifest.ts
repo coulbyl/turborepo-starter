@@ -2,14 +2,15 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Starter App",
-    short_name: "Starter",
-    description: "Turborepo starter boilerplate.",
-    start_url: "/",
+    name: "Identis",
+    short_name: "Identis",
+    description:
+      "Plateforme de vérification d'identité pour l'Afrique francophone.",
+    start_url: "/dashboard",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#e5ebf2",
-    theme_color: "#142033",
+    background_color: "#f3f4f6",
+    theme_color: "#1b3a6b",
     icons: [
       {
         src: "/icons/icon-192.png",
