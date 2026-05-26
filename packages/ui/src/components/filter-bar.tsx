@@ -4,24 +4,24 @@ import * as React from "react";
 import { XIcon, SlidersHorizontalIcon } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 
-import { cn } from "@starter/ui/lib/utils";
-import { Button } from "@starter/ui/components/button";
-import { Badge } from "@starter/ui/components/badge";
+import { cn } from "@identis/ui/lib/utils";
+import { Button } from "@identis/ui/components/button";
+import { Badge } from "@identis/ui/components/badge";
 import {
   Drawer,
   DrawerContent,
   DrawerTitle,
-} from "@starter/ui/components/drawer";
+} from "@identis/ui/components/drawer";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@starter/ui/components/select";
-import { DatePicker, DateRangePicker } from "@starter/ui/components/date-picker";
-import { Combobox, type ComboboxOption } from "@starter/ui/components/combobox";
-import { Separator } from "@starter/ui/components/separator";
+} from "@identis/ui/components/select";
+import { DatePicker, DateRangePicker } from "@identis/ui/components/date-picker";
+import { Combobox, type ComboboxOption } from "@identis/ui/components/combobox";
+import { Separator } from "@identis/ui/components/separator";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 

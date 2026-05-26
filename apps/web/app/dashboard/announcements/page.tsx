@@ -1,4 +1,4 @@
-import { Page, PageContent } from "@starter/ui";
+import { Page, PageContent } from "@identis/ui";
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/domains/auth/use-cases/get-current-session";
 import { AnnouncementsAdminPageClient } from "./components/announcements-admin-page-client";

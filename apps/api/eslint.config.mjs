@@ -1,4 +1,4 @@
-import { nestJsConfig } from '@starter/eslint-config/nest-js';
+import { nestJsConfig } from '@identis/eslint-config/nest-js';
 
 export default [
   ...nestJsConfig({

@@ -6,24 +6,24 @@ import { PanelLeftIcon } from "lucide-react";
 import { Slot } from "radix-ui";
 
 import { useIsMobile } from "../hooks/use-mobile";
-import { cn } from "@starter/ui/lib/utils";
-import { Button } from "@starter/ui/components/button";
-import { Input } from "@starter/ui/components/input";
-import { Separator } from "@starter/ui/components/separator";
+import { cn } from "@identis/ui/lib/utils";
+import { Button } from "@identis/ui/components/button";
+import { Input } from "@identis/ui/components/input";
+import { Separator } from "@identis/ui/components/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@starter/ui/components/sheet";
-import { Skeleton } from "@starter/ui/components/skeleton";
+} from "@identis/ui/components/sheet";
+import { Skeleton } from "@identis/ui/components/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@starter/ui/components/tooltip";
+} from "@identis/ui/components/tooltip";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

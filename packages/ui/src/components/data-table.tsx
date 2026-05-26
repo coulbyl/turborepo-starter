@@ -22,7 +22,7 @@ import {
   ChevronsUpDownIcon,
 } from "lucide-react";
 
-import { cn } from "@starter/ui/lib/utils";
+import { cn } from "@identis/ui/lib/utils";
 import {
   Pagination,
   PaginationContent,
@@ -31,15 +31,15 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@starter/ui/components/pagination";
+} from "@identis/ui/components/pagination";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@starter/ui/components/select";
-import { Skeleton } from "@starter/ui/components/skeleton";
+} from "@identis/ui/components/select";
+import { Skeleton } from "@identis/ui/components/skeleton";
 import {
   Table,
   TableBody,
@@ -47,7 +47,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@starter/ui/components/table";
+} from "@identis/ui/components/table";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 

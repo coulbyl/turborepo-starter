@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogOut } from "lucide-react";
-import { Button } from "@starter/ui";
+import { Button } from "@identis/ui";
 import { logout } from "@/domains/auth/use-cases/logout";
 
 export function LogoutButton({

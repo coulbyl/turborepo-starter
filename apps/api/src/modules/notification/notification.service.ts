@@ -4,7 +4,7 @@ import {
   NotificationType,
   type Prisma,
   UserRole,
-} from '@starter/db';
+} from '@identis/db';
 import { PrismaService } from '@/prisma.service';
 
 export type NotificationView = Omit<Notification, 'read' | 'readAt'> & {

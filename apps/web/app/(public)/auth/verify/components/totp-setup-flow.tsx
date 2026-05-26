@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "@starter/ui";
+} from "@identis/ui";
 import { setupTotp, confirmTotp } from "@/domains/auth/use-cases/totp";
 
 const schema = z.object({

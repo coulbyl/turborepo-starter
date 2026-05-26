@@ -7,7 +7,7 @@ import {
   renderPasswordReset,
   type EmailVerificationProps,
   type PasswordResetProps,
-} from '@starter/transactional';
+} from '@identis/transactional';
 
 @Injectable()
 export class MailService implements OnModuleInit {

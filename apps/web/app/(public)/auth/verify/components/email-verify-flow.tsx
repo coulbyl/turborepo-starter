@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "@starter/ui";
+} from "@identis/ui";
 import {
   sendVerificationEmail,
   verifyEmail,

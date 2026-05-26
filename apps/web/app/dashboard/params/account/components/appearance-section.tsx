@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
-import { RadioGroup, RadioGroupItem } from "@starter/ui";
+import { RadioGroup, RadioGroupItem } from "@identis/ui";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { clientApiRequest } from "@/lib/api/client-api";
 import { SettingsSectionCard } from "./settings-section-card";

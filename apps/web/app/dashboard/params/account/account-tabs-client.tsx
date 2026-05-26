@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@starter/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@identis/ui";
 import {
   Bell,
   Globe,

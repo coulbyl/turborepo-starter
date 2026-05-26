@@ -3,8 +3,8 @@
 import * as React from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-import { cn } from "@starter/ui/lib/utils";
-import { Input } from "@starter/ui/components/input";
+import { cn } from "@identis/ui/lib/utils";
+import { Input } from "@identis/ui/components/input";
 
 const PasswordInput = React.forwardRef<
   HTMLInputElement,

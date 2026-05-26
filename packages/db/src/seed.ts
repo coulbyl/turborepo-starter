@@ -25,7 +25,7 @@ function hashPassword(password: string): string {
 
 async function seedAdminUser() {
   const email = normalizeIdentifier(
-    process.env.SEED_ADMIN_EMAIL ?? "admin@starter.local",
+    process.env.SEED_ADMIN_EMAIL ?? "admin@identis.local",
   );
   const username = normalizeIdentifier(
     process.env.SEED_ADMIN_USERNAME ?? "admin",

@@ -1,4 +1,4 @@
-import { prisma } from '@starter/db';
+import { prisma } from '@identis/db';
 
 type TableRow = { tablename: string };
 

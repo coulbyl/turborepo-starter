@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { type CSSProperties, type ReactNode } from "react";
-import { cn } from "@starter/ui/cn";
+import { cn } from "@identis/ui/cn";
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +18,7 @@ import {
   SidebarProvider,
   SidebarSeparator,
   SidebarTrigger,
-} from "@starter/ui";
+} from "@identis/ui";
 import type { LucideIcon } from "lucide-react";
 
 export type NavItem = {

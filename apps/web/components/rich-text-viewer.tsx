@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useMemo } from "react";
-import { cn } from "@starter/ui";
+import { cn } from "@identis/ui";
 import { CopyBlockExtension } from "./copy-block-node";
 import { LinkPreviewCard } from "./link-preview-card";
 

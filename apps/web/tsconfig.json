@@ -1,5 +1,5 @@
 {
-  "extends": "@starter/typescript-config/nextjs.json",
+  "extends": "@identis/typescript-config/nextjs.json",
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
@@ -7,7 +7,7 @@
       "@/*": [
         "./*"
       ],
-      "@starter/ui/*": [
+      "@identis/ui/*": [
         "../../packages/ui/src/*"
       ]
     },

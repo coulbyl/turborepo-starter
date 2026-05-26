@@ -1,5 +1,5 @@
 {
-  "name": "@starter/transactional",
+  "name": "@identis/transactional",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -23,8 +23,8 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@starter/eslint-config": "workspace:*",
-    "@starter/typescript-config": "workspace:*",
+    "@identis/eslint-config": "workspace:*",
+    "@identis/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

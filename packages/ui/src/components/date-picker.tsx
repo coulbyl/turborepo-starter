@@ -6,14 +6,14 @@ import { fr } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 
-import { cn } from "@starter/ui/lib/utils";
-import { Button } from "@starter/ui/components/button";
-import { Calendar } from "@starter/ui/components/calendar";
+import { cn } from "@identis/ui/lib/utils";
+import { Button } from "@identis/ui/components/button";
+import { Calendar } from "@identis/ui/components/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@starter/ui/components/popover";
+} from "@identis/ui/components/popover";
 
 // ── DatePicker (single) ────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 {
-  "name": "@starter/ui",
+  "name": "@identis/ui",
   "version": "0.0.0",
   "private": true,
   "exports": {
@@ -28,8 +28,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@starter/eslint-config": "workspace:*",
-    "@starter/typescript-config": "workspace:*",
+    "@identis/eslint-config": "workspace:*",
+    "@identis/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

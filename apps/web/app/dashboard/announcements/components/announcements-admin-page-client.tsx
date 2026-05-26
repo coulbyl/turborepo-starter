@@ -22,7 +22,7 @@ import {
   FormMessage,
   Input,
   Skeleton,
-} from "@starter/ui";
+} from "@identis/ui";
 import { Megaphone, Pencil, Plus, Send, Trash2, X } from "lucide-react";
 import { useAdminAnnouncements } from "@/domains/announcements/use-cases/get-admin-announcements";
 import { useCreateAdminAnnouncement } from "@/domains/announcements/use-cases/create-admin-announcement";

@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { Page, PageContent } from "@starter/ui";
+import { Page, PageContent } from "@identis/ui";
 import { NotificationsPageClient } from "./components/notifications-page-client";
 
 export default function NotificationsPage() {

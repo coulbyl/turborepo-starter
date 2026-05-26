@@ -20,12 +20,12 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
-    "@starter/db#build": {
+    "@identis/db#build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["src/generated/prisma/**", "dist/**"]
     },
-    "@starter/transactional#build": {
+    "@identis/transactional#build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": ["dist/**"]

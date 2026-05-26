@@ -1,4 +1,4 @@
-import { Page, PageContent } from "@starter/ui";
+import { Page, PageContent } from "@identis/ui";
 import { Settings } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getCurrentSession } from "@/domains/auth/use-cases/get-current-session";

@@ -1,4 +1,4 @@
-import { Page, PageContent } from "@starter/ui";
+import { Page, PageContent } from "@identis/ui";
 import { SettingsSectionCard } from "../components/settings-section-card";
 import { SecuritySetupForm } from "./components/security-setup-form";
 

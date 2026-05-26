@@ -3,8 +3,8 @@
 import * as React from "react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
-import { cn } from "@starter/ui/lib/utils";
-import { Button } from "@starter/ui/components/button";
+import { cn } from "@identis/ui/lib/utils";
+import { Button } from "@identis/ui/components/button";
 import {
   Command,
   CommandEmpty,
@@ -12,12 +12,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@starter/ui/components/command";
+} from "@identis/ui/components/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@starter/ui/components/popover";
+} from "@identis/ui/components/popover";
 
 type ComboboxOption = { value: string; label: string };
 

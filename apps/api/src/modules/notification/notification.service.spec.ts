@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { NotificationType } from '@starter/db';
+import { NotificationType } from '@identis/db';
 import { NotificationService } from './notification.service';
 import type { PrismaService } from '@/prisma.service';
 

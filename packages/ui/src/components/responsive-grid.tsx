@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@starter/ui/lib/utils";
+import { cn } from "@identis/ui/lib/utils";
 
 type ColsValue = 1 | 2 | 3 | 4 | 5 | 6;
 

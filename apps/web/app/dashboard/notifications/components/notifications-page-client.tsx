@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BellOff, CheckCheck, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button, Skeleton } from "@starter/ui";
+import { Button, Skeleton } from "@identis/ui";
 import {
   useNotifications,
   useMarkRead,

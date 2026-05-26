@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { SectionHeader } from "@starter/ui";
+import { SectionHeader } from "@identis/ui";
 
 export function TableCard({
   title,

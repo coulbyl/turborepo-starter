@@ -1,5 +1,5 @@
 import type { Request } from 'express';
-import type { UserRole } from '@starter/db';
+import type { UserRole } from '@identis/db';
 
 export type AuthSessionUser = {
   id: string;

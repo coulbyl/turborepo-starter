@@ -13,8 +13,8 @@ import {
 } from "react-day-picker";
 import { fr } from "date-fns/locale";
 
-import { cn } from "@starter/ui/lib/utils";
-import { Button, buttonVariants } from "@starter/ui/components/button";
+import { cn } from "@identis/ui/lib/utils";
+import { Button, buttonVariants } from "@identis/ui/components/button";
 
 function Calendar({
   className,

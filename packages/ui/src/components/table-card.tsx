@@ -1,6 +1,6 @@
 import * as React from "react";
-import { SectionHeader } from "@starter/ui/components/section-header";
-import { cn } from "@starter/ui/lib/utils";
+import { SectionHeader } from "@identis/ui/components/section-header";
+import { cn } from "@identis/ui/lib/utils";
 
 type TableCardProps = {
   title: string;

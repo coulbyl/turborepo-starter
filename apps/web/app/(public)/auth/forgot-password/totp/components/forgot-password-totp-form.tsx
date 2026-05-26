@@ -16,7 +16,7 @@ import {
   FormMessage,
   Input,
   PasswordInput,
-} from "@starter/ui";
+} from "@identis/ui";
 import { resetPasswordWithTotp } from "@/domains/auth/use-cases/password-reset";
 
 const schema = z

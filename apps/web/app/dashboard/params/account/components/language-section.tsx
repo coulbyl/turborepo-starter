@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { RadioGroup, RadioGroupItem } from "@starter/ui";
+import { RadioGroup, RadioGroupItem } from "@identis/ui";
 import { useRouter } from "next/navigation";
 import { useOptimistic, useTransition } from "react";
 import { clientApiRequest } from "@/lib/api/client-api";

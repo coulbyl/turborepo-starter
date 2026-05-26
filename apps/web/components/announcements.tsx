@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   cn,
-} from "@starter/ui";
+} from "@identis/ui";
 import { useTranslations } from "next-intl";
 import { RichTextViewer } from "./rich-text-viewer";
 

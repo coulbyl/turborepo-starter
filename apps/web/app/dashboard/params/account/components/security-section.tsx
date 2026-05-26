@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle, Mail, ShieldCheck, ShieldOff } from "lucide-react";
-import { Button } from "@starter/ui";
+import { Button } from "@identis/ui";
 import { SettingsSectionCard } from "./settings-section-card";
 import { useCurrentUser } from "@/domains/auth/context/current-user-context";
 import { sendVerificationEmail } from "@/domains/auth/use-cases/verify-email";

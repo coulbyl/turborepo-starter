@@ -11,9 +11,9 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@starter/ui/components",
-    "utils": "@starter/ui/lib/utils",
-    "ui": "@starter/ui/components",
-    "lib": "@starter/ui/lib"
+    "components": "@identis/ui/components",
+    "utils": "@identis/ui/lib/utils",
+    "ui": "@identis/ui/components",
+    "lib": "@identis/ui/lib"
   }
 }

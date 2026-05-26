@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Badge } from "@starter/ui";
+import { Badge } from "@identis/ui";
 import {
   Bell,
   LayoutDashboard,

@@ -1,11 +1,11 @@
 {
-  "extends": "@starter/typescript-config/react-library.json",
+  "extends": "@identis/typescript-config/react-library.json",
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@starter/ui/*": ["./src/*"]
+      "@identis/ui/*": ["./src/*"]
     },
     "strictNullChecks": true
   },

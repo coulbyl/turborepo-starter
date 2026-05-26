@@ -6,7 +6,7 @@ function runMigrations(): void {
   const rootDir = resolve(process.cwd(), '../..');
   execFileSync(
     'pnpm',
-    ['--filter', '@starter/db', 'exec', 'prisma', 'migrate', 'deploy'],
+    ['--filter', '@identis/db', 'exec', 'prisma', 'migrate', 'deploy'],
     {
       cwd: rootDir,
       stdio: 'inherit',

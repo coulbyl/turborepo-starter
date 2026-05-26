@@ -16,7 +16,7 @@ import {
   FormMessage,
   Input,
   PasswordInput,
-} from "@starter/ui";
+} from "@identis/ui";
 import { login } from "@/domains/auth/use-cases/login";
 
 const loginSchema = z.object({

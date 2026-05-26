@@ -28,7 +28,7 @@ import {
   SelectValue,
   cn,
   type ColumnDef,
-} from "@starter/ui";
+} from "@identis/ui";
 import {
   Check,
   Copy,

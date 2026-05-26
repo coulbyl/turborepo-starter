@@ -1,5 +1,5 @@
 {
-  "extends": "@starter/typescript-config/base.json",
+  "extends": "@identis/typescript-config/base.json",
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
     "module": "commonjs",

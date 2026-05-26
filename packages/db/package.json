@@ -1,5 +1,5 @@
 {
-  "name": "@starter/db",
+  "name": "@identis/db",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -31,8 +31,8 @@
     "prisma": "catalog:"
   },
   "devDependencies": {
-    "@starter/eslint-config": "workspace:*",
-    "@starter/typescript-config": "workspace:*",
+    "@identis/eslint-config": "workspace:*",
+    "@identis/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "dotenv": "catalog:",
     "tsx": "catalog:",

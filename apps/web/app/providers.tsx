@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { ThemeProvider } from "@starter/ui";
+import { ThemeProvider } from "@identis/ui";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(

@@ -13,7 +13,7 @@ import {
   ListOrdered,
   X,
 } from "lucide-react";
-import { Button, Input, cn } from "@starter/ui";
+import { Button, Input, cn } from "@identis/ui";
 import { CopyBlockExtension } from "./copy-block-node";
 
 type ToolbarInput =

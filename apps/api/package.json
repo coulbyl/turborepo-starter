@@ -20,8 +20,8 @@
     "test:e2e": "vitest run --config vitest.config.e2e.ts"
   },
   "dependencies": {
-    "@starter/db": "workspace:*",
-    "@starter/transactional": "workspace:*",
+    "@identis/db": "workspace:*",
+    "@identis/transactional": "workspace:*",
     "@nestjs/bullmq": "catalog:",
     "@nestjs/common": "catalog:",
     "@nestjs/config": "catalog:",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
-    "@starter/eslint-config": "workspace:*",
+    "@identis/eslint-config": "workspace:*",
     "@nestjs/cli": "catalog:",
     "@nestjs/schematics": "catalog:",
     "@nestjs/testing": "catalog:",

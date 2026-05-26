@@ -17,7 +17,7 @@ import {
   Input,
   PasswordInput,
   Textarea,
-} from "@starter/ui";
+} from "@identis/ui";
 import { register } from "@/domains/auth/use-cases/register";
 
 const registerSchema = z.object({
