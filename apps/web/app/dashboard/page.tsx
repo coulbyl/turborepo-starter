@@ -3,27 +3,17 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
-  FolderOpen,
   TrendingUp,
   Wallet,
 } from "lucide-react";
 import { StatCard } from "@identis/ui/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@identis/ui/card";
-import { Badge } from "@identis/ui/badge";
 import { Button } from "@identis/ui/components/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@identis/ui/components/table";
 import { getCurrentSession } from "@/domains/auth/use-cases/get-current-session";
 import { getWorkspaces } from "@/domains/workspace/use-cases/get-workspaces";
 import { getWorkspaceStats } from "@/domains/workspace/use-cases/get-workspace-stats";
-import { STATUS_LABEL, STATUS_COLOR } from "@/domains/case/types/case";
 import { PageHeader } from "@/components/page-header";
+import { RecentCasesTable } from "./components/recent-cases-table";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
@@ -127,69 +117,7 @@ export default async function DashboardPage() {
           </Button>
         </CardHeader>
         <CardContent className="p-0">
-          {stats.recentCases.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <FolderOpen className="h-10 w-10 text-muted-foreground/40" />
-              <p className="text-sm text-muted-foreground">
-                Aucun dossier pour l&apos;instant
-              </p>
-              <Button asChild size="sm">
-                <Link href="/dashboard/cases/new">
-                  Créer le premier dossier
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Référence</TableHead>
-                  <TableHead>Sujet</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="hidden md:table-cell">Date</TableHead>
-                  <TableHead className="w-16" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stats.recentCases.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell>
-                      <Link
-                        href={`/dashboard/cases/${c.id}`}
-                        className="font-mono text-xs font-semibold text-primary hover:underline"
-                      >
-                        {c.reference}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {c.formData
-                        ? `${c.formData.firstName} ${c.formData.lastName}`
-                        : "—"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={`text-xs ${STATUS_COLOR[c.status]}`}
-                      >
-                        {STATUS_LABEL[c.status]}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden text-muted-foreground md:table-cell">
-                      {new Date(c.createdAt).toLocaleDateString("fr-FR", {
-                        day: "2-digit",
-                        month: "short",
-                      })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/dashboard/cases/${c.id}`}>Voir</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+          <RecentCasesTable cases={stats.recentCases} />
         </CardContent>
       </Card>
     </div>
