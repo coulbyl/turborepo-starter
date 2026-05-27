@@ -191,6 +191,22 @@ Import: `import { InputField, SelectField, ... } from "@/components/form-fields"
 
 These components handle RHF binding, Zod error display, and consistent styling out of the box. Only build a new form-field component if none of the above fit the use case.
 
+## Confirmation Dialogs — Always Use `ConfirmDialog`
+
+Never write an inline confirmation `Dialog`. Use `apps/web/components/confirm-dialog.tsx`:
+
+```tsx
+<ConfirmDialog
+  open={open}
+  onOpenChange={setOpen}
+  title="Delete …"
+  description="This action is irreversible."
+  confirmLabel="Delete"
+  loading={mutation.isPending}
+  onConfirm={handleConfirm}
+/>
+```
+
 ## Table Pagination — Always Use `TablePagination`
 
 Never write inline pagination logic (totalPages calc, prev/next buttons, item count). Use `apps/web/components/table-pagination.tsx`:

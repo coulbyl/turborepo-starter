@@ -193,6 +193,22 @@ Dans `apps/web`, tout champ de formulaire React Hook Form doit utiliser les comp
 
 Import : `import { InputField, SelectField, ... } from "@/components/form-fields";`
 
+**Confirmation — toujours utiliser `ConfirmDialog`**
+
+Ne jamais écrire une `Dialog` de confirmation inline. Utiliser `apps/web/components/confirm-dialog.tsx` :
+
+```tsx
+<ConfirmDialog
+  open={open}
+  onOpenChange={setOpen}
+  title="Supprimer …"
+  description="Cette action est irréversible."
+  confirmLabel="Supprimer"
+  loading={mutation.isPending}
+  onConfirm={handleConfirm}
+/>
+```
+
 **Pagination de tableau — toujours utiliser `TablePagination`**
 
 Ne jamais écrire de logique de pagination inline (calcul de `totalPages`, boutons précédent/suivant, compteur). Utiliser `apps/web/components/table-pagination.tsx` qui gère tout et retourne `null` automatiquement si une seule page :

@@ -14,14 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@identis/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@identis/ui/components/dialog";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useCase } from "@/domains/case/use-cases/get-case";
 import { useDeleteCase } from "@/domains/case/use-cases/delete-case";
 import { useCurrentWorkspace } from "@/domains/workspace/context/current-workspace-context";
@@ -196,30 +189,22 @@ export function CaseDetailClient({ caseId }: { caseId: string }) {
       )}
 
       {/* Delete confirmation */}
-      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Supprimer le dossier</DialogTitle>
-            <DialogDescription>
-              Le dossier <span className="font-mono font-semibold">{c.reference}</span> sera
-              définitivement supprimé avec toutes ses données de vérification. Cette action est
-              irréversible.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
-              Annuler
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleteCase.isPending}
-            >
-              {deleteCase.isPending ? "Suppression…" : "Supprimer"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title="Supprimer le dossier"
+        description={
+          <>
+            Le dossier{" "}
+            <span className="font-mono font-semibold">{c.reference}</span>{" "}
+            sera définitivement supprimé avec toutes ses données de
+            vérification. Cette action est irréversible.
+          </>
+        }
+        confirmLabel="Supprimer"
+        loading={deleteCase.isPending}
+        onConfirm={handleDelete}
+      />
 
       {/* Timeline */}
       {c.stepHistory.length > 0 && (
