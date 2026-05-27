@@ -223,23 +223,23 @@ _De zéro au premier client Dedicated — Plan sur 18 mois_
 
 ## Milestones clés
 
-| Date             | Milestone                                                            |
-| ---------------- | -------------------------------------------------------------------- |
+| Date             | Milestone                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
 | **26 mai 2026**  | Sprint 1 démarré — WalletModule, CaseModule, WebhooksModule, SmileIdProvider, dashboard cases ✅ |
-| **Juin 2026**    | Fin Sprint 1 cible — workspace members, PDF, sandbox Smile ID        |
-| **Juillet 2026** | Première vérification réelle en production (CNI ivoirienne + selfie) |
-| **Août 2026**    | Premier client payant — inscription 15 000 FCFA encaissée            |
-| **Sept 2026**    | 3 clients actifs — MVP validé                                        |
-| **Oct 2026**     | Début prospection Dedicated                                          |
-| **Nov 2026**     | 15 clients Cloud actifs                                              |
-| **Déc 2026**     | Premier contrat Dedicated signé                                      |
-| **Jan 2027**     | Premier déploiement Dedicated en production chez client              |
-| **Fév 2027**     | Début Phase Scale — React Native en développement                    |
-| **Avril 2027**   | App React Native publiée sur Google Play Store                       |
-| **Juin 2027**    | Rentabilité opérationnelle atteinte                                  |
-| **Août 2027**    | Ouverture Sénégal — premier client Dakar                             |
-| **Oct 2027**     | SDK NPM `@identis/node-sdk` publié sur npm                           |
-| **Déc 2027**     | 50 clients actifs · 5 Dedicated · 3 pays UEMOA                       |
+| **Juin 2026**    | Fin Sprint 1 cible — workspace members, PDF, sandbox Smile ID                                    |
+| **Juillet 2026** | Première vérification réelle en production (CNI ivoirienne + selfie)                             |
+| **Août 2026**    | Premier client payant — inscription 15 000 FCFA encaissée                                        |
+| **Sept 2026**    | 3 clients actifs — MVP validé                                                                    |
+| **Oct 2026**     | Début prospection Dedicated                                                                      |
+| **Nov 2026**     | 15 clients Cloud actifs                                                                          |
+| **Déc 2026**     | Premier contrat Dedicated signé                                                                  |
+| **Jan 2027**     | Premier déploiement Dedicated en production chez client                                          |
+| **Fév 2027**     | Début Phase Scale — React Native en développement                                                |
+| **Avril 2027**   | App React Native publiée sur Google Play Store                                                   |
+| **Juin 2027**    | Rentabilité opérationnelle atteinte                                                              |
+| **Août 2027**    | Ouverture Sénégal — premier client Dakar                                                         |
+| **Oct 2027**     | SDK NPM `@identis/node-sdk` publié sur npm                                                       |
+| **Déc 2027**     | 50 clients actifs · 5 Dedicated · 3 pays UEMOA                                                   |
 
 ---
 

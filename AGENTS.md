@@ -157,6 +157,56 @@ Use the matching skill when the task clearly falls into one of those areas.
 - Prefer minimal, package-scoped verification before running full workspace commands.
 - When editing docs or product copy, keep terminology aligned with `Identis` rather than the original starter template wording.
 
+## UI Components — Always Use `@identis/ui`
+
+In `apps/web`, **never write raw HTML elements** when an `@identis/ui` component exists for it. This is a hard rule, not a preference.
+
+| Raw HTML                                                | Use instead                                                                                                                          |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `<button>`                                              | `Button` from `@identis/ui/components/button`                                                                                        |
+| `<input>`                                               | `Input` from `@identis/ui/components/input`                                                                                          |
+| `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>` | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell` from `@identis/ui/components/table`                        |
+| `<select>`                                              | `Select` from `@identis/ui/components/select`                                                                                        |
+| Pagination buttons                                      | `Pagination`, `PaginationContent`, `PaginationItem`, `PaginationPrevious`, `PaginationNext` from `@identis/ui/components/pagination` |
+| `<textarea>`                                            | `Textarea` from `@identis/ui/components/textarea`                                                                                    |
+
+Before building a UI feature, check `packages/ui/src/components/` to see what's available. Use `@identis/ui/components/<name>` for components not explicitly listed in `package.json#exports`.
+
+## Form Fields — Always Use `apps/web/components/form-fields`
+
+In `apps/web`, **never write inline `<Controller>` or `<FormField>` blocks** for standard input types. Use the pre-built RHF-integrated components from `apps/web/components/form-fields/`:
+
+| Need                   | Component        |
+| ---------------------- | ---------------- |
+| Text input             | `InputField`     |
+| Multiline text         | `TextareaField`  |
+| Fixed options dropdown | `SelectField`    |
+| Searchable dropdown    | `ComboboxField`  |
+| Country selector       | `CountryField`   |
+| Single date            | `DateField`      |
+| Date range             | `DateRangeField` |
+| File upload            | `FileField`      |
+
+Import: `import { InputField, SelectField, ... } from "@/components/form-fields";`
+
+These components handle RHF binding, Zod error display, and consistent styling out of the box. Only build a new form-field component if none of the above fit the use case.
+
+## Table Pagination — Always Use `TablePagination`
+
+Never write inline pagination logic (totalPages calc, prev/next buttons, item count). Use `apps/web/components/table-pagination.tsx`:
+
+```tsx
+<TablePagination
+  page={page}
+  total={data.total}
+  limit={data.limit}
+  onPageChange={setPage}
+  itemLabel="dossier"
+/>
+```
+
+The component returns `null` automatically when `total <= limit`, so no conditional wrapper needed.
+
 ## Known Lint & Typecheck Rules
 
 These rules have caused repeated failures — check them before submitting a lint/typecheck pass.

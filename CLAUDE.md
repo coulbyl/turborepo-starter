@@ -131,7 +131,7 @@ Current schema (`packages/db/prisma/schema.prisma`) only has the boilerplate mod
 
 **`max-params` in NestJS**
 
-The rule fires at the **first decorator** of a method, not at the method signature. Place the disable comment *before* `@Post()` / `@Get()` etc., not before `create(`:
+The rule fires at the **first decorator** of a method, not at the method signature. Place the disable comment _before_ `@Post()` / `@Get()` etc., not before `create(`:
 
 ```ts
 // eslint-disable-next-line max-params   ← before the decorator
@@ -172,7 +172,42 @@ In class-validator DTOs, required properties must carry the `!` suffix — TypeS
 firstName!: string;
 ```
 
-**`@identis/ui` imports**
+**`@identis/ui` — toujours utiliser les composants du package**
+
+Dans `apps/web`, tout élément HTML natif qui a un équivalent dans `@identis/ui` doit utiliser le composant — jamais l'élément brut. Ne jamais écrire `<button>`, `<input>`, `<table>`, `<tr>`, `<th>`, `<td>`, `<select>` ou leurs wrappers Tailwind ad-hoc quand `Button`, `Input`, `Table`, `TableRow`, `TableHead`, `TableCell`, `Select`… existent déjà. Consulter `packages/ui/src/components/` pour la liste complète des composants disponibles.
+
+**Form fields — toujours utiliser les composants `form-fields`**
+
+Dans `apps/web`, tout champ de formulaire React Hook Form doit utiliser les composants de `apps/web/components/form-fields/` — jamais `<Controller>` ou `<FormField>` inline. Ces composants intègrent déjà le binding RHF, les messages d'erreur Zod et le style uniforme.
+
+| Besoin                           | Composant        |
+| -------------------------------- | ---------------- |
+| Texte libre                      | `InputField`     |
+| Texte long                       | `TextareaField`  |
+| Liste déroulante (options fixes) | `SelectField`    |
+| Liste déroulante avec recherche  | `ComboboxField`  |
+| Sélection de pays                | `CountryField`   |
+| Date unique                      | `DateField`      |
+| Plage de dates                   | `DateRangeField` |
+| Upload de fichier                | `FileField`      |
+
+Import : `import { InputField, SelectField, ... } from "@/components/form-fields";`
+
+**Pagination de tableau — toujours utiliser `TablePagination`**
+
+Ne jamais écrire de logique de pagination inline (calcul de `totalPages`, boutons précédent/suivant, compteur). Utiliser `apps/web/components/table-pagination.tsx` qui gère tout et retourne `null` automatiquement si une seule page :
+
+```tsx
+<TablePagination
+  page={page}
+  total={data.total}
+  limit={data.limit}
+  onPageChange={setPage}
+  itemLabel="dossier" // "dossier" → "3 dossiers"
+/>
+```
+
+**`@identis/ui` imports — chemins**
 
 Seuls les chemins explicitement listés dans `packages/ui/package.json#exports` fonctionnent avec TypeScript (`badge`, `button`, `card`, `stat-card`, etc.). Pour tout autre composant (`dialog`, `input`, `select`, `dropdown-menu`, `label`…), utiliser le chemin wildcard :
 

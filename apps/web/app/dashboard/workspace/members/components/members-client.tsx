@@ -7,12 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { clientApiRequest } from "@/lib/api/client-api";
 import { UserPlus, Trash2, MoreHorizontal } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@identis/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@identis/ui/card";
 import { Button } from "@identis/ui/button";
 import { Badge } from "@identis/ui/badge";
 import {
@@ -107,7 +102,9 @@ export function MembersClient({
       form.reset();
       setInviteOpen(false);
     } catch (e) {
-      setInviteError(e instanceof Error ? e.message : "Erreur lors de l'invitation");
+      setInviteError(
+        e instanceof Error ? e.message : "Erreur lors de l'invitation",
+      );
     }
   }
 
@@ -245,10 +242,7 @@ export function MembersClient({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Rôle</FormLabel>
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />

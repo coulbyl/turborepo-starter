@@ -53,6 +53,7 @@ enum CaseStatus {
   APPROVED
   REJECTED
   EXPIRED
+  FAILED
 }
 
 enum InitiationMode {
@@ -94,13 +95,6 @@ enum StepAction {
   AUTO_EXPIRED
 }
 
-enum FormSector {
-  IMF
-  IMMO
-  FINTECH
-  CUSTOM
-}
-
 enum FieldType {
   TEXT
   NUMBER
@@ -134,10 +128,9 @@ enum ApiEnv {
 model User {
   id                String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   email             String                 @unique
-  username          String                 @unique
   passwordHash      String
   fullName          String
-  bio               String?
+  phone             String?
   role              UserRole               @default(MEMBER)
   emailVerified     Boolean                @default(false)
   mfaMethod         MfaMethod?
@@ -253,10 +246,23 @@ model Announcement {
 // WORKSPACE — central multi-tenant entity
 // ─────────────────────────────────────────────
 
+model Sector {
+  id            String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  label         String         @unique
+  builtIn       Boolean        @default(false)
+  workspaces    Workspace[]
+  formTemplates FormTemplate[]
+  createdAt     DateTime       @default(now())
+
+  @@map("sector")
+}
+
 model Workspace {
   id               String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name             String
   slug             String              @unique
+  sectorId         String?             @db.Uuid
+  sector           Sector?             @relation(fields: [sectorId], references: [id])
   deploymentType   DeploymentType      @default(CLOUD)
   logoUrl          String?
   primaryColor     String?
@@ -417,7 +423,8 @@ model FormTemplate {
   id          String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
   workspaceId String      @db.Uuid
   name        String
-  sector      FormSector?
+  sectorId    String?     @db.Uuid
+  sector      Sector?     @relation(fields: [sectorId], references: [id])
   active      Boolean     @default(true)
   fields      FormField[]
   workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)

@@ -1,8 +1,10 @@
 import {
   BadRequestException,
+  HttpException,
   Inject,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { VerifProduct } from '@identis/db';
 import { ConfigService } from '@nestjs/config';
@@ -13,6 +15,7 @@ import {
   type IVerificationProvider,
 } from '@modules/verification/interfaces/verification-provider.interface';
 import { WalletService } from '@modules/wallet/wallet.service';
+import { translateSmileError } from '@modules/verification/smile-id.constants';
 import type { CreateCaseDto } from './dto/create-case.dto';
 import type { ListCasesQueryDto } from './dto/list-cases-query.dto';
 
@@ -145,16 +148,43 @@ export class CaseService {
         createdAt: newCase.createdAt,
       };
     } catch (error) {
-      // If Smile ID submission fails, soft-delete the case and re-throw
       await this.prisma.client.case.update({
         where: { id: newCase.id },
-        data: { status: 'EXPIRED' },
+        data: { status: 'FAILED' },
       });
+
+      // Extract Smile ID response body when available (AxiosError)
+      const axiosData =
+        error != null &&
+        typeof error === 'object' &&
+        'response' in error &&
+        error.response != null &&
+        typeof error.response === 'object' &&
+        'data' in error.response
+          ? (error.response as { data: unknown }).data
+          : undefined;
+
       logger.error(
-        { caseId: newCase.id, error },
+        { caseId: newCase.id, smileIdResponse: axiosData, error },
         'Smile ID submission failed — case invalidated',
       );
-      throw error;
+
+      if (error instanceof HttpException) throw error;
+
+      const rawSmileMessage =
+        axiosData != null &&
+        typeof axiosData === 'object' &&
+        'error' in axiosData &&
+        typeof (axiosData as Record<string, unknown>).error === 'string'
+          ? ((axiosData as Record<string, unknown>).error as string)
+          : null;
+
+      throw new UnprocessableEntityException(
+        translateSmileError(rawSmileMessage) ??
+          (error instanceof Error
+            ? error.message
+            : 'Erreur lors de la soumission de la vérification.'),
+      );
     }
   }
 

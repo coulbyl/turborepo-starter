@@ -75,9 +75,9 @@ function Combobox({
               {options.map((opt) => (
                 <CommandItem
                   key={opt.value}
-                  value={opt.value}
-                  onSelect={(v) => {
-                    onChange?.(v === value ? "" : v);
+                  value={opt.label}
+                  onSelect={() => {
+                    onChange?.(opt.value === value ? "" : opt.value);
                     setOpen(false);
                   }}
                 >

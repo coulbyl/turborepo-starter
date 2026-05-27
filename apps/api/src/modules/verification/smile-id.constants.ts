@@ -103,6 +103,31 @@ export const VERIFICATION_COST: Record<string, number> = {
 // Welcome credit given to new workspaces (10 free DocV verifications)
 export const WELCOME_CREDIT_FCFA = 10_000;
 
+// Messages d'erreur Smile ID → traduction française
+const SMILE_ERROR_TRANSLATIONS: Record<string, string> = {
+  'you are not authorized to do that.':
+    'Identifiants Smile ID invalides ou non configurés. Vérifiez SMILE_ID_PARTNER_ID et SMILE_ID_API_KEY.',
+  'invalid partner_id': 'Identifiant partenaire Smile ID invalide.',
+  'invalid signature':
+    'Signature Smile ID invalide. Vérifiez SMILE_ID_API_KEY.',
+  'partner not found':
+    'Compte Smile ID introuvable. Vérifiez SMILE_ID_PARTNER_ID.',
+  'job already exists': 'Une vérification avec cette référence existe déjà.',
+  'invalid country': "Le pays sélectionné n'est pas supporté par Smile ID.",
+  'invalid id_type': "Ce type de document n'est pas supporté pour ce pays.",
+  'please make sure that id_type is included in the id_info':
+    'Le type de document est requis pour ce pays.',
+};
+
+/**
+ * Traduit un message d'erreur Smile ID en français.
+ * Retourne null si aucune traduction connue.
+ */
+export function translateSmileError(raw: string | null): string | null {
+  if (!raw) return null;
+  return SMILE_ERROR_TRANSLATIONS[raw.toLowerCase().trim()] ?? null;
+}
+
 /**
  * Resolve the optimal Smile ID job_type for a given country + id_type.
  * Returns { jobType, authorityVerified }.

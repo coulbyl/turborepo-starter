@@ -33,6 +33,11 @@ function extractFirstErrorMessage(value: unknown): string | null {
   return null;
 }
 
+const GENERIC_SERVER_ERRORS = new Set([
+  "internal server error",
+  "an error occurred",
+]);
+
 export async function parseApiError(
   response: Response,
   fallbackMessage: string,
@@ -43,7 +48,10 @@ export async function parseApiError(
       (payload as ErrorPayload).message ?? payload,
     );
 
-    if (extractedMessage) {
+    if (
+      extractedMessage &&
+      !GENERIC_SERVER_ERRORS.has(extractedMessage.toLowerCase().trim())
+    ) {
       return new Error(extractedMessage);
     }
   } catch {

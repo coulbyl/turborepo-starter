@@ -23,6 +23,9 @@ type DatePickerProps = {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  fromYear?: number;
+  toYear?: number;
+  captionLayout?: "label" | "dropdown" | "dropdown-months" | "dropdown-years";
 };
 
 function DatePicker({
@@ -31,6 +34,9 @@ function DatePicker({
   placeholder = "",
   className,
   disabled,
+  fromYear,
+  toYear,
+  captionLayout = "dropdown",
 }: DatePickerProps) {
   return (
     <Popover>
@@ -53,6 +59,9 @@ function DatePicker({
           mode="single"
           selected={value}
           onSelect={onChange}
+          captionLayout={captionLayout}
+          fromYear={fromYear}
+          toYear={toYear}
           autoFocus
         />
       </PopoverContent>

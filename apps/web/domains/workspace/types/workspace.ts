@@ -1,7 +1,14 @@
+export type Sector = {
+  id: string;
+  label: string;
+  builtIn: boolean;
+};
+
 export type Workspace = {
   id: string;
   name: string;
   slug: string;
+  sector: Sector | null;
   deploymentType: "CLOUD" | "DEDICATED";
   logoUrl: string | null;
   primaryColor: string | null;
@@ -34,7 +41,6 @@ export type Member = {
   user: {
     id: string;
     email: string;
-    username: string;
     fullName: string;
     avatarUrl: string | null;
   };
@@ -42,6 +48,6 @@ export type Member = {
 
 export type CreateWorkspaceInput = {
   name: string;
-  slug: string;
+  sectorLabel?: string;
   welcomeMessage?: string;
 };

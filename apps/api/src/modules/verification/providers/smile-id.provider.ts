@@ -86,13 +86,9 @@ export class SmileIdProvider implements IVerificationProvider {
 
     const idInfo: Record<string, unknown> = {
       country: input.country.toUpperCase(),
+      id_type: input.idType.toUpperCase(),
       entered: input.idNumber ? 'true' : 'false',
     };
-
-    // id_type required for JT11, optional for JT6
-    if (jobType === JOB_TYPE.ENHANCED_DOCUMENT_VERIFICATION) {
-      idInfo['id_type'] = input.idType.toUpperCase();
-    }
 
     if (input.idNumber) {
       idInfo['id_number'] = input.idNumber;

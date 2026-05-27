@@ -7,7 +7,10 @@ export type WorkspaceStats = {
   pendingCases: number;
   approvalRate: number | null;
   walletBalance: number;
-  recentCases: Pick<Case, "id" | "reference" | "status" | "formData" | "createdAt" | "verification">[];
+  recentCases: Pick<
+    Case,
+    "id" | "reference" | "status" | "formData" | "createdAt" | "verification"
+  >[];
 };
 
 export async function getWorkspaceStats(

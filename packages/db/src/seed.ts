@@ -6,7 +6,7 @@ const SCRYPT_KEYLEN = 64;
 const SCRYPT_N = 32768;
 const SCRYPT_R = 8;
 const SCRYPT_P = 1;
-const SCRYPT_MAXMEM = 128 * SCRYPT_N * SCRYPT_R * SCRYPT_P * 2; // 64 MB
+const SCRYPT_MAXMEM = 128 * SCRYPT_N * SCRYPT_R * SCRYPT_P * 2;
 
 function normalizeIdentifier(value: string): string {
   return value.trim().toLowerCase();
@@ -23,58 +23,52 @@ function hashPassword(password: string): string {
   return `${SCRYPT_N}:${SCRYPT_R}:${SCRYPT_P}:${salt}:${hash}`;
 }
 
+const BUILT_IN_SECTORS = [
+  "FINTECH",
+  "MICROFINANCE / IMF",
+  "IMMOBILIER",
+  "BANQUE",
+  "ASSURANCE",
+];
+
+async function seedSectors() {
+  for (const label of BUILT_IN_SECTORS) {
+    await prisma.sector.upsert({
+      where: { label },
+      update: { builtIn: true },
+      create: { label, builtIn: true },
+    });
+  }
+  console.log(`[db:seed] ${BUILT_IN_SECTORS.length} built-in sectors ensured`);
+}
+
 async function seedAdminUser() {
   const email = normalizeIdentifier(
-    process.env.SEED_ADMIN_EMAIL ?? "admin@identis.local",
+    process.env.SEED_ADMIN_EMAIL ?? "admin@identis.ci",
   );
-  const username = normalizeIdentifier(
-    process.env.SEED_ADMIN_USERNAME ?? "admin",
-  );
-  const fullName = (process.env.SEED_ADMIN_FULL_NAME ?? "Starter Admin").trim();
+  const fullName = (process.env.SEED_ADMIN_FULL_NAME ?? "Identis Admin").trim();
   const password = process.env.SEED_ADMIN_PASSWORD;
 
-  const matchingUsers = await prisma.user.findMany({
-    where: { OR: [{ email }, { username }] },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      role: true,
-    },
+  const existing = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, role: true },
   });
 
-  if (matchingUsers.length > 1) {
-    throw new Error(
-      `[db:seed] admin seed is ambiguous for email=${email} username=${username}`,
-    );
-  }
-
-  if (matchingUsers.length === 1) {
-    const user = matchingUsers[0];
-
-    if (!user) {
-      throw new Error("[db:seed] unexpected missing admin candidate");
-    }
-
+  if (existing) {
     await prisma.user.update({
-      where: { id: user.id },
+      where: { id: existing.id },
       data: {
-        email,
-        username,
         fullName,
         role: "ADMIN",
         emailVerified: true,
-        ...(password && password.trim() !== ""
-          ? { passwordHash: hashPassword(password) }
-          : {}),
+        ...(password?.trim() ? { passwordHash: hashPassword(password) } : {}),
       },
     });
-
     console.log(`[db:seed] admin user ensured: ${email}`);
     return;
   }
 
-  if (!password || password.trim() === "") {
+  if (!password?.trim()) {
     console.log(
       "[db:seed] admin user skipped: set SEED_ADMIN_PASSWORD to create it",
     );
@@ -84,7 +78,6 @@ async function seedAdminUser() {
   await prisma.user.create({
     data: {
       email,
-      username,
       fullName,
       passwordHash: hashPassword(password),
       role: "ADMIN",
@@ -97,6 +90,7 @@ async function seedAdminUser() {
 }
 
 async function main() {
+  await seedSectors();
   await seedAdminUser();
 }
 

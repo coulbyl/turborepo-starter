@@ -12,7 +12,8 @@ export function useInviteMember(workspaceId: string) {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["members", workspaceId] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["members", workspaceId] }),
   });
 }
 
@@ -24,7 +25,8 @@ export function useUpdateMemberRole(workspaceId: string) {
         `/workspaces/${workspaceId}/members/${memberId}`,
         { method: "PATCH", body: JSON.stringify({ role }) },
       ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["members", workspaceId] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["members", workspaceId] }),
   });
 }
 
@@ -35,6 +37,7 @@ export function useRemoveMember(workspaceId: string) {
       clientApiRequest(`/workspaces/${workspaceId}/members/${memberId}`, {
         method: "DELETE",
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["members", workspaceId] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["members", workspaceId] }),
   });
 }

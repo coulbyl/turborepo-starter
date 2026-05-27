@@ -21,5 +21,7 @@ export async function createCase(
   return clientApiRequest<CreatedCase>(`/workspaces/${workspaceId}/cases`, {
     method: "POST",
     body: form,
+    fallbackErrorMessage:
+      "La vérification n'a pas pu être soumise. Veuillez réessayer.",
   });
 }

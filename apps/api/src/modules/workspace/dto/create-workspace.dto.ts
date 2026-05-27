@@ -1,10 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateWorkspaceDto {
   @IsString()
@@ -12,13 +6,11 @@ export class CreateWorkspaceDto {
   @MaxLength(80)
   name!: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(2)
-  @MaxLength(40)
-  @Matches(/^[a-z0-9-]+$/, {
-    message: 'slug: lettres minuscules, chiffres et tirets uniquement',
-  })
-  slug!: string;
+  @MaxLength(80)
+  sectorLabel?: string;
 
   @IsOptional()
   @IsString()

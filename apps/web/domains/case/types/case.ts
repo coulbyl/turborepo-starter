@@ -3,7 +3,8 @@ export type CaseStatus =
   | "IN_REVIEW"
   | "APPROVED"
   | "REJECTED"
-  | "EXPIRED";
+  | "EXPIRED"
+  | "FAILED";
 export type VerifStatus = "PENDING" | "APPROVED" | "REJECTED" | "UNKNOWN";
 
 export type CaseVerification = {
@@ -81,6 +82,7 @@ export const STATUS_LABEL: Record<CaseStatus, string> = {
   APPROVED: "Approuvé",
   REJECTED: "Refusé",
   EXPIRED: "Expiré",
+  FAILED: "Échoué",
 };
 
 export const STATUS_COLOR: Record<CaseStatus, string> = {
@@ -89,4 +91,5 @@ export const STATUS_COLOR: Record<CaseStatus, string> = {
   APPROVED: "text-emerald-600 bg-emerald-50 border-emerald-200",
   REJECTED: "text-red-600 bg-red-50 border-red-200",
   EXPIRED: "text-muted-foreground bg-muted border-border",
+  FAILED: "text-red-700 bg-red-50 border-red-300",
 };
