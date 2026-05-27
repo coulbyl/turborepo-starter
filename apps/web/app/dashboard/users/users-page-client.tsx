@@ -46,17 +46,14 @@ import type {
 import { useAdminUsers } from "@/domains/admin-users/use-cases/get-admin-users";
 import { useUpdateAdminUser } from "@/domains/admin-users/use-cases/update-admin-user";
 import { generateAdminResetLink } from "@/domains/admin-users/use-cases/generate-reset-link";
+import { formatDateNumeric } from "@/lib/date";
 
 function roleLabel(role: AdminUserRole) {
   return role === "ADMIN" ? "Admin" : "Utilisateur";
 }
 
 function formatCreatedAt(value: string) {
-  return new Date(value).toLocaleDateString("fr-FR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+  return formatDateNumeric(value);
 }
 
 function UserActions({

@@ -20,6 +20,7 @@ import { useDeleteCase } from "@/domains/case/use-cases/delete-case";
 import { useCurrentWorkspace } from "@/domains/workspace/context/current-workspace-context";
 import { CaseStatusBadge } from "../../components/case-status-badge";
 import type { CaseVerification, VerifStatus } from "@/domains/case/types/case";
+import { formatDateTimeLong, formatDateTimeMedium } from "@/lib/date";
 
 function VerifResultCard({ verif }: { verif: CaseVerification }) {
   const icons: Record<VerifStatus, React.ReactNode> = {
@@ -125,13 +126,7 @@ export function CaseDetailClient({ caseId }: { caseId: string }) {
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
               Créé le{" "}
-              {new Date(c.createdAt).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {formatDateTimeLong(c.createdAt)}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -230,12 +225,7 @@ export function CaseDetailClient({ caseId }: { caseId: string }) {
                     <p className="mt-0.5 text-muted-foreground">{h.comment}</p>
                   )}
                   <p className="mt-0.5 text-xs text-muted-foreground/50">
-                    {new Date(h.createdAt).toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatDateTimeMedium(h.createdAt)}
                   </p>
                 </div>
               </li>

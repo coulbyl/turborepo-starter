@@ -10,6 +10,7 @@ import {
   useMarkAllRead,
 } from "@/domains/notification/use-cases/use-notifications";
 import type { NotificationView } from "@/domains/notification/types/notification";
+import { formatDateWithWeekday } from "@/lib/date";
 
 function formatAge(createdAt: string): string {
   const diff = Date.now() - new Date(createdAt).getTime();
@@ -30,11 +31,7 @@ function formatDayLabel(createdAt: string): string {
 
   if (date.toDateString() === today.toDateString()) return "Today";
   if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
-  return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  return formatDateWithWeekday(createdAt);
 }
 
 function dayKey(createdAt: string): string {

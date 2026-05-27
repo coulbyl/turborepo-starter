@@ -41,6 +41,7 @@ import {
 } from "@/domains/workspace/use-cases/members";
 import type { Member, MemberRole } from "@/domains/workspace/types/workspace";
 import { MEMBER_ROLE_LABEL } from "@/domains/workspace/types/workspace";
+import { formatDateMedium } from "@/lib/date";
 
 const ROLE_COLOR: Record<MemberRole, string> = {
   ADMIN: "text-purple-600 bg-purple-50 border-purple-200",
@@ -152,11 +153,7 @@ export function MembersClient({
                     </Badge>
                   </td>
                   <td className="px-6 py-3 text-muted-foreground">
-                    {new Date(m.createdAt).toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {formatDateMedium(m.createdAt)}
                   </td>
                   {isAdmin && (
                     <td className="px-6 py-3 text-right">

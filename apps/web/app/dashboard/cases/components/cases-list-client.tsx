@@ -21,6 +21,7 @@ import type { CaseStatus } from "@/domains/case/types/case";
 import { ID_TYPE_LABEL } from "@/domains/case/constants";
 import { CaseStatusBadge } from "./case-status-badge";
 import { COUNTRY_MAP } from "@/lib/countries";
+import { formatDateNumeric } from "@/lib/date";
 
 const STATUS_FILTERS: { label: string; value: CaseStatus | undefined }[] = [
   { label: "Tous", value: undefined },
@@ -163,7 +164,7 @@ export function CasesListClient() {
                     <CaseStatusBadge status={c.status} />
                   </TableCell>
                   <TableCell className="hidden text-right text-xs text-muted-foreground md:table-cell">
-                    {new Date(c.createdAt).toLocaleDateString("fr-FR")}
+                    {formatDateNumeric(c.createdAt)}
                   </TableCell>
                   <TableCell className="w-8 text-right">
                     <Link

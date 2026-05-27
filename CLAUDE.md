@@ -176,6 +176,14 @@ firstName!: string;
 
 Dans `apps/web`, tout élément HTML natif qui a un équivalent dans `@identis/ui` doit utiliser le composant — jamais l'élément brut. Ne jamais écrire `<button>`, `<input>`, `<table>`, `<tr>`, `<th>`, `<td>`, `<select>` ou leurs wrappers Tailwind ad-hoc quand `Button`, `Input`, `Table`, `TableRow`, `TableHead`, `TableCell`, `Select`… existent déjà. Consulter `packages/ui/src/components/` pour la liste complète des composants disponibles.
 
+**Dates — toujours utiliser `apps/web/lib/date.ts`**
+
+Dans `apps/web`, ne jamais formater les dates inline avec `new Date(...).toLocaleDateString(...)`, `Intl.DateTimeFormat` ou des patterns `date-fns` écrits directement dans les pages/composants si `apps/web/lib/date.ts` couvre déjà le besoin.
+
+- Importer les helpers partagés depuis `@/lib/date`
+- Si le format nécessaire n'existe pas encore, ajouter d'abord un helper réutilisable dans `apps/web/lib/date.ts`, puis l'utiliser dans le composant
+- Garder toute la logique de formatage centralisée à cet endroit
+
 **Form fields — toujours utiliser les composants `form-fields`**
 
 Dans `apps/web`, tout champ de formulaire React Hook Form doit utiliser les composants de `apps/web/components/form-fields/` — jamais `<Controller>` ou `<FormField>` inline. Ces composants intègrent déjà le binding RHF, les messages d'erreur Zod et le style uniforme.

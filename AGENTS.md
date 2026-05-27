@@ -172,6 +172,14 @@ In `apps/web`, **never write raw HTML elements** when an `@identis/ui` component
 
 Before building a UI feature, check `packages/ui/src/components/` to see what's available. Use `@identis/ui/components/<name>` for components not explicitly listed in `package.json#exports`.
 
+## Dates — Always Use `apps/web/lib/date.ts`
+
+In `apps/web`, never format dates inline with `new Date(...).toLocaleDateString(...)`, `Intl.DateTimeFormat`, or ad-hoc `date-fns` patterns inside pages/components when `apps/web/lib/date.ts` covers the use case.
+
+- Import the shared helpers from `@/lib/date`.
+- If the needed display format does not exist yet, add a small reusable helper to `apps/web/lib/date.ts` first, then use it from the component.
+- Keep date formatting centralized there so future UI changes do not require hunting through the app.
+
 ## Form Fields — Always Use `apps/web/components/form-fields`
 
 In `apps/web`, **never write inline `<Controller>` or `<FormField>` blocks** for standard input types. Use the pre-built RHF-integrated components from `apps/web/components/form-fields/`:
