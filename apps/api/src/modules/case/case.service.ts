@@ -13,6 +13,7 @@ import { createLogger } from '@utils/logger';
 import {
   VERIFICATION_PROVIDER,
   type IVerificationProvider,
+  type SmileWebhookPayload,
 } from '@modules/verification/interfaces/verification-provider.interface';
 import { WalletService } from '@modules/wallet/wallet.service';
 import { translateSmileError } from '@modules/verification/smile-id.constants';
@@ -302,6 +303,50 @@ export class CaseService {
       walletBalance,
       recentCases,
     };
+  }
+
+  async handleWebhook(payload: SmileWebhookPayload) {
+    if (!payload.job_complete) return;
+
+    const verification = await this.prisma.client.verification.findFirst({
+      where: { smileJobId: payload.smile_job_id },
+    });
+
+    if (!verification) {
+      logger.warn({ smileJobId: payload.smile_job_id }, 'Webhook: verification not found');
+      return;
+    }
+
+    const actions = payload.result?.Actions ?? {};
+    const resultCode = payload.result?.ResultCode;
+    const approved = payload.job_success && (resultCode === '0810' || resultCode === '0812');
+
+    const verifStatus = approved ? 'APPROVED' : 'REJECTED';
+    // Approved → IN_REVIEW: an agent still validates before final approval
+    const caseStatus = approved ? 'IN_REVIEW' : 'REJECTED';
+
+    await this.prisma.client.verification.update({
+      where: { id: verification.id },
+      data: {
+        status: verifStatus,
+        livenessScore: actions.Liveness_Check === 'Passed' ? 0.95 : 0.1,
+        documentValid: payload.job_success,
+        faceMatch: actions.Selfie_To_ID_Card_Compare === 'Passed',
+        amlMatch: false,
+        duplicateFound: false,
+        rawResult: payload as object,
+      },
+    });
+
+    await this.prisma.client.case.update({
+      where: { id: verification.caseId },
+      data: { status: caseStatus },
+    });
+
+    logger.info(
+      { smileJobId: payload.smile_job_id, caseId: verification.caseId, caseStatus },
+      'Webhook processed',
+    );
   }
 
   async findOne(workspaceId: string, caseId: string) {
