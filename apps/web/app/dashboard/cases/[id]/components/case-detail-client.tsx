@@ -1,15 +1,29 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
   CheckCircle2,
   Clock,
+  Download,
   ShieldAlert,
   ShieldCheck,
+  Trash2,
   XCircle,
 } from "lucide-react";
+import { Button } from "@identis/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@identis/ui/components/dialog";
 import { useCase } from "@/domains/case/use-cases/get-case";
+import { useDeleteCase } from "@/domains/case/use-cases/delete-case";
 import { useCurrentWorkspace } from "@/domains/workspace/context/current-workspace-context";
 import { CaseStatusBadge } from "../../components/case-status-badge";
 import type { CaseVerification, VerifStatus } from "@/domains/case/types/case";
@@ -73,7 +87,17 @@ function VerifResultCard({ verif }: { verif: CaseVerification }) {
 
 export function CaseDetailClient({ caseId }: { caseId: string }) {
   const workspace = useCurrentWorkspace();
+  const router = useRouter();
   const { data: c, isLoading } = useCase(workspace.id, caseId);
+  const deleteCase = useDeleteCase(workspace.id);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleDelete = async () => {
+    await deleteCase.mutateAsync(caseId);
+    router.push("/dashboard/cases");
+  };
+
+  const reportUrl = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/workspaces/${workspace.id}/cases/${caseId}/report`;
 
   if (isLoading) {
     return (
@@ -117,7 +141,23 @@ export function CaseDetailClient({ caseId }: { caseId: string }) {
               })}
             </p>
           </div>
-          <CaseStatusBadge status={c.status} />
+          <div className="flex items-center gap-2">
+            <CaseStatusBadge status={c.status} />
+            <Button variant="outline" size="sm" asChild>
+              <a href={reportUrl} download>
+                <Download size={13} />
+                PDF
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setConfirmDelete(true)}
+              className="text-destructive hover:bg-destructive/10"
+            >
+              <Trash2 size={13} />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -154,6 +194,32 @@ export function CaseDetailClient({ caseId }: { caseId: string }) {
           </dl>
         </div>
       )}
+
+      {/* Delete confirmation */}
+      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Supprimer le dossier</DialogTitle>
+            <DialogDescription>
+              Le dossier <span className="font-mono font-semibold">{c.reference}</span> sera
+              définitivement supprimé avec toutes ses données de vérification. Cette action est
+              irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteCase.isPending}
+            >
+              {deleteCase.isPending ? "Suppression…" : "Supprimer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Timeline */}
       {c.stepHistory.length > 0 && (

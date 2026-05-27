@@ -99,19 +99,36 @@ export class CaseService {
     const callbackUrl = this.config.get<string>('SMILE_ID_CALLBACK_URL', '');
     const jobRef = `${newCase.id}-${Date.now()}`;
 
-    try {
-      // 5. Submit to Smile ID (async — result via webhook)
-      const result = await this.verificationProvider.verifyDocument({
-        caseId: newCase.id,
-        jobRef,
-        country: dto.country,
-        idType: dto.idType,
-        idNumber: dto.idNumber,
-        selfieBase64,
-        idFrontBase64,
-        idBackBase64,
-        callbackUrl,
+    const withTimeout = async <T>(promise: Promise<T>): Promise<T> => {
+      let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<never>((_, reject) => {
+        timeoutHandle = setTimeout(
+          () => reject(new Error('Smile ID timeout — job will be retried via queue')),
+          30_000,
+        );
       });
+      try {
+        return await Promise.race([promise, timeout]);
+      } finally {
+        clearTimeout(timeoutHandle);
+      }
+    };
+
+    try {
+      // 5. Submit to Smile ID with 30s timeout (async — result via webhook)
+      const result = await withTimeout(
+        this.verificationProvider.verifyDocument({
+          caseId: newCase.id,
+          jobRef,
+          country: dto.country,
+          idType: dto.idType,
+          idNumber: dto.idNumber,
+          selfieBase64,
+          idFrontBase64,
+          idBackBase64,
+          callbackUrl,
+        }),
+      );
 
       // 6. Create Verification record
       await this.prisma.client.verification.create({
@@ -305,6 +322,18 @@ export class CaseService {
     };
   }
 
+  async remove(workspaceId: string, caseId: string) {
+    const found = await this.prisma.client.case.findFirst({
+      where: { id: caseId, workspaceId },
+      select: { id: true },
+    });
+    if (!found) throw new NotFoundException('Dossier introuvable');
+
+    // TODO: delete photos from R2 before removing DB record (not yet implemented)
+    await this.prisma.client.case.delete({ where: { id: caseId } });
+    logger.info({ caseId }, 'Case deleted');
+  }
+
   async handleWebhook(payload: SmileWebhookPayload) {
     if (!payload.job_complete) return;
 
@@ -354,6 +383,7 @@ export class CaseService {
       where: { id: caseId, workspaceId },
       include: {
         verification: true,
+        workspace: { select: { name: true, logoUrl: true } },
         stepHistory: {
           orderBy: { createdAt: 'asc' },
           include: {

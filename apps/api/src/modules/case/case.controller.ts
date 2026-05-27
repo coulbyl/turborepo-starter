@@ -1,14 +1,18 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Query,
+  Res,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -18,6 +22,7 @@ import { CurrentWorkspaceId } from '@common/decorators/current-workspace.decorat
 import { CurrentSession } from '@modules/auth/current-session.decorator';
 import type { AuthSession } from '@modules/auth/auth.types';
 import { CaseService } from './case.service';
+import { PdfReportService } from './pdf-report.service';
 import { CreateCaseDto } from './dto/create-case.dto';
 import { ListCasesQueryDto } from './dto/list-cases-query.dto';
 
@@ -25,7 +30,10 @@ import { ListCasesQueryDto } from './dto/list-cases-query.dto';
 @UseGuards(AuthSessionGuard, WorkspaceScopeGuard)
 @Controller('workspaces/:workspaceId/cases')
 export class CaseController {
-  constructor(private readonly caseService: CaseService) {}
+  constructor(
+    private readonly caseService: CaseService,
+    private readonly pdfReportService: PdfReportService,
+  ) {}
 
   // eslint-disable-next-line max-params
   @Post()
@@ -85,5 +93,30 @@ export class CaseController {
     @Param('caseId') caseId: string,
   ) {
     return this.caseService.findOne(workspaceId, caseId);
+  }
+
+  @Get(':caseId/report')
+  async downloadReport(
+    @CurrentWorkspaceId() workspaceId: string,
+    @Param('caseId') caseId: string,
+    @Res() res: Response,
+  ) {
+    const c = await this.caseService.findOne(workspaceId, caseId);
+    const pdf = this.pdfReportService.generate(c);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="rapport-${c.reference}.pdf"`,
+      'Content-Length': pdf.length,
+    });
+    res.end(pdf);
+  }
+
+  @Delete(':caseId')
+  @HttpCode(204)
+  remove(
+    @CurrentWorkspaceId() workspaceId: string,
+    @Param('caseId') caseId: string,
+  ) {
+    return this.caseService.remove(workspaceId, caseId);
   }
 }
