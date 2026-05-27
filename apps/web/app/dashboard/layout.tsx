@@ -18,7 +18,7 @@ export default async function DashboardLayout({
 
   // No workspace yet → onboarding
   if (workspaces.length === 0) {
-    redirect("/dashboard/workspace/new");
+    redirect("/onboarding");
   }
 
   // Default to first workspace (Sprint 2: persist selection in cookie)

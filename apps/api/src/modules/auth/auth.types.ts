@@ -4,9 +4,8 @@ import type { UserRole } from '@identis/db';
 export type AuthSessionUser = {
   id: string;
   email: string;
-  username: string;
   fullName: string;
-  bio: string | null;
+  phone: string | null;
   role: UserRole;
   emailVerified: boolean;
   mfaMethod: 'EMAIL' | 'TOTP' | null;

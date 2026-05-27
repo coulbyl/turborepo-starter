@@ -50,7 +50,7 @@ export function AccountButton({
         >
           <UserAvatar
             avatarUrl={currentUser.avatarUrl}
-            username={currentUser.fullName}
+            name={currentUser.fullName}
             size={32}
             className="ring-1 ring-border"
           />
@@ -66,7 +66,7 @@ export function AccountButton({
           <div className="flex items-center gap-3">
             <UserAvatar
               avatarUrl={currentUser.avatarUrl}
-              username={currentUser.fullName}
+              name={currentUser.fullName}
               size={40}
               className="ring-1 ring-border"
             />
@@ -75,7 +75,7 @@ export function AccountButton({
                 {currentUser.fullName}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                @{currentUser.username}
+                {currentUser.email}
               </p>
             </div>
           </div>

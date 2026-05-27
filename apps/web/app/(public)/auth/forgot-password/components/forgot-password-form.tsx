@@ -18,7 +18,7 @@ import {
 import { requestPasswordReset } from "@/domains/auth/use-cases/password-reset";
 
 const schema = z.object({
-  identifier: z.string().min(3, "Renseignez votre email ou nom d'utilisateur."),
+  identifier: z.email("Renseignez votre email."),
 });
 
 type Values = z.infer<typeof schema>;
@@ -82,9 +82,14 @@ export function ForgotPasswordForm() {
           name="identifier"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email ou nom d&apos;utilisateur</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input autoComplete="username" className="h-11" {...field} />
+                <Input
+                  type="email"
+                  autoComplete="email"
+                  className="h-11"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

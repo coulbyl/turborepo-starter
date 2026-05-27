@@ -1,6 +1,6 @@
 type UserAvatarProps = {
   avatarUrl: string | null | undefined;
-  username: string;
+  name: string;
   size?: number;
   className?: string;
 };
@@ -16,17 +16,17 @@ const AVATAR_COLORS = [
   "#f97316",
 ];
 
-function getInitialsColor(username: string): string {
+function getInitialsColor(name: string): string {
   let hash = 0;
-  for (let i = 0; i < username.length; i++) {
-    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length] ?? "#6366f1";
 }
 
 export function UserAvatar({
   avatarUrl,
-  username,
+  name,
   size = 32,
   className = "",
 }: UserAvatarProps) {
@@ -35,7 +35,7 @@ export function UserAvatar({
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={avatarUrl}
-        alt={username}
+        alt={name}
         width={size}
         height={size}
         className={`rounded-full object-cover ${className}`}
@@ -43,8 +43,8 @@ export function UserAvatar({
     );
   }
 
-  const initials = username.slice(0, 2).toUpperCase();
-  const bg = getInitialsColor(username);
+  const initials = name.slice(0, 2).toUpperCase();
+  const bg = getInitialsColor(name);
 
   return (
     <div

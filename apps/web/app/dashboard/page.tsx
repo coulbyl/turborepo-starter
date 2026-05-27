@@ -139,9 +139,7 @@ export default async function DashboardPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-muted-foreground text-xs uppercase tracking-wide">
-                  <th className="px-6 py-3 text-left font-medium">
-                    Référence
-                  </th>
+                  <th className="px-6 py-3 text-left font-medium">Référence</th>
                   <th className="px-6 py-3 text-left font-medium">Sujet</th>
                   <th className="px-6 py-3 text-left font-medium">Statut</th>
                   <th className="px-6 py-3 text-left font-medium">Date</th>

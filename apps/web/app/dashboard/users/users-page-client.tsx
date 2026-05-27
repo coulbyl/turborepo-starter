@@ -169,7 +169,7 @@ export function UsersPageClient() {
           <div className="flex min-w-0 items-center gap-3">
             <UserAvatar
               avatarUrl={row.original.avatarUrl}
-              username={row.original.fullName}
+              name={row.original.fullName}
               size={32}
               className="ring-1 ring-border"
             />
@@ -178,7 +178,7 @@ export function UsersPageClient() {
                 {row.original.fullName}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                @{row.original.username} · {row.original.email}
+                {row.original.email}
               </p>
             </div>
           </div>
@@ -289,16 +289,13 @@ export function UsersPageClient() {
                 <div className="flex min-w-0 items-center gap-3">
                   <UserAvatar
                     avatarUrl={user.avatarUrl}
-                    username={user.fullName}
+                    name={user.fullName}
                     size={40}
                     className="ring-1 ring-border"
                   />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-foreground">
                       {user.fullName}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      @{user.username}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">
                       {user.email}

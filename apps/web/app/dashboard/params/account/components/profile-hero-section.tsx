@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mail, AtSign, ShieldCheck, Pencil, Check, X } from "lucide-react";
+import { Mail, ShieldCheck, Pencil, Check, X } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { FREE_AVATARS } from "@/lib/avatars";
 import {
@@ -13,10 +13,8 @@ import { updateIdentity } from "@/domains/auth/use-cases/update-identity";
 
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Admin",
-  MEMBER: "Member",
+  MEMBER: "Membre",
 };
-
-type EditableField = "email" | "username" | null;
 
 function EditableInfoRow({
   icon: Icon,
@@ -31,7 +29,6 @@ function EditableInfoRow({
 }: {
   icon: React.ElementType;
   label: string;
-  field: EditableField;
   value: string;
   editing: boolean;
   onStartEdit: () => void;
@@ -103,7 +100,7 @@ function EditableInfoRow({
             type="button"
             onClick={onStartEdit}
             className="ml-auto shrink-0 rounded-md p-1 text-muted-foreground opacity-0 hover:opacity-100 group-hover:opacity-60 hover:text-foreground transition-opacity"
-            title={`Edit ${label.toLowerCase()}`}
+            title={`Modifier ${label.toLowerCase()}`}
           >
             <Pencil size={11} />
           </button>
@@ -121,10 +118,9 @@ export function ProfileHeroSection() {
     currentUser.avatarUrl,
   );
   const [avatarSaving, setAvatarSaving] = useState(false);
-
-  const [editingField, setEditingField] = useState<EditableField>(null);
-  const [fieldSaving, setFieldSaving] = useState(false);
-  const [fieldError, setFieldError] = useState<string | null>(null);
+  const [emailEditing, setEmailEditing] = useState(false);
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   useEffect(() => {
     setSelected(currentUser.avatarUrl);
@@ -146,31 +142,20 @@ export function ProfileHeroSection() {
     }
   }
 
-  async function handleSaveField(field: "email" | "username", value: string) {
+  async function handleSaveEmail(value: string) {
     const trimmed = value.trim();
     if (!trimmed) return;
-    setFieldSaving(true);
-    setFieldError(null);
+    setEmailSaving(true);
+    setEmailError(null);
     try {
-      const updated = await updateIdentity({ [field]: trimmed });
+      const updated = await updateIdentity({ email: trimmed });
       setCurrentUser({ ...currentUser, ...updated });
-      setEditingField(null);
+      setEmailEditing(false);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "An error occurred.";
-      setFieldError(msg);
+      setEmailError(err instanceof Error ? err.message : "An error occurred.");
     } finally {
-      setFieldSaving(false);
+      setEmailSaving(false);
     }
-  }
-
-  function startEdit(field: EditableField) {
-    setFieldError(null);
-    setEditingField(field);
-  }
-
-  function cancelEdit() {
-    setFieldError(null);
-    setEditingField(null);
   }
 
   return (
@@ -184,7 +169,7 @@ export function ProfileHeroSection() {
           >
             <UserAvatar
               avatarUrl={selected}
-              username={currentUser.username}
+              name={currentUser.fullName}
               size={80}
             />
           </div>
@@ -209,7 +194,7 @@ export function ProfileHeroSection() {
                 >
                   <UserAvatar
                     avatarUrl={avatar.url}
-                    username={avatar.label}
+                    name={avatar.label}
                     size={30}
                   />
                 </button>
@@ -224,9 +209,6 @@ export function ProfileHeroSection() {
               {currentUser.fullName}
             </h2>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                @{currentUser.username}
-              </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-accent/12 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-accent">
                 <ShieldCheck size={10} />
                 {ROLE_LABEL[currentUser.role] ?? currentUser.role}
@@ -238,28 +220,19 @@ export function ProfileHeroSection() {
             <EditableInfoRow
               icon={Mail}
               label="Email"
-              field="email"
               value={currentUser.email}
-              editing={editingField === "email"}
-              onStartEdit={() => startEdit("email")}
-              onSave={(val) => handleSaveField("email", val)}
-              onCancel={cancelEdit}
-              saving={fieldSaving}
-              error={editingField === "email" ? fieldError : null}
-            />
-            <EditableInfoRow
-              icon={AtSign}
-              label="Username"
-              field="username"
-              value={`@${currentUser.username}`}
-              editing={editingField === "username"}
-              onStartEdit={() => startEdit("username")}
-              onSave={(val) =>
-                handleSaveField("username", val.replace(/^@/, ""))
-              }
-              onCancel={cancelEdit}
-              saving={fieldSaving}
-              error={editingField === "username" ? fieldError : null}
+              editing={emailEditing}
+              onStartEdit={() => {
+                setEmailError(null);
+                setEmailEditing(true);
+              }}
+              onSave={handleSaveEmail}
+              onCancel={() => {
+                setEmailError(null);
+                setEmailEditing(false);
+              }}
+              saving={emailSaving}
+              error={emailError}
             />
           </div>
         </div>

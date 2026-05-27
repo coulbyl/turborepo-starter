@@ -17,7 +17,7 @@ export class MailService implements OnModuleInit {
 
   constructor(private readonly config: ConfigService) {
     this.smtpEnabled = config.get<string>('SMTP_ENABLED', 'false') !== 'false';
-    this.smtpFrom = config.get<string>('SMTP_FROM', 'starter@localhost');
+    this.smtpFrom = config.get<string>('SMTP_FROM', 'noreply@identis.ci');
   }
 
   onModuleInit(): void {
@@ -64,7 +64,7 @@ export class MailService implements OnModuleInit {
     await this.transporter.sendMail({
       from: this.smtpFrom,
       to,
-      subject: `[Starter] ${subject}`,
+      subject: `[Identis] ${subject}`,
       html: body.html,
       text: body.text,
     });

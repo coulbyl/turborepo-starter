@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import type { Request, Response, NextFunction } from 'express';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -12,7 +13,11 @@ async function bootstrap() {
   const corsOrigin = process.env.CORS_ORIGIN ?? true;
   const app = await NestFactory.create(AppModule);
 
-  app.use(helmet());
+  const helmetMiddleware = helmet();
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.path.startsWith('/reference')) return next();
+    helmetMiddleware(req, res, next);
+  });
   app.enableCors({ origin: corsOrigin, credentials: true });
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 

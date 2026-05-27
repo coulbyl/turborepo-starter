@@ -1,4 +1,4 @@
-export const AUTH_SESSION_COOKIE = 'starter_session';
+export const AUTH_SESSION_COOKIE = 'identis_session';
 export const AUTH_SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 export const COOKIE_DOMAIN = process.env.AUTH_COOKIE_DOMAIN;
 

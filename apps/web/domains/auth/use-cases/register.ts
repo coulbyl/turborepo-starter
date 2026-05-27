@@ -6,10 +6,8 @@ import type { AuthSession } from "../types/auth";
 
 export type RegisterInput = {
   email: string;
-  username: string;
   fullName: string;
   password: string;
-  bio?: string;
 };
 
 export async function register(input: RegisterInput): Promise<AuthSession> {

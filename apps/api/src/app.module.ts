@@ -14,6 +14,7 @@ import { AnnouncementsModule } from './modules/announcements/announcements.modul
 import { MailModule } from './modules/mail/mail.module';
 import { RedisModule } from './common/redis/redis.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
+import { SectorModule } from './modules/sector/sector.module';
 import { VerificationModule } from './modules/verification/verification.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { CaseModule } from './modules/case/case.module';
@@ -43,6 +44,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
     AnnouncementsModule,
     MailModule,
     WorkspaceModule,
+    SectorModule,
     VerificationModule,
     WalletModule,
     CaseModule,

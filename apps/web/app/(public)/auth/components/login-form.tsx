@@ -20,10 +20,7 @@ import {
 import { login } from "@/domains/auth/use-cases/login";
 
 const loginSchema = z.object({
-  identifier: z
-    .string()
-    .trim()
-    .min(1, "Renseignez votre email ou votre username."),
+  identifier: z.string().trim().min(1, "Renseignez votre email."),
   password: z.string().min(1, "Renseignez votre mot de passe."),
 });
 
@@ -71,9 +68,14 @@ export function LoginForm() {
           name="identifier"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email ou nom d&apos;utilisateur</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input autoComplete="username" className="h-11" {...field} />
+                <Input
+                  type="email"
+                  autoComplete="email"
+                  className="h-11"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -198,7 +198,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex items-center gap-2.5 rounded-lg border border-sidebar-border/50 bg-sidebar-accent/40 px-2.5 py-2">
           <UserAvatar
             avatarUrl={currentUser.avatarUrl}
-            username={currentUser.fullName}
+            name={currentUser.fullName}
             size={30}
           />
           <div className="min-w-0 flex-1">

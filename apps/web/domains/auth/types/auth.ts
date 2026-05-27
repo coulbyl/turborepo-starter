@@ -1,9 +1,8 @@
 export type AuthSessionUser = {
   id: string;
   email: string;
-  username: string;
   fullName: string;
-  bio: string | null;
+  phone: string | null;
   role: "ADMIN" | "MEMBER";
   emailVerified: boolean;
   mfaMethod: "EMAIL" | "TOTP" | null;

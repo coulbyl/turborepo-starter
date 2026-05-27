@@ -3,7 +3,6 @@ export type AdminUserRole = "ADMIN" | "MEMBER";
 export type AdminUserRow = {
   id: string;
   email: string;
-  username: string;
   fullName: string;
   role: AdminUserRole;
   emailVerified: boolean;

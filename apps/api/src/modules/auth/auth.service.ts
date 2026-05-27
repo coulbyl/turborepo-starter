@@ -69,31 +69,27 @@ export class AuthService {
     input: RegisterDto,
   ): Promise<{ token: string; session: AuthSession }> {
     const email = normalizeIdentifier(input.email);
-    const username = normalizeIdentifier(input.username);
 
-    const existing = await this.prisma.client.user.findFirst({
-      where: { OR: [{ email }, { username }] },
+    const existing = await this.prisma.client.user.findUnique({
+      where: { email },
       select: { id: true },
     });
 
     if (existing) {
-      throw new ConflictException('Email ou username déjà utilisé');
+      throw new ConflictException('Cet email est déjà utilisé');
     }
 
     const user = await this.prisma.client.user.create({
       data: {
         email,
-        username,
         fullName: input.fullName.trim(),
         passwordHash: await hashPassword(input.password),
-        bio: input.bio?.trim() || null,
       },
       select: {
         id: true,
         email: true,
-        username: true,
         fullName: true,
-        bio: true,
+        phone: true,
         role: true,
         emailVerified: true,
         mfaMethod: true,
@@ -117,15 +113,14 @@ export class AuthService {
   async login(
     input: LoginDto,
   ): Promise<{ token: string; session: AuthSession }> {
-    const identifier = normalizeIdentifier(input.identifier);
-    const user = await this.prisma.client.user.findFirst({
-      where: { OR: [{ email: identifier }, { username: identifier }] },
+    const email = normalizeIdentifier(input.identifier);
+    const user = await this.prisma.client.user.findUnique({
+      where: { email },
       select: {
         id: true,
         email: true,
-        username: true,
         fullName: true,
-        bio: true,
+        phone: true,
         role: true,
         emailVerified: true,
         mfaMethod: true,
@@ -146,20 +141,7 @@ export class AuthService {
       token,
       session: {
         sessionId: session.id,
-        user: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          fullName: user.fullName,
-          bio: user.bio,
-          role: user.role,
-          emailVerified: user.emailVerified,
-          mfaMethod: user.mfaMethod,
-          totpVerified: user.totpVerified,
-          avatarUrl: user.avatarUrl,
-          theme: user.theme,
-          locale: user.locale,
-        },
+        user: this.toSessionUser(user),
       },
     };
   }
@@ -187,9 +169,8 @@ export class AuthService {
           select: {
             id: true,
             email: true,
-            username: true,
             fullName: true,
-            bio: true,
+            phone: true,
             role: true,
             emailVerified: true,
             mfaMethod: true,
@@ -237,9 +218,8 @@ export class AuthService {
       select: {
         id: true,
         email: true,
-        username: true,
         fullName: true,
-        bio: true,
+        phone: true,
         role: true,
         emailVerified: true,
         mfaMethod: true,
@@ -255,7 +235,7 @@ export class AuthService {
   async sendEmailVerification(userId: string): Promise<void> {
     const user = await this.prisma.client.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { email: true, username: true, emailVerified: true },
+      select: { email: true, fullName: true, emailVerified: true },
     });
 
     if (user.emailVerified) {
@@ -277,7 +257,7 @@ export class AuthService {
     });
 
     await this.mail.sendEmailVerification(user.email, {
-      username: user.username,
+      username: user.fullName,
       code,
       expiresInMinutes: OTP_EXPIRES_IN_MINUTES,
     });
@@ -346,7 +326,7 @@ export class AuthService {
     });
 
     const otpauth = totp.generateURI({
-      issuer: 'Starter',
+      issuer: 'Identis',
       label: user.email,
       secret,
     });
@@ -384,13 +364,13 @@ export class AuthService {
   }
 
   async requestPasswordReset(dto: RequestPasswordResetDto): Promise<void> {
-    const identifier = normalizeIdentifier(dto.identifier);
-    const user = await this.prisma.client.user.findFirst({
-      where: { OR: [{ email: identifier }, { username: identifier }] },
+    const email = normalizeIdentifier(dto.identifier);
+    const user = await this.prisma.client.user.findUnique({
+      where: { email },
       select: {
         id: true,
         email: true,
-        username: true,
+        fullName: true,
         emailVerified: true,
         totpVerified: true,
         mfaMethod: true,
@@ -399,7 +379,7 @@ export class AuthService {
 
     if (!user) {
       logger.debug(
-        { identifier },
+        { email },
         'password-reset: identifier not found, silently ignored',
       );
       return;
@@ -418,7 +398,7 @@ export class AuthService {
 
     if (recentCount >= PASSWORD_RESET_RATE_LIMIT_MAX) {
       logger.warn(
-        { userId: user.id, username: user.username, recentCount },
+        { userId: user.id, recentCount },
         'password-reset: rate limit reached',
       );
       return;
@@ -427,16 +407,13 @@ export class AuthService {
     const { resetUrl } = await this.createResetToken(user.id, false);
 
     await this.mail.sendPasswordReset(user.email, {
-      username: user.username,
+      username: user.fullName,
       resetUrl,
       expiresInMinutes: PASSWORD_RESET_EXPIRES_IN_MINUTES,
       isAdminGenerated: false,
     });
 
-    logger.info(
-      { userId: user.id, username: user.username },
-      'password-reset: email sent',
-    );
+    logger.info({ userId: user.id }, 'password-reset: email sent');
   }
 
   async resetPassword(dto: ResetPasswordDto): Promise<void> {
@@ -467,9 +444,9 @@ export class AuthService {
   }
 
   async resetPasswordWithTotp(dto: ResetPasswordTotpDto): Promise<void> {
-    const identifier = normalizeIdentifier(dto.identifier);
-    const user = await this.prisma.client.user.findFirst({
-      where: { OR: [{ email: identifier }, { username: identifier }] },
+    const email = normalizeIdentifier(dto.identifier);
+    const user = await this.prisma.client.user.findUnique({
+      where: { email },
       select: { id: true, totpSecret: true, totpVerified: true },
     });
 
@@ -505,31 +482,15 @@ export class AuthService {
     dto: UpdateIdentityDto,
   ): Promise<AuthSessionUser> {
     const email = dto.email ? normalizeIdentifier(dto.email) : undefined;
-    const username = dto.username
-      ? normalizeIdentifier(dto.username)
-      : undefined;
 
-    if (email !== undefined || username !== undefined) {
-      const conflicts = await this.prisma.client.user.findFirst({
-        where: {
-          AND: [
-            { NOT: { id: userId } },
-            {
-              OR: [
-                ...(email !== undefined ? [{ email }] : []),
-                ...(username !== undefined ? [{ username }] : []),
-              ],
-            },
-          ],
-        },
-        select: { email: true, username: true },
+    if (email !== undefined) {
+      const conflict = await this.prisma.client.user.findFirst({
+        where: { email, NOT: { id: userId } },
+        select: { id: true },
       });
 
-      if (conflicts) {
-        if (email !== undefined && conflicts.email === email) {
-          throw new ConflictException('Cet email est déjà utilisé');
-        }
-        throw new ConflictException("Ce nom d'utilisateur est déjà utilisé");
+      if (conflict) {
+        throw new ConflictException('Cet email est déjà utilisé');
       }
     }
 
@@ -546,7 +507,6 @@ export class AuthService {
       where: { id: userId },
       data: {
         ...(email !== undefined && { email }),
-        ...(username !== undefined && { username }),
         ...(shouldResetVerification && {
           emailVerified: false,
           mfaMethod: null,
@@ -555,9 +515,8 @@ export class AuthService {
       select: {
         id: true,
         email: true,
-        username: true,
         fullName: true,
-        bio: true,
+        phone: true,
         role: true,
         emailVerified: true,
         mfaMethod: true,
@@ -606,7 +565,7 @@ export class AuthService {
 
   private extractSessionToken(request: AuthenticatedRequest): string | null {
     const cookies = parseCookieHeader(request.headers.cookie);
-    return cookies.starter_session ?? null;
+    return cookies.identis_session ?? null;
   }
 
   private async createSession(userId: string) {
@@ -626,9 +585,8 @@ export class AuthService {
   private toSessionUser(user: {
     id: string;
     email: string;
-    username: string;
     fullName: string;
-    bio: string | null;
+    phone: string | null;
     role: AuthSessionUser['role'];
     emailVerified: boolean;
     mfaMethod: AuthSessionUser['mfaMethod'];

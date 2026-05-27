@@ -109,7 +109,7 @@ export default function LandingPage() {
               href="/auth/register"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2563eb] px-8 py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 sm:w-auto"
             >
-              Créer un workspace gratuit <ArrowRight size={14} />
+              Créer mon compte <ArrowRight size={14} />
             </Link>
             <Link
               href="/auth/login"
@@ -119,8 +119,7 @@ export default function LandingPage() {
             </Link>
           </div>
           <p className="mt-4 text-xs text-muted-foreground/50">
-            15 000 FCFA à l&apos;inscription · 10 vérifications offertes · Sans
-            engagement
+            Compte · Organisation · Dashboard — en moins de 5 minutes
           </p>
         </div>
       </section>
@@ -218,7 +217,7 @@ export default function LandingPage() {
                 href="/auth/register"
                 className="mt-7 flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
-                Créer un workspace <ArrowRight size={13} />
+                Créer mon compte <ArrowRight size={13} />
               </Link>
             </div>
 
@@ -265,14 +264,14 @@ export default function LandingPage() {
             Prêt à digitaliser votre processus KYC ?
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Créez votre workspace en 5 minutes. 10 vérifications offertes pour
-            tester en conditions réelles.
+            Créez votre compte, configurez votre organisation, lancez votre
+            première vérification — tout en moins de 5 minutes.
           </p>
           <Link
             href="/auth/register"
             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#2563eb] px-8 py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
           >
-            Démarrer gratuitement <ArrowRight size={14} />
+            Créer mon compte <ArrowRight size={14} />
           </Link>
         </div>
       </section>

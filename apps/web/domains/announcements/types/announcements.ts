@@ -10,7 +10,6 @@ export type Announcement = {
   updatedAt: string;
   createdBy: {
     id: string;
-    username: string;
     fullName: string;
   } | null;
 };

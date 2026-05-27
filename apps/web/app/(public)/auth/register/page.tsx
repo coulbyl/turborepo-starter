@@ -5,7 +5,7 @@ export default function RegisterPage() {
   return (
     <AuthShell
       title="Créer un compte"
-      subtitle="Ouvrez votre workspace et démarrez vos vérifications d'identité."
+      subtitle="Créez votre accès en 30 secondes, puis configurez votre organisation."
     >
       <RegisterForm />
     </AuthShell>

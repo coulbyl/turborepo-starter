@@ -48,7 +48,7 @@ export function AvatarSection({
       description="Choose your profile avatar."
     >
       <div className="mb-4 flex justify-center">
-        <UserAvatar avatarUrl={selected} username={username} size={72} />
+        <UserAvatar avatarUrl={selected} name={username} size={72} />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -98,7 +98,7 @@ function AvatarChip({
             : "border-border bg-panel hover:border-accent/50"
       }`}
     >
-      <UserAvatar avatarUrl={avatar.url} username={avatar.label} size={40} />
+      <UserAvatar avatarUrl={avatar.url} name={avatar.label} size={40} />
       <span className="text-center text-[0.62rem] font-medium leading-tight text-muted-foreground">
         {avatar.label}
       </span>
