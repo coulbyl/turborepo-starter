@@ -87,7 +87,7 @@ export function CaseDetailClient({ caseId }: { caseId: string }) {
 
   const handleDelete = async () => {
     await deleteCase.mutateAsync(caseId);
-    router.push("/dashboard/cases");
+    router.back();
   };
 
   const reportUrl = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/workspaces/${workspace.id}/cases/${caseId}/report`;

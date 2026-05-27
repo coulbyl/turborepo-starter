@@ -1,20 +1,29 @@
 import Link from "next/link";
 import {
-  FolderOpen,
-  Clock,
-  CheckCircle2,
-  Wallet,
   ArrowRight,
+  CheckCircle2,
+  Clock,
+  FolderOpen,
   TrendingUp,
+  Wallet,
 } from "lucide-react";
 import { StatCard } from "@identis/ui/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@identis/ui/card";
 import { Badge } from "@identis/ui/badge";
-import { Button } from "@identis/ui/button";
+import { Button } from "@identis/ui/components/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@identis/ui/components/table";
 import { getCurrentSession } from "@/domains/auth/use-cases/get-current-session";
 import { getWorkspaces } from "@/domains/workspace/use-cases/get-workspaces";
 import { getWorkspaceStats } from "@/domains/workspace/use-cases/get-workspace-stats";
 import { STATUS_LABEL, STATUS_COLOR } from "@/domains/case/types/case";
+import { PageHeader } from "@/components/page-header";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
@@ -35,20 +44,15 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">
-            {greeting}, {session.user.fullName.split(" ")[0]}
-          </h1>
-          <p className="text-muted-foreground text-sm mt-0.5">
-            {workspace.name} · Vue d&apos;ensemble
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/dashboard/cases/new">Nouveau dossier</Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={`${greeting}, ${session.user.fullName.split(" ")[0]}`}
+        description={`${workspace.name} · Vue d'ensemble`}
+        action={
+          <Button asChild>
+            <Link href="/dashboard/cases/new">Nouveau dossier</Link>
+          </Button>
+        }
+      />
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -126,7 +130,7 @@ export default async function DashboardPage() {
           {stats.recentCases.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <FolderOpen className="h-10 w-10 text-muted-foreground/40" />
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm text-muted-foreground">
                 Aucun dossier pour l&apos;instant
               </p>
               <Button asChild size="sm">
@@ -136,53 +140,55 @@ export default async function DashboardPage() {
               </Button>
             </div>
           ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-muted-foreground text-xs uppercase tracking-wide">
-                  <th className="px-6 py-3 text-left font-medium">Référence</th>
-                  <th className="px-6 py-3 text-left font-medium">Sujet</th>
-                  <th className="px-6 py-3 text-left font-medium">Statut</th>
-                  <th className="px-6 py-3 text-left font-medium">Date</th>
-                  <th className="px-6 py-3" />
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Référence</TableHead>
+                  <TableHead>Sujet</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead className="hidden md:table-cell">Date</TableHead>
+                  <TableHead className="w-16" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {stats.recentCases.map((c) => (
-                  <tr
-                    key={c.id}
-                    className="border-b last:border-0 hover:bg-muted/30 transition-colors"
-                  >
-                    <td className="px-6 py-3 font-mono text-xs text-muted-foreground">
-                      {c.reference}
-                    </td>
-                    <td className="px-6 py-3 font-medium">
+                  <TableRow key={c.id}>
+                    <TableCell>
+                      <Link
+                        href={`/dashboard/cases/${c.id}`}
+                        className="font-mono text-xs font-semibold text-primary hover:underline"
+                      >
+                        {c.reference}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="font-medium">
                       {c.formData
                         ? `${c.formData.firstName} ${c.formData.lastName}`
                         : "—"}
-                    </td>
-                    <td className="px-6 py-3">
+                    </TableCell>
+                    <TableCell>
                       <Badge
                         variant="outline"
                         className={`text-xs ${STATUS_COLOR[c.status]}`}
                       >
                         {STATUS_LABEL[c.status]}
                       </Badge>
-                    </td>
-                    <td className="px-6 py-3 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="hidden text-muted-foreground md:table-cell">
                       {new Date(c.createdAt).toLocaleDateString("fr-FR", {
                         day: "2-digit",
                         month: "short",
                       })}
-                    </td>
-                    <td className="px-6 py-3 text-right">
+                    </TableCell>
+                    <TableCell className="text-right">
                       <Button variant="ghost" size="sm" asChild>
                         <Link href={`/dashboard/cases/${c.id}`}>Voir</Link>
                       </Button>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>

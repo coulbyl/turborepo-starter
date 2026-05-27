@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
+import { ChevronRight, Search } from "lucide-react";
 import { Button } from "@identis/ui/components/button";
 import { Input } from "@identis/ui/components/input";
 import {
@@ -33,9 +34,25 @@ const STATUS_FILTERS: { label: string; value: CaseStatus | undefined }[] = [
 
 export function CasesListClient() {
   const workspace = useCurrentWorkspace();
-  const [status, setStatus] = useState<CaseStatus | undefined>();
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const status = (searchParams.get("status") as CaseStatus) || undefined;
+  const search = searchParams.get("search") ?? "";
+  const page = parseInt(searchParams.get("page") ?? "1", 10);
+
+  const setParams = useCallback(
+    (updates: Record<string, string | undefined>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value) params.set(key, value);
+        else params.delete(key);
+      });
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams],
+  );
 
   const { data, isLoading } = useCases({
     workspaceId: workspace.id,
@@ -55,10 +72,9 @@ export function CasesListClient() {
               key={f.label}
               variant={status === f.value ? "default" : "outline"}
               size="sm"
-              onClick={() => {
-                setStatus(f.value);
-                setPage(1);
-              }}
+              onClick={() =>
+                setParams({ status: f.value, page: undefined })
+              }
             >
               {f.label}
             </Button>
@@ -74,10 +90,9 @@ export function CasesListClient() {
             type="text"
             placeholder="Référence, nom…"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) =>
+              setParams({ search: e.target.value || undefined, page: undefined })
+            }
             className="pl-8 sm:w-56"
           />
         </div>
@@ -109,15 +124,21 @@ export function CasesListClient() {
                 <TableHead className="hidden text-right md:table-cell">
                   Date
                 </TableHead>
+                <TableHead className="w-8" />
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.items.map((c) => (
-                <TableRow key={c.id}>
+                <TableRow
+                  key={c.id}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/dashboard/cases/${c.id}`)}
+                >
                   <TableCell>
                     <Link
                       href={`/dashboard/cases/${c.id}`}
                       className="font-mono text-xs font-semibold text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {c.reference}
                     </Link>
@@ -144,6 +165,17 @@ export function CasesListClient() {
                   <TableCell className="hidden text-right text-xs text-muted-foreground md:table-cell">
                     {new Date(c.createdAt).toLocaleDateString("fr-FR")}
                   </TableCell>
+                  <TableCell className="w-8 text-right">
+                    <Link
+                      href={`/dashboard/cases/${c.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ChevronRight
+                        size={15}
+                        className="text-muted-foreground/50 transition-colors group-hover:text-foreground"
+                      />
+                    </Link>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -156,7 +188,7 @@ export function CasesListClient() {
         page={page}
         total={data?.total ?? 0}
         limit={data?.limit ?? 20}
-        onPageChange={setPage}
+        onPageChange={(p) => setParams({ page: p > 1 ? String(p) : undefined })}
         itemLabel="dossier"
       />
     </div>

@@ -1,6 +1,7 @@
 import { getMembers } from "@/domains/workspace/use-cases/get-members";
 import { getWorkspaces } from "@/domains/workspace/use-cases/get-workspaces";
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 import { MembersClient } from "./components/members-client";
 
 export default async function MembersPage() {
@@ -12,12 +13,10 @@ export default async function MembersPage() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold">Membres</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">
-          Gérez les accès à {workspace.name}
-        </p>
-      </div>
+      <PageHeader
+        title="Membres"
+        description={`Gérez les accès à ${workspace.name}`}
+      />
       <MembersClient
         workspaceId={workspace.id}
         initialMembers={members}

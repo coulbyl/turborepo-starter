@@ -1,5 +1,10 @@
 import { CaseDetailClient } from "./components/case-detail-client";
 
-export default function CaseDetailPage({ params }: { params: { id: string } }) {
-  return <CaseDetailClient caseId={params.id} />;
+export default async function CaseDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <CaseDetailClient caseId={id} />;
 }
