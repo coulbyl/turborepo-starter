@@ -12,6 +12,9 @@ export type DocumentVerificationInput = {
   country: string; // ISO 3166-1 alpha-2 (CI, SN, FR, US, ...)
   idType: string; // NATIONAL_ID | PASSPORT | DRIVERS_LICENSE | ...
   idNumber?: string; // Optional — pre-fills id_info for authority lookup
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string; // 'yyyy-mm-dd' — for fake provider and future heuristics
   selfieBase64: string;
   idFrontBase64: string;
   idBackBase64?: string;
@@ -90,6 +93,8 @@ export type SmileWebhookPayload = {
       Return_Personal_Info?: string;
       AML_CHECK?: string;
       Human_Review_Compare?: string;
+      Document_Authenticity?: string;
+      Expiration_Check?: string;
     };
     FullName?: string;
     DOB?: string;
@@ -98,6 +103,50 @@ export type SmileWebhookPayload = {
     Country?: string;
     IDType?: string;
     Photo?: string;
+    Scores?: {
+      Liveness?: number;
+      FaceMatch?: number;
+      Overall?: number;
+      Duplicate?: number;
+    };
+    ExtractedData?: {
+      fullName?: string;
+      firstName?: string;
+      lastName?: string;
+      dateOfBirth?: string;
+      idNumber?: string;
+      country?: string;
+      idType?: string;
+      expirationDate?: string;
+      nationality?: string;
+      sex?: string;
+    };
+    Document?: {
+      valid?: boolean;
+      reason?: string;
+      expiryStatus?: string;
+      issuingCountry?: string;
+    };
+    AML?: {
+      match?: boolean;
+      matchedLists?: string[];
+      summary?: string;
+    };
+    Duplicate?: {
+      found?: boolean;
+      matchedCaseId?: string;
+      score?: number;
+    };
+    Flags?: string[];
+    FailureReasons?: string[];
+    Warnings?: string[];
+    Provider?: {
+      name?: string;
+      mode?: string;
+      scenario?: string;
+      authorityVerified?: boolean;
+      jobType?: number;
+    };
   };
 };
 

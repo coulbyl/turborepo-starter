@@ -7,6 +7,98 @@ export type CaseStatus =
   | "FAILED";
 export type VerifStatus = "PENDING" | "APPROVED" | "REJECTED" | "UNKNOWN";
 
+export type VerificationActions = {
+  Liveness_Check?: string;
+  Selfie_To_ID_Card_Compare?: string;
+  Verify_ID_Number?: string;
+  Return_Personal_Info?: string;
+  AML_CHECK?: string;
+  Human_Review_Compare?: string;
+  Document_Authenticity?: string;
+  Expiration_Check?: string;
+};
+
+export type VerificationScores = {
+  Liveness?: number;
+  FaceMatch?: number;
+  Overall?: number;
+  Duplicate?: number;
+};
+
+export type VerificationExtractedData = {
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  idNumber?: string;
+  country?: string;
+  idType?: string;
+  expirationDate?: string;
+  nationality?: string;
+  sex?: string;
+};
+
+export type VerificationDocument = {
+  valid?: boolean;
+  reason?: string;
+  expiryStatus?: string;
+  issuingCountry?: string;
+};
+
+export type VerificationAml = {
+  match?: boolean;
+  matchedLists?: string[];
+  summary?: string;
+};
+
+export type VerificationDuplicate = {
+  found?: boolean;
+  matchedCaseId?: string;
+  score?: number;
+};
+
+export type VerificationProvider = {
+  name?: string;
+  mode?: string;
+  scenario?: string;
+  authorityVerified?: boolean;
+  jobType?: number;
+};
+
+export type VerificationResultPayload = {
+  ResultCode?: string;
+  ResultText?: string;
+  SmileJobID?: string;
+  FullName?: string;
+  DOB?: string;
+  ExpirationDate?: string;
+  IDNumber?: string;
+  Country?: string;
+  IDType?: string;
+  Photo?: string;
+  Actions?: VerificationActions;
+  Scores?: VerificationScores;
+  ExtractedData?: VerificationExtractedData;
+  Document?: VerificationDocument;
+  AML?: VerificationAml;
+  Duplicate?: VerificationDuplicate;
+  Flags?: string[];
+  FailureReasons?: string[];
+  Warnings?: string[];
+  Provider?: VerificationProvider;
+};
+
+export type VerificationRawResult = {
+  jobType?: number;
+  authorityVerified?: boolean;
+  submittedAt?: string;
+  timestamp?: string;
+  job_complete?: boolean;
+  job_success?: boolean;
+  smile_job_id?: string;
+  result?: VerificationResultPayload;
+};
+
 export type CaseVerification = {
   status: VerifStatus;
   livenessScore: number | null;
@@ -14,6 +106,13 @@ export type CaseVerification = {
   faceMatch: boolean | null;
   amlMatch: boolean | null;
   duplicateFound: boolean | null;
+  smileJobId?: string;
+  product?: string;
+  rawResult?: VerificationRawResult;
+  cniPhotoUrl?: string | null;
+  selfiePhotoUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type CaseFormData = {

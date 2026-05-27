@@ -17,6 +17,7 @@ import {
 } from '@modules/verification/interfaces/verification-provider.interface';
 import { WalletService } from '@modules/wallet/wallet.service';
 import { translateSmileError } from '@modules/verification/smile-id.constants';
+import { mapWebhookToVerificationState } from '@modules/verification/verification-webhook.mapper';
 import type { CreateCaseDto } from './dto/create-case.dto';
 import type { ListCasesQueryDto } from './dto/list-cases-query.dto';
 
@@ -103,7 +104,10 @@ export class CaseService {
       let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
       const timeout = new Promise<never>((_, reject) => {
         timeoutHandle = setTimeout(
-          () => reject(new Error('Smile ID timeout — job will be retried via queue')),
+          () =>
+            reject(
+              new Error('Smile ID timeout — job will be retried via queue'),
+            ),
           30_000,
         );
       });
@@ -123,6 +127,9 @@ export class CaseService {
           country: dto.country,
           idType: dto.idType,
           idNumber: dto.idNumber,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          dateOfBirth: dto.dateOfBirth,
           selfieBase64,
           idFrontBase64,
           idBackBase64,
@@ -179,7 +186,7 @@ export class CaseService {
         error.response != null &&
         typeof error.response === 'object' &&
         'data' in error.response
-          ? (error.response as { data: unknown }).data
+          ? error.response.data
           : undefined;
 
       logger.error(
@@ -193,8 +200,8 @@ export class CaseService {
         axiosData != null &&
         typeof axiosData === 'object' &&
         'error' in axiosData &&
-        typeof (axiosData as Record<string, unknown>).error === 'string'
-          ? ((axiosData as Record<string, unknown>).error as string)
+        typeof axiosData.error === 'string'
+          ? axiosData.error
           : null;
 
       throw new UnprocessableEntityException(
@@ -342,28 +349,43 @@ export class CaseService {
     });
 
     if (!verification) {
-      logger.warn({ smileJobId: payload.smile_job_id }, 'Webhook: verification not found');
+      logger.warn(
+        { smileJobId: payload.smile_job_id },
+        'Webhook: verification not found',
+      );
       return;
     }
 
-    const actions = payload.result?.Actions ?? {};
-    const resultCode = payload.result?.ResultCode;
-    const approved = payload.job_success && (resultCode === '0810' || resultCode === '0812');
+    const {
+      verifStatus,
+      caseStatus,
+      livenessScore,
+      documentValid,
+      faceMatch,
+      amlMatch,
+      duplicateFound,
+    } = mapWebhookToVerificationState(payload);
 
-    const verifStatus = approved ? 'APPROVED' : 'REJECTED';
-    // Approved → IN_REVIEW: an agent still validates before final approval
-    const caseStatus = approved ? 'IN_REVIEW' : 'REJECTED';
+    const previousRawResult =
+      verification.rawResult &&
+      typeof verification.rawResult === 'object' &&
+      !Array.isArray(verification.rawResult)
+        ? (verification.rawResult as Record<string, unknown>)
+        : {};
 
     await this.prisma.client.verification.update({
       where: { id: verification.id },
       data: {
         status: verifStatus,
-        livenessScore: actions.Liveness_Check === 'Passed' ? 0.95 : 0.1,
-        documentValid: payload.job_success,
-        faceMatch: actions.Selfie_To_ID_Card_Compare === 'Passed',
-        amlMatch: false,
-        duplicateFound: false,
-        rawResult: payload as object,
+        livenessScore,
+        documentValid,
+        faceMatch,
+        amlMatch,
+        duplicateFound,
+        rawResult: {
+          ...previousRawResult,
+          ...payload,
+        },
       },
     });
 
@@ -373,7 +395,11 @@ export class CaseService {
     });
 
     logger.info(
-      { smileJobId: payload.smile_job_id, caseId: verification.caseId, caseStatus },
+      {
+        smileJobId: payload.smile_job_id,
+        caseId: verification.caseId,
+        caseStatus,
+      },
       'Webhook processed',
     );
   }

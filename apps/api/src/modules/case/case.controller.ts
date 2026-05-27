@@ -102,7 +102,7 @@ export class CaseController {
     @Res() res: Response,
   ) {
     const c = await this.caseService.findOne(workspaceId, caseId);
-    const pdf = this.pdfReportService.generate(c);
+    const pdf = await this.pdfReportService.generate(c);
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="rapport-${c.reference}.pdf"`,

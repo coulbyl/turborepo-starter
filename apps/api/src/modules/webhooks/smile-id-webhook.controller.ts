@@ -8,81 +8,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CaseStatus, VerifStatus } from '@identis/db';
+import { VerifStatus } from '@identis/db';
 import { PrismaService } from '@/prisma.service';
 import {
   VERIFICATION_PROVIDER,
   type IVerificationProvider,
   type SmileWebhookPayload,
 } from '@modules/verification/interfaces/verification-provider.interface';
-import { RESULT_CODE } from '@modules/verification/smile-id.constants';
-
-// ── Result code → Identis statuses ───────────────────────────────────────────
-
-function resolveStatuses(payload: SmileWebhookPayload): {
-  verifStatus: VerifStatus;
-  caseStatus: CaseStatus;
-  livenessScore: number | null;
-  documentValid: boolean | null;
-  faceMatch: boolean | null;
-} {
-  if (!payload.job_complete) {
-    return {
-      verifStatus: VerifStatus.PENDING,
-      caseStatus: CaseStatus.PENDING,
-      livenessScore: null,
-      documentValid: null,
-      faceMatch: null,
-    };
-  }
-
-  const code = payload.result?.ResultCode ?? '';
-  const actions = payload.result?.Actions ?? {};
-  const livenessOk = actions.Liveness_Check === 'Passed';
-  const faceMatchOk = actions.Selfie_To_ID_Card_Compare === 'Passed';
-  const documentValid = actions.Verify_ID_Number === 'Verified' || faceMatchOk;
-
-  if (code === RESULT_CODE.PASS && livenessOk) {
-    return {
-      verifStatus: VerifStatus.APPROVED,
-      caseStatus: CaseStatus.APPROVED,
-      livenessScore: null, // raw score not exposed by Smile ID in this field
-      documentValid,
-      faceMatch: faceMatchOk,
-    };
-  }
-
-  // 0811 = provisional — needs human review
-  if (code === RESULT_CODE.PROVISIONAL) {
-    return {
-      verifStatus: VerifStatus.PENDING,
-      caseStatus: CaseStatus.IN_REVIEW,
-      livenessScore: null,
-      documentValid,
-      faceMatch: faceMatchOk,
-    };
-  }
-
-  // Enhanced KYC pass (text-only, no face match)
-  if (code === RESULT_CODE.ID_VERIFIED) {
-    return {
-      verifStatus: VerifStatus.APPROVED,
-      caseStatus: CaseStatus.APPROVED,
-      livenessScore: null,
-      documentValid: true,
-      faceMatch: null,
-    };
-  }
-
-  // 0812, 1013, or any other failure
-  return {
-    verifStatus: VerifStatus.REJECTED,
-    caseStatus: CaseStatus.REJECTED,
-    livenessScore: null,
-    documentValid: false,
-    faceMatch: false,
-  };
-}
+import { mapWebhookToVerificationState } from '@modules/verification/verification-webhook.mapper';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -118,7 +51,7 @@ export class SmileIdWebhookController {
 
     const verification = await this.prisma.client.verification.findFirst({
       where: { smileJobId },
-      select: { id: true, caseId: true, status: true },
+      select: { id: true, caseId: true, status: true, rawResult: true },
     });
 
     if (!verification) {
@@ -136,8 +69,22 @@ export class SmileIdWebhookController {
       return { received: true };
     }
 
-    const { verifStatus, caseStatus, livenessScore, documentValid, faceMatch } =
-      resolveStatuses(payload);
+    const {
+      verifStatus,
+      caseStatus,
+      livenessScore,
+      documentValid,
+      faceMatch,
+      amlMatch,
+      duplicateFound,
+    } = mapWebhookToVerificationState(payload);
+
+    const previousRawResult =
+      verification.rawResult &&
+      typeof verification.rawResult === 'object' &&
+      !Array.isArray(verification.rawResult)
+        ? (verification.rawResult as Record<string, unknown>)
+        : {};
 
     // 2. Update Verification + Case atomically
     await this.prisma.client.$transaction([
@@ -148,7 +95,12 @@ export class SmileIdWebhookController {
           livenessScore,
           documentValid,
           faceMatch,
-          rawResult: payload,
+          amlMatch,
+          duplicateFound,
+          rawResult: {
+            ...previousRawResult,
+            ...payload,
+          },
           updatedAt: new Date(),
         },
       }),
